@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="日本歷史人物學習工具，涵蓋古代到現代60位重要人物，支援卡片瀏覽、知識測驗、時間軸視覺化。">
+<title>日本歴史人物事典｜にほんの偉人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --ink: #1c1a17;
+  --ink-soft: #3a352e;
+  --paper: #ede7d9;
+  --paper-deep: #e2dac8;
+  --paper-card: #f7f3e8;
+  --vermillion: #a8392a;
+  --vermillion-soft: #c75a44;
+  --vermillion-pale: #f3ddd6;
+  --indigo: #2d4356;
+  --indigo-soft: #43617a;
+  --indigo-pale: #dde6ec;
+  --gold: #a8842f;
+  --gold-pale: #f1e6c8;
+  --line: #d4c9ad;
+  --line-soft: #e6dec8;
+  --font-display: 'Shippori Mincho', 'Noto Serif TC', serif;
+  --font-body: 'Noto Sans TC', 'Hiragino Sans', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+  background-image:
+    radial-gradient(circle at 15% 8%, rgba(168,57,42,0.04) 0%, transparent 35%),
+    radial-gradient(circle at 85% 92%, rgba(45,67,86,0.04) 0%, transparent 35%);
+}
+
+/* ══ DARK MODE ══ */
+body.dark {
+  --ink: #ece6d8;
+  --ink-soft: #c9c2ae;
+  --paper: #15140f;
+  --paper-deep: #0e0d09;
+  --paper-card: #1e1c15;
+  --vermillion: #d4604a;
+  --vermillion-soft: #e07d68;
+  --vermillion-pale: #2e1c17;
+  --indigo: #6f93ad;
+  --indigo-soft: #8babc4;
+  --indigo-pale: #1a2630;
+  --gold: #d4af5a;
+  --gold-pale: #2a2412;
+  --line: #3a3528;
+  --line-soft: #2a2619;
+}
+
+/* ══ GRAYSCALE ══ */
+body.grayscale { filter: grayscale(1); }
+
+/* ══ Header ══ */
+.app-header {
+  background: var(--paper-card);
+  border-bottom: 2px solid var(--ink);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex: 1;
+  min-width: 200px;
+}
+.brand-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--vermillion);
+  color: var(--paper-card);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+  letter-spacing: -1px;
+}
+.brand h1 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.brand .sub {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.08em;
+}
+.header-stats {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+}
+.stat-pill {
+  background: var(--paper-deep);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.stat-pill.correct { background: var(--gold-pale); color: var(--gold); border-color: var(--gold); }
+.stat-pill.wrong { background: var(--vermillion-pale); color: var(--vermillion); border-color: var(--vermillion); }
+
+.theme-toggle-group { display: flex; gap: 4px; }
+.theme-btn {
+  border: 1.5px solid var(--line);
+  background: var(--paper-card);
+  border-radius: 6px;
+  width: 32px; height: 32px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-soft);
+  transition: all 0.15s;
+}
+.theme-btn:hover { border-color: var(--ink-soft); }
+.theme-btn.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.theme-btn svg { width: 16px; height: 16px; }
+
+/* ══ Nav tabs ══ */
+.nav-tabs {
+  background: var(--paper-card);
+  border-bottom: 1px solid var(--line);
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  position: sticky;
+  top: 67px;
+  z-index: 39;
+}
+.nav-tab {
+  border: none;
+  background: none;
+  padding: 12px 18px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s;
+}
+.nav-tab:hover { color: var(--ink); }
+.nav-tab.active { color: var(--vermillion); border-bottom-color: var(--vermillion); }
+
+/* ══ Filter bar ══ */
+.filter-bar {
+  background: var(--paper-deep);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 24px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.filter-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.chip {
+  border: 1.5px solid var(--line);
+  background: var(--paper-card);
+  border-radius: 999px;
+  padding: 4px 13px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--ink-soft); }
+.chip.selected { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.chip.selected.era-tag { background: var(--vermillion); border-color: var(--vermillion); }
+.chip.selected.field-tag { background: var(--indigo); border-color: var(--indigo); }
+
+/* ══ Main area ══ */
+.main { padding: 24px; max-width: 1100px; margin: 0 auto; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--ink-soft); }
+.empty-state .big { font-size: 2.4rem; margin-bottom: 10px; opacity: 0.5; }
+
+/* ══ CARD GRID VIEW ══ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.figure-card {
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  overflow: hidden;
+  position: relative;
+}
+.figure-card:hover {
+  border-color: var(--vermillion);
+  box-shadow: 0 6px 20px rgba(28,26,23,0.1);
+  transform: translateY(-2px);
+}
+.fc-era-bar {
+  height: 5px;
+  width: 100%;
+}
+.fc-body { padding: 16px 18px; }
+.fc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.fc-name-wrap { display: flex; flex-direction: column; }
+.fc-reading { font-size: 0.7rem; color: var(--ink-soft); letter-spacing: 0.04em; }
+.fc-name { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin-top: 1px; }
+.fc-years { font-size: 0.72rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; margin-top: 3px; }
+.fc-oneline { font-size: 0.83rem; color: var(--ink-soft); line-height: 1.55; margin-top: 8px; }
+.fc-tags { display: flex; gap: 5px; margin-top: 12px; flex-wrap: wrap; }
+.fc-tag { font-size: 0.68rem; font-weight: 600; padding: 2px 9px; border-radius: 999px; }
+
+/* ══ DETAIL MODAL/PANEL ══ */
+.detail-overlay {
+  position: fixed; inset: 0;
+  background: rgba(28,26,23,0.6);
+  z-index: 100;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 30px 16px;
+  overflow-y: auto;
+  animation: fadeIn 0.2s;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.detail-panel {
+  background: var(--paper-card);
+  border-radius: 14px;
+  max-width: 680px;
+  width: 100%;
+  margin: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  position: relative;
+}
+.detail-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--paper-deep);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+  z-index: 5;
+}
+.detail-close:hover { background: var(--ink); color: var(--paper); }
+.detail-header {
+  padding: 32px 32px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.detail-reading { font-size: 0.85rem; color: var(--ink-soft); letter-spacing: 0.06em; }
+.detail-name { font-family: var(--font-display); font-size: 2.1rem; font-weight: 700; margin-top: 2px; }
+.detail-romaji { font-size: 0.8rem; color: var(--ink-soft); font-style: italic; margin-top: 2px; }
+.detail-meta-row { display: flex; gap: 10px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+.detail-years { font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); }
+.detail-oneline {
+  font-size: 0.95rem; color: var(--ink); margin-top: 12px; line-height: 1.6;
+  padding: 10px 14px; background: var(--paper-deep); border-radius: 8px;
+  border-left: 3px solid var(--vermillion);
+}
+.detail-body { padding: 24px 32px 32px; }
+.detail-section { margin-bottom: 22px; }
+.detail-section-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem; font-weight: 700; color: var(--vermillion);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.detail-section-title::before { content: '◆'; font-size: 0.6rem; }
+.detail-text { font-size: 0.92rem; line-height: 1.85; color: var(--ink); text-align: justify; }
+.detail-quote {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--indigo);
+  text-align: center;
+  padding: 16px 20px;
+  background: var(--indigo-pale);
+  border-radius: 8px;
+  margin-top: 6px;
+  line-height: 1.7;
+}
+.detail-related { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.related-chip {
+  border: 1px solid var(--line);
+  background: var(--paper-deep);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: all 0.15s;
+}
+.related-chip:hover { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-pale); }
+
+/* ══ QUIZ MODE ══ */
+.quiz-card {
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 32px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.quiz-progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+.progress-bar-bg { flex: 1; height: 7px; background: var(--paper-deep); border-radius: 999px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--vermillion); border-radius: 999px; transition: width 0.3s; }
+.progress-label { font-size: 0.78rem; color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.quiz-q-type { font-size: 0.74rem; font-weight: 700; color: var(--indigo); letter-spacing: 0.06em; margin-bottom: 10px; }
+.quiz-question { font-size: 1.15rem; line-height: 1.7; margin-bottom: 22px; color: var(--ink); }
+.quiz-question strong { color: var(--vermillion); }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  border: 1.5px solid var(--line);
+  background: var(--paper-deep);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--ink);
+}
+.quiz-option:hover { border-color: var(--indigo); }
+.quiz-option.correct-option { background: var(--gold-pale); border-color: var(--gold); color: var(--gold); font-weight: 700; }
+.quiz-option.wrong-option { background: var(--vermillion-pale); border-color: var(--vermillion); color: var(--vermillion); font-weight: 700; }
+.quiz-option.disabled { pointer-events: none; opacity: 0.6; }
+.quiz-option.disabled.correct-option, .quiz-option.disabled.wrong-option { opacity: 1; }
+.quiz-feedback { margin-top: 16px; font-size: 0.88rem; line-height: 1.6; color: var(--ink-soft); min-height: 20px; }
+.btn-next-q {
+  margin-top: 18px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 10px;
+  padding: 11px 28px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: none;
+}
+.btn-next-q:hover { background: var(--vermillion); }
+.done-state { text-align: center; padding: 30px 10px; }
+.done-state .big { font-size: 3rem; margin-bottom: 10px; }
+.done-state h2 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; }
+.done-state p { color: var(--ink-soft); margin-bottom: 22px; }
+.btn-restart {
+  background: var(--ink); color: var(--paper); border: none; border-radius: 10px;
+  padding: 12px 30px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+}
+.btn-restart:hover { background: var(--vermillion); }
+
+/* ══ TIMELINE VIEW ══ */
+.timeline-wrap { position: relative; padding: 20px 0 40px; }
+.timeline-spine {
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--vermillion), var(--indigo));
+  transform: translateX(-50%);
+}
+.timeline-era-marker {
+  text-align: center;
+  margin: 36px 0 20px;
+  position: relative;
+}
+.timeline-era-marker .era-stamp {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--paper);
+  padding: 6px 22px;
+  position: relative;
+  z-index: 2;
+}
+.timeline-era-marker .era-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--vermillion);
+  border: 2px solid var(--vermillion);
+  border-radius: 6px;
+  padding: 4px 16px;
+  background: var(--paper-card);
+}
+.timeline-era-marker .era-range {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+.timeline-item {
+  display: flex;
+  width: 100%;
+  margin-bottom: 14px;
+  position: relative;
+}
+.timeline-item.left { justify-content: flex-end; }
+.timeline-item.right { justify-content: flex-start; }
+.timeline-item .ti-card {
+  width: calc(50% - 28px);
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.timeline-item .ti-card:hover { border-color: var(--vermillion); box-shadow: 0 4px 14px rgba(28,26,23,0.1); }
+.timeline-item .ti-year { font-size: 0.7rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.timeline-item .ti-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin-top: 1px; }
+.timeline-item .ti-oneline { font-size: 0.78rem; color: var(--ink-soft); margin-top: 4px; line-height: 1.5; }
+.timeline-dot {
+  position: absolute;
+  left: 50%;
+  top: 18px;
+  width: 11px; height: 11px;
+  background: var(--paper);
+  border: 3px solid var(--indigo);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+@media (max-width: 720px) {
+  .timeline-spine { left: 18px; }
+  .timeline-item.left, .timeline-item.right { justify-content: flex-start; }
+  .timeline-item .ti-card { width: calc(100% - 46px); margin-left: 40px; }
+  .timeline-dot { left: 18px; }
+  .detail-header, .detail-body { padding-left: 20px; padding-right: 20px; }
+}
+
+@media (max-width: 600px) {
+  .app-header { padding: 12px 14px; }
+  .nav-tabs { padding: 0 14px; top: 60px; }
+  .filter-bar { padding: 8px 14px; }
+  .main { padding: 14px; }
+  .card-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fc-body { padding: 12px 13px; }
+  .fc-name { font-size: 1.05rem; }
+  .detail-name { font-size: 1.6rem; }
+}
+@media (max-width: 420px) {
+  .card-grid { grid-template-columns: 1fr; }
+}
+
+/* Furigana tooltip for quote readings (reuse fg pattern if needed later) */
+.search-input {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  background: var(--paper-card);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  outline: none;
+  font-family: inherit;
+  color: var(--ink);
+  margin-bottom: 18px;
+  transition: border 0.15s;
+}
+.search-input:focus { border-color: var(--vermillion); }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="brand">
+    <span class="brand-seal">史</span>
+    <div>
+      <h1>日本歴史人物事典</h1>
+      <div class="sub">60位日本歴史上の人物 ／ 古代～現代</div>
+    </div>
+  </div>
+  <div class="header-stats">
+    <span class="stat-pill correct" id="stat-correct">✓ 0</span>
+    <span class="stat-pill wrong" id="stat-wrong">✗ 0</span>
+  </div>
+  <div class="theme-toggle-group">
+    <button class="theme-btn active" id="theme-light" onclick="setTheme('light')" title="亮色模式">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+    <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')" title="深色模式">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <button class="theme-btn" id="theme-gray" onclick="setTheme('gray')" title="黑白模式">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" data-view="cards" onclick="setView('cards')">人物卡片</button>
+  <button class="nav-tab" data-view="quiz" onclick="setView('quiz')">知識測驗</button>
+  <button class="nav-tab" data-view="timeline" onclick="setView('timeline')">時間軸</button>
+</div>
+
+<div id="filter-area"></div>
+<div class="main" id="main-area"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  日本歷史人物資料庫
+//  時代分類: kodai(古代) asuka(飛鳥) nara(奈良) heian(平安)
+//  sengoku(戰國) edo(江戸) meiji(明治) modern(近現代)
+//  領域分類: military(武將) politics(政治) culture(文化藝術)
+//  religion(宗教思想) science(科學技術) reform(改革維新)
+// ══════════════════════════════════════════
+
+const FIGURES = [
+// ─────────── 古代・飛鳥・奈良 ───────────
+{
+  id: 'shotoku',
+  name: '聖徳太子', reading: 'しょうとくたいし', romaji: 'Shōtoku Taishi',
+  zh: '聖德太子', era: 'asuka', field: ['politics','religion'],
+  years: '574–622', yearStart: 574,
+  oneline: '推動冠位十二階與十七條憲法，奠定日本古代國家體制的皇族政治家',
+  story: '聖德太子本名厩戸皇子，是用明天皇之子，自幼聰穎好學，相傳能同時聽取十人陳情而不混淆，因此被神格化為「聖德」之名。推古天皇即位後，他以攝政身分輔佐朝政，面對當時蘇我氏與物部氏的權力鬥爭、以及如何在中國隋朝強盛的東亞局勢中站穩腳步，太子展開了一連串國家體制改革。他制定「冠位十二階」，首次以才能而非出身來任命官職，打破貴族世襲壟斷；又頒布「十七條憲法」，揭示「以和為貴」的施政精神，融合儒家倫理與佛教思想，成為日本最早的成文政治綱領之一。他同時是虔誠的佛教徒，建立四天王寺、法隆寺等寺院，推動佛教在日本的扎根，法隆寺更是現存世界最古老的木造建築群。太子也派遣小野妹子出使隋朝，國書中「日出處天子致書日沒處天子」一語展現對等外交的氣魄，雖一度引發隋煬帝不快，卻象徵日本欲與中國並立的自我意識覺醒。',
+  legacy: '聖德太子被後世視為日本國家體制的奠基者，其形象在《日本書紀》中已被高度神聖化，江戶時代以後更發展出聖德太子信仰，許多寺院供奉其像。近代以前，太子肖像長期印於日本紙幣之上，是最常出現在鈔票上的歷史人物，足見其在國民心中的崇高地位。不過現代史學界對厩戸皇子的諸多事蹟究竟是真實記載還是後世附會，仍存在學術爭議，「聖德太子」之名本身也可能是後代追贈。',
+  quote: '以和為貴',
+  related: ['suiko','soga-umako']
+},
+{
+  id: 'suiko',
+  name: '推古天皇', reading: 'すいこてんのう', romaji: 'Suiko Tennō',
+  zh: '推古天皇', era: 'asuka', field: ['politics'],
+  years: '554–628', yearStart: 554,
+  oneline: '日本史上第一位女性天皇，在位期間重用聖德太子推行改革',
+  story: '推古天皇是欽明天皇之女，敏達天皇的皇后，在丈夫死後因皇位繼承紛爭，被群臣推舉即位，成為日本歷史記載中第一位女性天皇。她在位三十六年，是飛鳥時代政局相對穩定的關鍵時期。推古天皇本身並不直接掌握實權，而是任命姪子聖德太子為攝政，並倚重大臣蘇我馬子，三方形成穩定的權力結構，共同推動冠位十二階、十七條憲法等制度改革，也持續派遣遣隋使，吸收中國的典章制度與佛教文化。',
+  legacy: '推古天皇的即位開創了日本古代多位女性天皇相繼執政的先例（如其後的皇極天皇、持統天皇等），顯示出當時皇位繼承制度的彈性，也讓後世重新思考古代日本女性在政治中的角色與地位。',
+  quote: null,
+  related: ['shotoku','soga-umako']
+},
+{
+  id: 'soga-umako',
+  name: '蘇我馬子', reading: 'そがのうまこ', romaji: 'Soga no Umako',
+  zh: '蘇我馬子', era: 'asuka', field: ['politics'],
+  years: '551?–626', yearStart: 551,
+  oneline: '飛鳥時代權傾朝野的大臣，蘇我氏全盛期的代表人物',
+  story: '蘇我馬子出身飛鳥豪族蘇我氏，因蘇我氏與渡來人關係密切、又積極支持佛教傳入，與崇尚傳統神祇的物部氏長期對立。馬子在丁未之亂中擊敗物部守屋，奠定蘇我氏在朝中的絕對優勢，其後更擁立推古天皇即位，與聖德太子共同主導國政。他主持建造飛鳥寺（法興寺），是日本最早的正式佛教寺院之一，將佛教正式確立為國家所支持的信仰體系。',
+  legacy: '蘇我氏在馬子之後權勢更盛，其子蝦夷、孫入鹿相繼專權，最終在645年的乙巳之變中被中大兄皇子與中臣鎌足所滅，間接促成了大化革新。馬子雖然在歷史評價上常因蘇我氏後來的專橫而蒙上負面色彩，但他在引進佛教與建立中央集權雛形上的貢獻仍受到肯定。',
+  quote: null,
+  related: ['shotoku','nakatomi-kamatari']
+},
+{
+  id: 'tenji',
+  name: '天智天皇', reading: 'てんじてんのう', romaji: 'Tenji Tennō',
+  zh: '天智天皇', era: 'asuka', field: ['politics'],
+  years: '626–671', yearStart: 626,
+  oneline: '發動乙巳之變、推動大化革新的中大兄皇子，日本中央集權的奠基者',
+  story: '天智天皇即位前稱中大兄皇子，是日本古代史上最具行動力的政治人物之一。645年，他與中臣鎌足合謀，在宮中當場誅殺權傾一時的蘇我入鹿，史稱「乙巳之變」，徹底瓦解蘇我氏的專權，隨後展開「大化革新」，仿效中國唐朝的律令制度，推行公地公民制、班田收授法等土地與戶籍改革，將權力收歸中央。即位後他面對白江口之戰慘敗於唐羅聯軍，深刻意識到國防的重要，於是遷都近江大津宮，加強防禦工事，並編纂日本最早的成文法典之一《近江令》。',
+  legacy: '天智天皇所推動的中央集權體制，為其後的律令國家奠定基礎，他的弟弟天武天皇與其子孫持續深化這套體制，最終在飛鳥淨御原令、大寶律令中完備成形。天智天皇與中臣鎌足的盟友關係，也開啟了日後藤原氏長期左右日本政治的歷史序幕。',
+  quote: null,
+  related: ['nakatomi-kamatari','soga-umako']
+},
+{
+  id: 'nakatomi-kamatari',
+  name: '中臣鎌足', reading: 'なかとみのかまたり', romaji: 'Nakatomi no Kamatari',
+  zh: '中臣鎌足', era: 'asuka', field: ['politics'],
+  years: '614–669', yearStart: 614,
+  oneline: '藤原氏始祖，協助中大兄皇子發動乙巳之變的智囊',
+  story: '中臣鎌足出身掌管神道祭祀的中臣氏，與中大兄皇子在蹴鞠場結識，兩人志同道合，密謀剷除專橫的蘇我入鹿。645年乙巳之變成功後，鎌足全力輔佐中大兄皇子推動大化革新，是新政權體制設計的核心智囊之一。669年鎌足病重之際，天智天皇親自探視，並賜姓「藤原」，這個姓氏自此成為日本歷史上最顯赫的政治家族之名。',
+  legacy: '藤原氏在鎌足之子藤原不比等手中進一步壯大，此後近千年間，藤原氏透過與皇室聯姻、把持攝政與關白等要職，長期主導日本朝廷政治，平安時代更達到「攝關政治」的全盛期，鎌足可說是這個龐大政治世家的源頭。',
+  quote: null,
+  related: ['tenji','fujiwara-michinaga']
+},
+{
+  id: 'shomu',
+  name: '聖武天皇', reading: 'しょうむてんのう', romaji: 'Shōmu Tennō',
+  zh: '聖武天皇', era: 'asuka', field: ['politics','religion'],
+  years: '701–756', yearStart: 701,
+  oneline: '虔信佛教、建造東大寺大佛的奈良時代天皇',
+  story: '聖武天皇在位期間，日本接連遭遇天花大流行、饑荒與政治動盪，他將這些災厄視為國家失序的徵兆，於是篤信「鎮護國家」的佛教思想，下詔在全國各地興建國分寺與國分尼寺，並在奈良建造總本山東大寺，鑄造高達十五公尺的盧舍那大佛（即今日的奈良大佛），動員全國人力物力，耗時多年才完成，是當時東亞規模數一數二的佛教工程。',
+  legacy: '東大寺大佛至今仍是奈良的地標與日本佛教藝術的代表作，每年吸引大量遊客與信眾參訪。聖武天皇透過佛教凝聚國家認同的做法，也深刻影響了日本此後「鎮護國家」佛教觀的發展脈絡。',
+  quote: null,
+  related: ['ganjin']
+},
+{
+  id: 'ganjin',
+  name: '鑑真', reading: 'がんじん', romaji: 'Ganjin',
+  zh: '鑑真和尚', era: 'asuka', field: ['religion'],
+  years: '688–763', yearStart: 688,
+  oneline: '六次東渡、雙目失明仍堅持赴日傳戒的唐朝高僧',
+  story: '鑑真是唐朝揚州大明寺的著名律宗高僧，應日本留學僧的邀請，決心東渡傳授正式的佛教戒律制度。然而當時航海技術簡陋，他先後五次嘗試東渡均告失敗，甚至因海難、疾病而雙目失明，但他始終沒有放棄，終於在753年第六次嘗試時成功抵達日本，此時他已年近六十六歲、雙眼全盲。鑑真在奈良創建唐招提寺，建立日本第一個正式的戒壇，為天皇與僧侶授戒，確立了日本佛教戒律制度的正統性。',
+  legacy: '鑑真的事蹟在中日兩國都被視為文化交流的典範，其堅毅不拔的精神感動後世，唐招提寺至今仍是奈良的世界文化遺產，寺中保存的鑑真坐像被列為日本國寶，是中日友好交流史上最常被提及的象徵人物之一。',
+  quote: null,
+  related: ['shomu']
+},
+
+// ─────────── 平安時代 ───────────
+{
+  id: 'fujiwara-michinaga',
+  name: '藤原道長', reading: 'ふじわらのみちなが', romaji: 'Fujiwara no Michinaga',
+  zh: '藤原道長', era: 'heian', field: ['politics'],
+  years: '966–1028', yearStart: 966,
+  oneline: '攝關政治全盛期的權臣，「此世即吾世」的詠歎者',
+  story: '藤原道長出身藤原氏北家，憑藉與皇室層層聯姻的策略，將四個女兒分別嫁給天皇與東宮，自己則以外戚身分長期把持攝政、太政大臣等要職，權勢之大幾乎凌駕天皇本身，史稱「攝關政治」的巔峰。1018年，他在女兒威子被立為皇后的慶祝宴會上，即興詠出和歌「此世即吾世，如月滿無缺」，直白地表達自己權力圓滿、再無遺憾的心境，成為日本史上最廣為人知的詩句之一。他晚年篤信佛教，建造法成寺，企求死後往生極樂淨土。',
+  legacy: '藤原道長的時代是平安貴族文化的黃金期，《源氏物語》作者紫式部、《枕草子》作者清少納言皆活躍於與他關係密切的宮廷沙龍之中，可說他的權力庇蔭間接催生了日本古典文學的高峰。其子藤原賴通其後持續維持攝關政治，建造平等院鳳凰堂，將這個時代的審美推向極致。',
+  quote: '此世即吾世，如月滿無缺（この世をば我が世とぞ思ふ望月の欠けたることもなしと思へば）',
+  related: ['murasaki-shikibu','sei-shonagon']
+},
+{
+  id: 'murasaki-shikibu',
+  name: '紫式部', reading: 'むらさきしきぶ', romaji: 'Murasaki Shikibu',
+  zh: '紫式部', era: 'heian', field: ['culture'],
+  years: '973?–1014?', yearStart: 973,
+  oneline: '《源氏物語》作者，世界上最早的長篇寫實小說創作者之一',
+  story: '紫式部出身中級貴族家庭，自幼展現過人的漢學才華，相傳她偷聽兄長讀書便能比兄長更快記住內容，令父親感嘆「可惜妳不是男兒身」。她早年喪夫，其後入宮服侍中宮彰子（藤原道長之女），在宮廷生活的見聞與深厚的文學素養孕育出鉅作《源氏物語》。這部作品以光源氏一生的愛情與政治糾葛為主軸，細膩描繪平安貴族社會的人情世故、審美觀與無常哀感（物哀），全書五十四帖、登場人物超過四百人，結構之龐大精細，在世界文學史上極為罕見。',
+  legacy: '《源氏物語》被公認為世界最早的長篇寫實小說之一，至今仍是日本古典文學研究的核心文本，被翻譯成數十種語言，深刻影響了後世日本文學、美術、甚至現代動漫對「平安美學」的想像。紫式部的肖像也曾登上日幣兩千圓紙鈔。',
+  quote: null,
+  related: ['fujiwara-michinaga','sei-shonagon']
+},
+{
+  id: 'sei-shonagon',
+  name: '清少納言', reading: 'せいしょうなごん', romaji: 'Sei Shōnagon',
+  zh: '清少納言', era: 'heian', field: ['culture'],
+  years: '966?–1025?', yearStart: 966,
+  oneline: '《枕草子》作者，以機智犀利的隨筆觀察開創「隨筆文學」先河',
+  story: '清少納言服侍中宮定子，以博學機智著稱，常在宮廷應對中展現過人才思，深受定子寵愛。她的代表作《枕草子》以隨筆形式記錄宮廷生活的點滴觀察、四季風物與個人好惡，文字明快俐落，與《源氏物語》深沉婉約的物哀美學形成鮮明對比，後世以「をかし」（生動有趣）來概括枕草子的美學特質，與源氏物語的「もののあはれ」（物哀）並列為平安文學兩大美學典範。',
+  legacy: '《枕草子》開創了日本「隨筆」這一文體的先河，其開篇名句「春は曙」（春天最美是黎明）至今仍是日本中學國語教科書的必讀經典，清少納言與紫式部也常被相提並論，成為平安女流文學雙璧的代表。',
+  quote: '春は曙。やうやう白くなりゆく山際……（春天最美是黎明，漸漸發白的山稜……）',
+  related: ['murasaki-shikibu','fujiwara-michinaga']
+},
+{
+  id: 'taira-kiyomori',
+  name: '平清盛', reading: 'たいらのきよもり', romaji: 'Taira no Kiyomori',
+  zh: '平清盛', era: 'heian', field: ['military','politics'],
+  years: '1118–1181', yearStart: 1118,
+  oneline: '首位出身武士、官至太政大臣的平氏全盛期領袖',
+  story: '平清盛出身伊勢平氏，在保元之亂、平治之亂中接連立下戰功，逐步壓制對手源氏勢力，成為當時朝廷最具實權的武家領袖。他打破慣例，以武士身分官拜太政大臣，位極人臣，並仿效藤原氏的外戚策略，將女兒德子嫁給高倉天皇，外孫即位為安德天皇，平氏一族「非平氏者非人」的權勢之盛，連時人都為之側目。他也積極推動與南宋的貿易（日宋貿易），整建大輪田泊（今神戶港），展現出超越同時代武將的商業眼光。',
+  legacy: '平清盛的崛起標誌著日本由貴族政治走向武家政治的關鍵轉折，然而平氏政權因過度集權、樹敵過多，在清盛死後迅速由源賴朝、源義經兄弟領導的源氏勢力所推翻，1185年壇之浦之戰平氏滅亡。這段興衰史後來被編纂為軍記物語《平家物語》，開篇「祇園精舍の鐘の聲，諸行無常的響き」傳誦千古，是日本「盛者必衰」美學意識的經典源頭。',
+  quote: null,
+  related: ['minamoto-yoritomo','minamoto-yoshitsune']
+},
+];
+// ─────────── 鎌倉・室町時代 ───────────
+const FIGURES_PART2 = [
+{
+  id: 'minamoto-yoritomo',
+  name: '源頼朝', reading: 'みなもとのよりとも', romaji: 'Minamoto no Yoritomo',
+  zh: '源賴朝', era: 'sengoku', field: ['military','politics'],
+  years: '1147–1199', yearStart: 1147,
+  oneline: '創立鎌倉幕府，開啟日本武家政權七百年歷史的第一代征夷大將軍',
+  story: '源賴朝是源氏嫡流，平治之亂後因父親源義朝戰敗被流放伊豆，少年時代在監視下度過。1180年他趁各地反平氏勢力蜂起之際舉兵，雖初戰失利，卻在關東站穩腳步，逐步整合東國武士團，建立起以鎌倉為根據地的武家政權雛形。他派遣弟弟源義經率軍西征，接連在一之谷、屋島、壇之浦擊敗平氏，終結平氏政權。然而賴朝對戰功彪炳卻擅自接受朝廷封賞的義經心生猜忌，最終逼得義經逃亡奧州、兵敗自盡，手足相殘的悲劇至今仍是日本文學與戲劇反覆描繪的題材。1192年，賴朝獲朝廷任命為征夷大將軍，正式建立鎌倉幕府，確立了「幕府」這種武家政權形式，將軍事與行政實權從京都朝廷轉移到鎌倉。',
+  legacy: '源賴朝建立的幕府體制延續了將近七百年（鎌倉、室町、江戶三代幕府），是日本中世到近世最核心的政治架構，直到1868年明治維新才告終結。他與弟弟義經之間的恩怨情仇也成為日本文化中經久不衰的悲劇母題。',
+  quote: null,
+  related: ['minamoto-yoshitsune','taira-kiyomori','hojo-masako']
+},
+{
+  id: 'minamoto-yoshitsune',
+  name: '源義経', reading: 'みなもとのよしつね', romaji: 'Minamoto no Yoshitsune',
+  zh: '源義經', era: 'sengoku', field: ['military'],
+  years: '1159–1189', yearStart: 1159,
+  oneline: '一之谷、壇之浦的天才戰術家，最終遭兄長賴朝逼死的悲劇英雄',
+  story: '源義經自幼被送往鞍馬寺修行，相傳曾向傳說中的天狗學習武藝兵法。成年後投奔兄長源賴朝麾下，在追討平氏的戰役中展現驚人的軍事才華：一之谷之戰他率奇兵從險峻山崖「鵯越」奇襲平氏背後，屋島之戰巧用聲東擊西之計，壇之浦海戰更徹底殲滅平氏水軍，年僅二十多歲便立下滅亡平氏的不世戰功。然而義經未經兄長許可便接受朝廷官位，加上長期的猜忌與謠言，賴朝對他日益不滿，下令追討。義經輾轉逃亡至奧州藤原氏庇護下，最終仍在衣川館遭圍攻，自盡身亡。',
+  legacy: '源義經悲劇性的一生在日本文化中被無數次演繹，「判官贔屓」（對弱者及悲劇英雄寄予同情）一詞即源自他的官職「判官」，成為日本人特有的一種同情心理代名詞。他的傳奇也催生了多部能劇、歌舞伎與小說題材，是日本最受喜愛的悲劇英雄之一。',
+  quote: null,
+  related: ['minamoto-yoritomo','taira-kiyomori']
+},
+{
+  id: 'hojo-masako',
+  name: '北条政子', reading: 'ほうじょうまさこ', romaji: 'Hōjō Masako',
+  zh: '北條政子', era: 'sengoku', field: ['politics'],
+  years: '1157–1225', yearStart: 1157,
+  oneline: '鎌倉幕府的「尼將軍」，賴朝死後實際掌控幕府政局的女性領袖',
+  story: '北条政子是源賴朝之妻，出身伊豆豪族北条氏。賴朝死後，她雖已落髮為尼，仍以強勢的政治手腕介入幕政，輔佐年幼的兒子源賴家、實朝相繼擔任將軍，並協助娘家北条氏逐步取得幕府實權，建立「執權政治」體制。1221年朝廷發動「承久之亂」企圖推翻幕府，政子在關鍵時刻向動搖的御家人發表激昂演說，力陳賴朝建立幕府的恩義，成功穩住軍心，幕府軍最終擊敗朝廷軍，奠定武家政權凌駕公家朝廷的歷史定局。',
+  legacy: '北条政子被後世稱為「尼將軍」，是日本史上少數能在男性主導的武家政治中發揮決定性影響力的女性人物，承久之亂的勝利也讓鎌倉幕府的權威首度凌駕天皇朝廷，是日本中世政治史的重要轉捩點。',
+  quote: null,
+  related: ['minamoto-yoritomo']
+},
+{
+  id: 'ashikaga-takauji',
+  name: '足利尊氏', reading: 'あしかがたかうじ', romaji: 'Ashikaga Takauji',
+  zh: '足利尊氏', era: 'sengoku', field: ['military','politics'],
+  years: '1305–1358', yearStart: 1305,
+  oneline: '推翻鎌倉幕府又另立室町幕府的複雜歷史人物',
+  story: '足利尊氏原為鎌倉幕府御家人，受後醍醐天皇號召討幕，倒戈攻陷六波羅探題，助天皇推翻鎌倉幕府，完成「建武新政」。然而後醍醐天皇試圖恢復天皇親政、削弱武士既得利益的做法引發武士階層強烈不滿，尊氏轉而舉兵反抗天皇，擁立另一位天皇（北朝），自己出任征夷大將軍，建立室町幕府，與後醍醐天皇逃往吉野建立的南朝形成長達半世紀的「南北朝」分裂對峙。',
+  legacy: '足利尊氏因「背叛天皇」的形象，在強調忠君思想的近代以前評價普遍不高，但他建立的室町幕府開啟了足利氏統治日本兩百多年的時代，其孫足利義滿時期更迎來北山文化（金閣寺）的盛世，他的歷史定位至今仍是學界爭論的焦點。',
+  quote: null,
+  related: ['ashikaga-yoshimitsu']
+},
+{
+  id: 'ashikaga-yoshimitsu',
+  name: '足利義満', reading: 'あしかがよしみつ', romaji: 'Ashikaga Yoshimitsu',
+  zh: '足利義滿', era: 'sengoku', field: ['politics','culture'],
+  years: '1358–1408', yearStart: 1358,
+  oneline: '統一南北朝、建造金閣寺的室町幕府第三代將軍',
+  story: '足利義滿年僅十歲即繼任將軍，在重臣輔佐下逐步鞏固幕府權威，並於1392年成功促成南北朝合一，結束長達五十多年的分裂內戰。他在京都北山興建金碧輝煌的「金閣」（鹿苑寺舍利殿），作為自己退隱後的別墅，融合公家、武家與禪宗美學風格，象徵室町幕府權力的鼎盛，這個時期的文化因此被稱為「北山文化」。義滿也積極與明朝建立「日明貿易」（勘合貿易），接受明朝冊封為「日本國王」，雖在當時引發部分非議，卻為室町幕府帶來龐大貿易利益。',
+  legacy: '金閣寺至今仍是京都最具代表性的世界文化遺產與觀光地標，足利義滿主導的北山文化也奠定了日後室町美學（包括能劇、茶道雛形）發展的重要基礎。',
+  quote: null,
+  related: ['ashikaga-takauji']
+},
+
+// ─────────── 戰國時代 ───────────
+{
+  id: 'oda-nobunaga',
+  name: '織田信長', reading: 'おだのぶなが', romaji: 'Oda Nobunaga',
+  zh: '織田信長', era: 'sengoku', field: ['military','politics'],
+  years: '1534–1582', yearStart: 1534,
+  oneline: '「鳴かぬなら殺してしまえホトトギス」——以鐵血手腕統一近半天下的戰國梟雄',
+  story: '織田信長年少時行為怪異荒誕，被周遭稱為「尾張的大傻瓜」，但繼承家督後迅速展現驚人的軍事與政治才能。1560年桶狹間之戰，他以寡擊眾，奇襲擊潰兵力數倍於己的今川義元大軍，一戰成名。此後他陸續消滅齋藤氏、淺井氏、朝倉氏等對手，迎接室町幕府末代將軍足利義昭入京，卻在掌握實權後將其放逐，事實上終結了室町幕府。信長治軍治國以革新著稱：率先大量採用火槍（鐵砲）戰術，在長篠之戰以「三段擊」戰術擊潰武田勝賴的騎兵軍團；推行「樂市樂座」廢除商業壟斷特權，促進自由貿易；對佛教勢力毫不留情，火燒比叡山延曆寺、長期圍攻石山本願寺，展現其無視傳統權威的強硬作風。1582年，他在京都本能寺遭部將明智光秀突襲背叛，史稱「本能寺之變」，信長自焚而死，統一天下大業功虧一簣。',
+  legacy: '織田信長被視為終結戰國亂世、開啟日本邁向統一道路的關鍵人物，他的革新精神（樂市樂座、火槍戰術、城下町建設）深刻影響了豐臣秀吉與德川家康的治國方略，三人合稱「戰國三傑」。後世著名的俳句「鳴かぬなら殺してしまえホトトギス」（杜鵑不啼就殺了牠）即用以形容信長剛烈果決、不容妥協的性格，與秀吉、家康的處事風格形成鮮明對比，是日本人耳熟能詳的性格比喻。',
+  quote: '鳴かぬなら殺してしまえホトトギス（杜鵑不啼，就殺了牠）',
+  related: ['toyotomi-hideyoshi','tokugawa-ieyasu','akechi-mitsuhide']
+},
+{
+  id: 'toyotomi-hideyoshi',
+  name: '豊臣秀吉', reading: 'とよとみひでよし', romaji: 'Toyotomi Hideyoshi',
+  zh: '豐臣秀吉', era: 'sengoku', field: ['military','politics'],
+  years: '1537–1598', yearStart: 1537,
+  oneline: '「鳴かぬなら鳴かせてみようホトトギス」——從農民之子崛起為統一天下的天下人',
+  story: '豐臣秀吉出身尾張貧農家庭，最初以低階小卒身分投入織田信長麾下，憑藉過人的機智與處世手腕，逐步晉升為信長重要的方面軍指揮官，他高超的築城、攻略與人際協調能力，使他在「墨俣一夜城」傳說、攻略中國地方等任務中屢建奇功。本能寺之變信長身死後，秀吉迅速回師「中國大返還」，在山崎之戰擊敗叛將明智光秀，為主公復仇，並趁勢取得織田家臣團的領導地位。其後他陸續降伏柴田勝家、德川家康、北條氏等對手，1590年完成日本全國統一大業。秀吉建立「太閤檢地」與「刀狩令」制度，精確丈量全國土地、沒收農民武器，奠定兵農分離的社會結構基礎，深刻影響此後江戶時代的身分制度。晚年他兩度出兵朝鮮（文祿・慶長之役），卻以失敗收場，國力耗損嚴重，秀吉本人也在憂憤中病逝。',
+  legacy: '豐臣秀吉的崛起被視為日本史上「下剋上」精神的極致體現，農民出身卻能成為天下人的傳奇至今仍激勵人心。「鳴かぬなら鳴かせてみようホトトギス」（杜鵑不啼，就想辦法讓牠啼）這句後世創作的俳句，精準傳達他善於變通、巧妙誘導的處世風格，與信長的剛烈、家康的隱忍形成戰國三傑性格的經典對照組，是日本流行文化與商業管理書籍中常被引用的比喻。',
+  quote: '鳴かぬなら鳴かせてみようホトトギス（杜鵑不啼，就想辦法讓牠啼）',
+  related: ['oda-nobunaga','tokugawa-ieyasu','ishida-mitsunari']
+},
+{
+  id: 'tokugawa-ieyasu',
+  name: '徳川家康', reading: 'とくがわいえやす', romaji: 'Tokugawa Ieyasu',
+  zh: '德川家康', era: 'sengoku', field: ['military','politics'],
+  years: '1543–1616', yearStart: 1543,
+  oneline: '「鳴かぬなら鳴くまで待とうホトトギス」——以隱忍奪得天下、開創江戶幕府的最終勝利者',
+  story: '德川家康少年時代曾長期作為人質寄居於今川氏與織田氏之間，飽嚐寄人籬下的辛酸，這段經歷鍛鍊出他極度堅忍、謹慎布局的性格。他與織田信長結為同盟，協助信長擴張勢力，信長死後他韜光養晦，先與豐臣秀吉維持表面臣服的關係，暗中累積實力，被秀吉移封至江戶（今東京），表面上是邊陲左遷，家康卻趁機開發關東，奠定日後雄厚的經濟與軍事基礎。秀吉死後，家康在1600年關原之戰中擊敗以石田三成為首的西軍，徹底掌握天下實權，1603年受封征夷大將軍，建立江戶幕府。1615年大坂夏之陣，他更徹底消滅豐臣氏殘餘勢力，確保德川政權的長治久安。家康治國強調穩定與制度化，制定《武家諸法度》規範大名行為，建立參勤交代制度削弱地方諸侯的財力與反抗能力，為日後長達兩百六十多年的江戶太平盛世打下根基。',
+  legacy: '德川家康建立的江戶幕府體制創造了日本史上最長久的和平時代，被稱為「德川太平」，直到1868年明治維新才告終結。「鳴かぬなら鳴くまで待とうホトトギス」（杜鵑不啼，就等到牠啼為止）這句俳句精準刻畫出家康極致的耐心與長期布局思維，與信長的剛烈、秀吉的權謀形成鮮明對比，三句俳句並列已成為日本企業管理與性格分析中最廣為人知的文化典故之一。',
+  quote: '鳴かぬなら鳴くまで待とうホトトギス（杜鵑不啼，就等到牠啼為止）',
+  related: ['oda-nobunaga','toyotomi-hideyoshi','ishida-mitsunari']
+},
+{
+  id: 'akechi-mitsuhide',
+  name: '明智光秀', reading: 'あけちみつひで', romaji: 'Akechi Mitsuhide',
+  zh: '明智光秀', era: 'sengoku', field: ['military'],
+  years: '1528?–1582', yearStart: 1528,
+  oneline: '本能寺之變的主謀，戰國史上最大謎團的核心人物',
+  story: '明智光秀原為流浪武士，後受織田信長賞識重用，因博學多聞、長於內政與外交談判，逐步晉升為信長麾下重要的方面軍大將，負責經略丹波等地。然而1582年，正率軍協助攻打毛利氏的光秀，卻突然調轉兵鋒，包圍京都本能寺，逼死毫無防備的信長，史稱「本能寺之變」。光秀叛變的動機至今仍是日本史學界與大眾文化最熱衷討論的謎團之一，野心說、怨恨說、朝廷黑幕說等諸多假說並存，沒有定論。光秀在政變後僅僅掌權十餘日，便在山崎之戰被迅速回師的豐臣秀吉擊敗，逃亡途中遭土民殺害，因此也被戲稱為「三日天下」。',
+  legacy: '本能寺之變被視為日本戰國史最大的轉折點之一，徹底改變了天下統一的走向，也讓明智光秀的形象在後世文學、影視作品中反覆被重新詮釋，從奸臣叛將到悲劇英雄，評價隨時代不斷翻轉。',
+  quote: null,
+  related: ['oda-nobunaga','toyotomi-hideyoshi']
+},
+{
+  id: 'ishida-mitsunari',
+  name: '石田三成', reading: 'いしだみつなり', romaji: 'Ishida Mitsunari',
+  zh: '石田三成', era: 'sengoku', field: ['military','politics'],
+  years: '1559–1600', yearStart: 1559,
+  oneline: '忠於豐臣家、在關原之戰中與家康決一死戰的西軍主帥',
+  story: '石田三成自幼便以聰慧機敏受豐臣秀吉賞識，相傳秀吉巡視寺院口渴求茶時，三成先後三次依序奉上由溫至熱的茶水，細膩體察主公需求的故事流傳甚廣（「三獻茶」軼事）。三成成年後成為秀吉政權核心的文治官僚，負責檢地、後勤調度等行政事務，治國能力出眾，但也因性格剛直、不善與武將交際，與加藤清正、福島正則等武功派大名關係緊張。秀吉死後，三成憂心德川家康日益坐大、威脅豐臣家天下，於是聯合各方大名組成西軍，在1600年關原之戰中與家康率領的東軍決戰。然而戰局中途因小早川秀秋等多名西軍將領臨陣倒戈，西軍潰敗，三成兵敗被俘，最終在京都六條河原被處決。',
+  legacy: '石田三成雖兵敗身死，但他對豐臣家矢志不渝的忠誠形象，在後世日本文化中獲得相當高的評價與同情，常被視為悲劇式的忠臣典型，與勝利者德川家康形成鮮明的歷史對照。',
+  quote: null,
+  related: ['toyotomi-hideyoshi','tokugawa-ieyasu']
+},
+{
+  id: 'takeda-shingen',
+  name: '武田信玄', reading: 'たけだしんげん', romaji: 'Takeda Shingen',
+  zh: '武田信玄', era: 'sengoku', field: ['military'],
+  years: '1521–1573', yearStart: 1521,
+  oneline: '「風林火山」軍旗下的甲斐之虎，戰國最強騎兵軍團統帥',
+  story: '武田信玄出身甲斐守護大名武田氏，年輕時即放逐治理無方的父親自立，展現果決的政治手腕。他治理領國重視水利與民生，著名的「信玄堤」治水工程至今仍是優秀內政的代表案例。軍事上，信玄打造出戰國時代最令人聞風喪膽的騎兵軍團，軍旗上書「風林火山」（疾如風、徐如林、侵掠如火、不動如山，典出《孫子兵法》），與越後的上杉謙信在川中島數度交手，留下五次川中島合戰的著名對決，兩雄相爭卻始終未能分出最終勝負，成為戰國史上最具傳奇色彩的宿命對決之一。信玄晚年率軍西進，在三方原之戰大敗德川家康，眼看就要進逼京都，卻在途中病逝軍中，統一天下的雄心就此中斷。',
+  legacy: '武田信玄治軍與治國的才能備受後世推崇，「風林火山」的軍事思想至今仍被引用於企業經營與戰略管理領域，他與上杉謙信的川中島之戰也是日本歷史小說、電玩遊戲中最熱門的戰國題材之一。',
+  quote: '風林火山（疾如風、徐如林、侵掠如火、不動如山）',
+  related: ['uesugi-kenshin','tokugawa-ieyasu']
+},
+{
+  id: 'uesugi-kenshin',
+  name: '上杉謙信', reading: 'うえすぎけんしん', romaji: 'Uesugi Kenshin',
+  zh: '上杉謙信', era: 'sengoku', field: ['military'],
+  years: '1530–1578', yearStart: 1530,
+  oneline: '自詡「軍神」毘沙門天化身、與武田信玄五度交鋒的越後之龍',
+  story: '上杉謙信篤信佛教戰神毘沙門天，自視為其化身，軍旗上書一個「毘」字，治軍嚴明、戰術精湛，被譽為戰國第一智將。他與武田信玄爭奪信濃地區的控制權，雙方在川中島五度會戰，其中第四次合戰雙方主力正面碰撞，戰況空前慘烈，相傳謙信曾隻身策馬殺入信玄本陣，揮刀直擊信玄，信玄則以軍配（指揮扇）擋下，這段「一騎討ち」軼事成為日本武將對決中最富戲劇性的傳說場景之一，雖然其真實性在史學上存疑，卻早已深植日本大眾文化之中。謙信治軍同時也以重情重義著稱，相傳在今川氏對信玄領國實施「鹽止め」（禁運食鹽）的經濟封鎖時，謙信反而主動運鹽接濟敵對的信玄領民，留下「敵に塩を送る」（雪中送炭）的典故，成為日語中表達不計恩怨、扶助對手的成語。',
+  legacy: '上杉謙信清廉自持、終身未娶、不近女色的形象，加上他與信玄之間既是宿敵又互相敬重的關係，使他成為日本武士精神「義」的代表人物之一，「敵に塩を送る」一語至今仍是日語常用成語。',
+  quote: '敵に塩を送る（雪中送炭，原意：即使對敵人也送鹽相助）',
+  related: ['takeda-shingen']
+},
+{
+  id: 'date-masamune',
+  name: '伊達政宗', reading: 'だてまさむね', romaji: 'Date Masamune',
+  zh: '伊達政宗', era: 'sengoku', field: ['military','politics'],
+  years: '1567–1636', yearStart: 1567,
+  oneline: '獨眼龍——東北奧州霸主，亂世末期崛起的最後一位戰國梟雄',
+  story: '伊達政宗幼時因天花失去右眼視力，因此得名「獨眼龍」。他十八歲便繼承家督，迅速以強硬手段統一奧州（東北）大部分地區，正值勢力如日中天之際，天下卻已被豐臣秀吉統一在即，政宗審時度勢決定臣服秀吉，避免了正面對抗的覆滅命運。德川家康建立江戶幕府後，政宗治理仙台藩，致力開發新田、推動與西方的貿易往來，曾派遣使節支倉常長遠赴歐洲覲見羅馬教皇，是江戶初期極具國際視野的大名之一。政宗一生用兵詭譎多變、深具個人魅力，他華麗的鎧甲與三日月形頭盔造型，至今仍是日本戰國武將形象中最具辨識度的代表之一。',
+  legacy: '伊達政宗因其鮮明的個人風格與「最後的戰國武將」形象，在現代日本大眾文化（電玩、動漫、大河劇）中人氣極高，仙台市至今仍以「獨眼龍政宗」作為重要的觀光與文化象徵。',
+  quote: null,
+  related: ['tokugawa-ieyasu']
+},
+];
+
+// 合併資料
+FIGURES.push(...FIGURES_PART2);
+// ─────────── 江戶時代 ───────────
+const FIGURES_PART3 = [
+{
+  id: 'tokugawa-iemitsu',
+  name: '徳川家光', reading: 'とくがわいえみつ', romaji: 'Tokugawa Iemitsu',
+  zh: '德川家光', era: 'edo', field: ['politics'],
+  years: '1604–1651', yearStart: 1604,
+  oneline: '確立鎖國體制與參勤交代制度的江戶幕府第三代將軍',
+  story: '德川家光生於江戶幕府已然穩固的時代，自幼即被立為世子，是德川幕府首位「生而為將軍」的繼承人。他在祖父家康、父親秀忠打下的基礎上，進一步強化幕府的中央集權體制：正式將「參勤交代」制度法制化，強制各地大名定期前往江戶居住、留下妻兒作為人質，大幅削弱地方諸侯反叛的財力與意願；面對基督教在九州迅速傳播、島原之亂等動盪，他下令厲行禁教與「鎖國」政策，僅保留長崎出島作為與荷蘭、中國貿易的單一窗口，這套體制此後維持了兩百餘年。',
+  legacy: '家光時代確立的鎖國與參勤交代體制，深刻形塑了江戶時代日本的政治經濟結構與社會樣貌，直到十九世紀培里艦隊叩關才被迫打破，是理解江戶時代何以維持長期穩定的關鍵制度設計。',
+  quote: null,
+  related: ['tokugawa-ieyasu']
+},
+{
+  id: 'tokugawa-yoshimune',
+  name: '徳川吉宗', reading: 'とくがわよしむね', romaji: 'Tokugawa Yoshimune',
+  zh: '德川吉宗', era: 'edo', field: ['politics','reform'],
+  years: '1684–1751', yearStart: 1684,
+  oneline: '推行「享保改革」、被譽為「米將軍」的江戶幕府中興之主',
+  story: '德川吉宗原為紀州藩主，因將軍家世系斷絕而被擁立為第八代將軍，他厲行節儉、整頓財政，推動史稱「享保改革」的一系列政策：獎勵新田開發、調整年貢徵收方式以穩定幕府財政收入（因此被民間稱為「米將軍」），設置「目安箱」直接收受庶民投書建言，並放寬漢譯洋書的進口限制，間接促成日後「蘭學」（西方學術）在日本的興起與發展。',
+  legacy: '享保改革被視為江戶幕府三大改革之首（另有寬政改革、天保改革），為財政日漸困窘的幕府爭取到喘息空間，吉宗務實開明的施政風格也使他在江戶時代諸將軍中享有較高的歷史評價。',
+  quote: null,
+  related: ['tokugawa-iemitsu']
+},
+{
+  id: 'matsuo-basho',
+  name: '松尾芭蕉', reading: 'まつおばしょう', romaji: 'Matsuo Bashō',
+  zh: '松尾芭蕉', era: 'edo', field: ['culture'],
+  years: '1644–1694', yearStart: 1644,
+  oneline: '將俳句提升至藝術高度的「俳聖」，《奧之細道》的旅人詩人',
+  story: '松尾芭蕉早年曾仕於武家，後辭去俸祿、雲遊四方，專注於俳諧（俳句的前身）創作。他將原本帶有滑稽戲謔色彩的俳諧，提煉昇華為講求餘韻、寂靜與自然意境的藝術形式，確立了「蕉風」俳句的美學典範，「閑かさや岩にしみ入る蟬の聲」（寂靜啊，蟬聲滲入岩石之中）即是其代表名句之一，短短十七字卻營造出深遠的禪意與寂靜美感。1689年，芭蕉與弟子曾良展開長達約150天、行經東北與北陸地區的徒步旅行，沿途寫下大量俳句，集結成紀行文學經典《奧之細道》，將旅途見聞與人生無常的感懷融為一體，是日本古典文學中最重要的紀行作品之一。',
+  legacy: '松尾芭蕉被尊稱為「俳聖」，他所確立的俳句美學標準，深刻影響此後三百多年的日本詩歌創作，《奧之細道》的旅程路線至今仍是日本東北觀光的重要文化路徑，許多沿途景點都立有紀念其俳句的石碑。',
+  quote: '閑かさや岩にしみ入る蟬の聲（寂靜啊，蟬聲滲入岩石之中）',
+  related: []
+},
+{
+  id: 'chikamatsu',
+  name: '近松門左衛門', reading: 'ちかまつもんざえもん', romaji: 'Chikamatsu Monzaemon',
+  zh: '近松門左衛門', era: 'edo', field: ['culture'],
+  years: '1653–1724', yearStart: 1653,
+  oneline: '被譽為「日本的莎士比亞」，淨琉璃與歌舞伎劇本的集大成者',
+  story: '近松門左衛門是江戶中期最重要的戲劇作家，為人形淨琉璃（文樂）與歌舞伎創作了上百部劇本，題材橫跨歷史武將故事（時代物）與描繪庶民愛恨情仇的「世話物」。他的世話物作品如《曾根崎心中》，取材自當時真實發生的殉情事件，細膩刻劃小人物在義理與人情之間的掙扎，文字優美而情感真摯，開創了以平民生活為主題的悲劇文學新境界，在他之前的戲劇多以貴族武家為主角，近松則將普通商人、藝妓的愛情悲劇提升至能與古典悲劇並列的藝術高度。',
+  legacy: '近松門左衛門的劇作至今仍是文樂與歌舞伎的核心保留劇目，他開創的「世話物」傳統深刻影響日本後世通俗文學與戲劇對市井人情的描寫手法，因其作品深刻的人性刻劃與戲劇張力，西方學者常將他與莎士比亞相提並論。',
+  quote: null,
+  related: []
+},
+{
+  id: 'motoori-norinaga',
+  name: '本居宣長', reading: 'もとおりのりなが', romaji: 'Motoori Norinaga',
+  zh: '本居宣長', era: 'edo', field: ['culture','religion'],
+  years: '1730–1801', yearStart: 1730,
+  oneline: '畢生研究《古事記》、開創「國學」、提出「物哀」美學概念的學者',
+  story: '本居宣長本業為醫師，但畢生心力投注於古典文獻研究，他耗時三十五年完成《古事記傳》，逐字逐句考證日本最古老史書《古事記》的原始讀音與意義，剝除歷代受中國儒家、佛教思想影響後附加的詮釋，試圖還原日本「固有」的精神世界與審美意識，由此開創了被稱為「國學」的學術流派。宣長透過研究《源氏物語》等古典文學，提出「物哀」（もののあはれ）概念，主張日本文學的本質核心在於對人事萬物無常變化所生發的細膩感懷與共鳴，這個美學概念成為理解日本古典文學乃至日本人感性結構的重要理論框架。',
+  legacy: '本居宣長的國學研究與「物哀」美學理論，至今仍是日本文學與思想史研究的基石性學說，深刻影響後世對「日本性」（Japaneseness）的自我詮釋與文化認同論述。',
+  quote: '物のあはれ（物哀，對人事無常的深刻感懷）',
+  related: []
+},
+{
+  id: 'sugita-genpaku',
+  name: '杉田玄白', reading: 'すぎたげんぱく', romaji: 'Sugita Genpaku',
+  zh: '杉田玄白', era: 'edo', field: ['science'],
+  years: '1733–1817', yearStart: 1733,
+  oneline: '翻譯《解體新書》、開創日本「蘭學」（西方醫學）研究的先驅醫師',
+  story: '杉田玄白是江戶中期的蘭方醫（學習荷蘭傳入之西方醫學的醫師），他與同道前野良澤等人，在觀摩刑場解剖屍體後，驚訝於荷蘭解剖學書籍《Ontleedkundige Tafelen》圖示的精確程度，遠勝傳統漢方醫學的人體認識，於是發願將其翻譯成日文。當時眾人幾乎不通荷蘭語，僅能憑藉零星詞彙與圖像反覆推敲比對，耗時近四年艱辛翻譯，終於在1774年完成《解體新書》，是日本第一部系統性翻譯的西方醫學典籍。玄白晚年所著的回憶錄《蘭學事始》，生動記錄了這段翻譯過程的艱辛與草創期蘭學研究者篳路藍縷的奮鬥精神。',
+  legacy: '《解體新書》的問世標誌著日本正式吸收西方近代科學知識的開端，「蘭學」自此蓬勃發展，培養出大批鑽研西方醫學、天文、物理的學者，為日後明治維新時期日本得以迅速吸收西方文明、推動近代化奠定了重要的知識基礎與心理準備。',
+  quote: null,
+  related: []
+},
+{
+  id: 'ino-tadataka',
+  name: '伊能忠敬', reading: 'いのうただたか', romaji: 'Inō Tadataka',
+  zh: '伊能忠敬', era: 'edo', field: ['science'],
+  years: '1745–1818', yearStart: 1745,
+  oneline: '五十歲後投入天文曆學、徒步測繪出第一張精確日本地圖的商人學者',
+  story: '伊能忠敬原本是經營米穀與釀酒事業的商人，在年近五十歲、事業有成後將家業交由養子接管，轉而拜師學習天文曆學。為了精確測量地球子午線一度的長度，他決定親自徒步丈量日本全國海岸線，自1800年起以十七年的時間，帶領測量隊伍走遍日本各地，總行程超過三萬五千公里，運用當時最精密的天文觀測與三角測量技術，繪製出日本史上第一張依據實際測量、精確度極高的全國地圖《大日本沿海輿地全圖》，其海岸線輪廓之精準，即使與現代衛星測繪地圖相比也相差無幾，伊能忠敬本人在地圖最終完成前便已過世，由弟子接續完成。',
+  legacy: '伊能忠敬以平民、晚年起步之姿，憑藉毅力完成國家級的科學測繪工程，至今仍是日本「活到老學到老」精神的代表人物，他繪製的地圖被視為江戶時代科學與測繪技術的巔峰之作，深受後世景仰。',
+  quote: null,
+  related: []
+},
+{
+  id: 'tokugawa-yoshinobu',
+  name: '徳川慶喜', reading: 'とくがわよしのぶ', romaji: 'Tokugawa Yoshinobu',
+  zh: '德川慶喜', era: 'edo', field: ['politics'],
+  years: '1837–1913', yearStart: 1837,
+  oneline: '主動「大政奉還」、結束江戶幕府兩百六十餘年統治的末代將軍',
+  story: '德川慶喜出身水戶藩，自幼接受嚴格的尊王思想教育，後過繼為一橋家養子，最終在幕末動盪局勢中被推舉為第十五代將軍，成為德川幕府的末代掌權者。此時西方列強叩關、倒幕勢力高漲，慶喜審時度勢，認知到武力對抗已難以挽回局勢，於1867年主動向明治天皇提出「大政奉還」，將統治權交還朝廷，企圖以和平方式保全德川家的地位與影響力。然而新政府隨後仍發布「王政復古大號令」，剝奪德川家領地與官位，引爆鳥羽伏見之戰，慶喜兵敗後選擇恭順投降、不做無謂抵抗，避免了更大規模的內戰與流血衝突。',
+  legacy: '德川慶喜雖是末代將軍，但他主動讓出政權、避免日本陷入長期內戰的決斷，使得明治維新得以相對和平地推進，他晚年深居簡出、轉而投入攝影與自行車等興趣，安享天年，是日本近代史轉折點上一位頗具爭議卻也展現務實智慧的關鍵人物。',
+  quote: null,
+  related: ['saigo-takamori','katsu-kaishu']
+},
+];
+
+FIGURES.push(...FIGURES_PART3);
+// ─────────── 幕末・明治維新 ───────────
+const FIGURES_PART4 = [
+{
+  id: 'saigo-takamori',
+  name: '西郷隆盛', reading: 'さいごうたかもり', romaji: 'Saigō Takamori',
+  zh: '西鄉隆盛', era: 'meiji', field: ['politics','reform','military'],
+  years: '1828–1877', yearStart: 1828,
+  oneline: '「最後的武士」，倒幕功臣卻在西南戰爭中反叛新政府而身死的悲劇英雄',
+  story: '西鄉隆盛出身薩摩藩下級武士家庭，在藩主島津齊彬賞識下嶄露頭角，致力推動倒幕運動。他與長州藩的木戶孝允等人促成「薩長同盟」，整合原本敵對的兩大強藩力量，是推翻江戶幕府、迎來明治維新的核心功臣之一，並在戊辰戰爭中擔任新政府軍總大將，兵不血刃地完成江戶城無血開城的談判，避免了一場可能血流成河的攻城戰。然而明治新政府成立後，西鄉對新政府快速西化、廢除武士特權階級的激進改革深感不滿，加上主張出兵朝鮮的「征韓論」遭否決，憤而辭官返回薩摩老家。1877年，對新政府心懷不滿的舊薩摩武士擁立西鄉舉兵反抗，史稱「西南戰爭」，這是明治政府成立以來規模最大的內戰，西鄉軍最終在政府新式軍隊的優勢火力下節節敗退，西鄉本人在城山戰役中自盡身亡。',
+  legacy: '西鄉隆盛雖以叛軍領袖身分死去，但他在明治維新中的卓越貢獻獲得後世高度肯定，新政府後來亦為其恢復名譽，東京上野公園至今矗立著他牽著愛犬的銅像，是日本人心中「最後的武士」象徵，他複雜而充滿矛盾的一生——既是維新功臣又是叛亂領袖——使他成為日本近代史上最具悲劇魅力的人物之一。',
+  quote: '敬天愛人',
+  related: ['okubo-toshimichi','katsu-kaishu','tokugawa-yoshinobu']
+},
+{
+  id: 'okubo-toshimichi',
+  name: '大久保利通', reading: 'おおくぼとしみち', romaji: 'Ōkubo Toshimichi',
+  zh: '大久保利通', era: 'meiji', field: ['politics','reform'],
+  years: '1830–1878', yearStart: 1830,
+  oneline: '明治維新「維新三傑」之一，主導廢藩置縣的鐵腕政治家',
+  story: '大久保利通與西鄉隆盛同為薩摩藩出身的盟友，兩人共同促成倒幕大業，但在明治維新後，大久保的施政路線轉趨務實穩健，主張優先充實國力、暫緩對外擴張，因此在「征韓論」爭議中與西鄉立場相左，並在西鄉辭官出走後，成為主導新政府的核心領袖。大久保推動「廢藩置縣」，徹底廢除延續數百年的封建藩國體制，將全國統一劃為中央直轄的縣制，是建立近代日本中央集權國家最關鍵的制度改革之一，過程中他展現出極為強硬果決的執行手腕。西南戰爭爆發後，大久保堅定鎮壓昔日盟友西鄉的叛亂，西鄉死後不久，大久保本人也在1878年遭舊士族刺殺身亡，結束了充滿戲劇張力的一生。',
+  legacy: '大久保利通與西鄉隆盛、木戶孝允並稱「維新三傑」，他主導的廢藩置縣與殖產興業政策，被視為明治政府得以迅速近代化、建立現代國家體制的關鍵基石，儘管其鐵腕作風頗具爭議，在日本近代化進程中的歷史地位仍備受肯定。',
+  quote: null,
+  related: ['saigo-takamori','kido-takayoshi']
+},
+{
+  id: 'sakamoto-ryoma',
+  name: '坂本龍馬', reading: 'さかもとりょうま', romaji: 'Sakamoto Ryōma',
+  zh: '坂本龍馬', era: 'meiji', field: ['politics','reform'],
+  years: '1836–1867', yearStart: 1836,
+  oneline: '促成薩長同盟、提出大政奉還構想的幕末浪漫志士，日本最受歡迎的歷史人物之一',
+  story: '坂本龍馬出身土佐藩鄉士家庭，少年時代曾因資質平庸而被視為「愛哭鬼」，但成年後在江戶學習劍術與西方知識的過程中思想急速成熟。他脫離土佐藩成為「浪人」，輾轉投身勝海舟門下學習航海與西方政治制度，深受其開明思想啟發，逐漸形成超越藩界、以「日本」整體利益為念的近代國家觀念，這在當時各藩各自為政的氛圍中相當前衛。龍馬最為人稱道的事蹟，是促成原本互相敵視的薩摩藩與長州藩締結「薩長同盟」，整合了倒幕運動最關鍵的兩股軍事力量；他也成立日本第一個具現代股份公司雛形的商社「龜山社中」（後改稱海援隊），從事航運貿易並暗中協助志士活動。龍馬主張以和平方式推動政權轉移，提出「大政奉還」的構想藍圖，建議幕府將軍主動將政權交還天皇，避免內戰流血，這個構想後來確實成為德川慶喜實際採取的政治路線。然而就在大政奉還實現後不久，1867年龍馬於京都近江屋遭刺客暗殺，年僅三十一歲，未能親眼見證他所構想的新時代來臨。',
+  legacy: '坂本龍馬雖未能親身參與明治新政府，但他超越藩閥、放眼日本整體乃至世界格局的開闊視野，加上充滿浪漫色彩的傳奇生涯與英年早逝的悲劇性結局，使他成為日本歷史人物中人氣最高、最受小說與戲劇青睞的角色之一，在「最受尊敬的日本歷史人物」相關民調中經常位居前列。',
+  quote: '日本を今一度せんたくいたし申候（要將日本徹底洗滌一新）',
+  related: ['katsu-kaishu','saigo-takamori','kido-takayoshi']
+},
+{
+  id: 'kido-takayoshi',
+  name: '木戸孝允', reading: 'きどたかよし', romaji: 'Kido Takayoshi',
+  zh: '木戶孝允', era: 'meiji', field: ['politics','reform'],
+  years: '1833–1877', yearStart: 1833,
+  oneline: '長州藩倒幕領袖，「維新三傑」中最具改革理念的制度設計者',
+  story: '木戶孝允（舊名桂小五郎）是長州藩出身的志士領袖，在幕末動盪中數度死裡逃生，因此得到「逃跑的小五郎」之戲稱，但他始終是長州藩倒幕運動實質上的核心策劃者。他與坂本龍馬、西鄉隆盛等人共同促成薩長同盟，是推翻幕府的關鍵推手之一。明治維新後，木戶在新政府中積極推動「五條御誓文」的起草，主張廣興會議、萬機決於公論，展現出在維新三傑中相對溫和、重視制度與民意的改革理念，也曾隨岩倉使節團出訪歐美，深刻體認西方立憲體制的先進之處，返國後力主穩健漸進的近代化路線。',
+  legacy: '木戶孝允與西鄉隆盛、大久保利通並稱「維新三傑」，相較於西鄉的悲劇英雄色彩與大久保的鐵腕務實，木戶更被視為明治維新理念面、制度設計面的重要推手，對日後日本走向立憲政體有深遠影響。',
+  quote: null,
+  related: ['saigo-takamori','okubo-toshimichi','sakamoto-ryoma']
+},
+{
+  id: 'katsu-kaishu',
+  name: '勝海舟', reading: 'かつかいしゅう', romaji: 'Katsu Kaishū',
+  zh: '勝海舟', era: 'meiji', field: ['politics','reform'],
+  years: '1823–1899', yearStart: 1823,
+  oneline: '促成江戶城無血開城、避免日本陷入慘烈內戰的幕府開明派外交家',
+  story: '勝海舟出身幕府旗本家庭，是幕末少數真正精通西方海軍與國際情勢的開明人才，曾率領「咸臨丸」橫渡太平洋訪問美國，是日本最早親眼見識西方文明的官員之一。他雖效力於幕府，卻認知到幕府體制已難以因應時代變局，因此在思想上頗為開明，坂本龍馬即是受其啟發、投入其門下學習航海與國際政治理念的重要弟子之一。1868年戊辰戰爭中，新政府軍逼近江戶城下，勝海舟代表幕府與西鄉隆盛展開談判，雙方最終達成協議，江戶城和平移交，史稱「江戶無血開城」，避免了一場可能造成數十萬軍民傷亡的慘烈攻城戰，保全了江戶（東京）這座城市與其百萬居民的生命財產安全。',
+  legacy: '勝海舟促成的江戶無血開城，被視為日本能以相對和平方式完成政權轉移、避免陷入長期內戰的關鍵一役，他務實開明、超越幕府與新政府陣營對立的視野，也使他在幕末維新人物中享有獨特的歷史評價。',
+  quote: null,
+  related: ['sakamoto-ryoma','saigo-takamori','tokugawa-yoshinobu']
+},
+{
+  id: 'fukuzawa-yukichi',
+  name: '福沢諭吉', reading: 'ふくざわゆきち', romaji: 'Fukuzawa Yukichi',
+  zh: '福澤諭吉', era: 'meiji', field: ['culture','reform'],
+  years: '1835–1901', yearStart: 1835,
+  oneline: '「天不生人上之人，亦不生人下之人」——慶應義塾創辦人、日幣萬元鈔肖像人物',
+  story: '福澤諭吉出身下級武士家庭，年輕時自學蘭學與英語，曾三度隨幕府使節團出訪歐美，親眼見識西方社會的政治、教育與科技發展，深受震撼。返國後他創辦慶應義塾（今慶應義塾大學前身），致力推廣西式教育與獨立自主的個人精神，著作《學問のすゝめ》（勸學篇）開篇名句「天は人の上に人を造らず人の下に人を造らずと言えり」（天不在人之上造人，也不在人之下造人），強調人人生而平等、唯有透過學問才能改變命運與國家貧弱，這部著作在明治初期銷售突破數百萬冊，深刻影響了整整一代日本人的價值觀。他也主張「脫亞入歐」，認為日本應積極學習西方文明、與停滯不前的亞洲鄰國劃清界線，這個主張雖在當時具有開創性，卻也在後世引發關於其對亞洲鄰國態度的歷史爭議與反思。',
+  legacy: '福澤諭吉被尊為日本近代教育與啟蒙思想的奠基者，其肖像長期印於日幣最高面額的一萬圓紙鈔之上（直至2024年新鈔改版），慶應義塾大學也持續是日本頂尖私立學府之一，他的教育理念至今仍深刻影響日本社會對學問與自立精神的重視。',
+  quote: '天は人の上に人を造らず人の下に人を造らずと言えり（天不在人之上造人，也不在人之下造人）',
+  related: []
+},
+{
+  id: 'meiji-emperor',
+  name: '明治天皇', reading: 'めいじてんのう', romaji: 'Meiji Tennō',
+  zh: '明治天皇', era: 'meiji', field: ['politics'],
+  years: '1852–1912', yearStart: 1852,
+  oneline: '見證日本從封建幕府蛻變為近代立憲國家的象徵性君主',
+  story: '明治天皇十五歲即位，正值幕府瓦解、新政府成立的劇烈動盪時期，他被新政府奉為國家統一與近代化改革的最高象徵，頒布「五條御誓文」揭示新政府廣興會議、破除舊習、求知識於世界的施政方針。在他在位的四十五年間，日本經歷了廢藩置縣、版籍奉還、頒布大日本帝國憲法、設立帝國議會等一連串劇烈的制度變革，從封建幕藩體制迅速蛻變為亞洲第一個擁有近代憲法與議會的立憲國家，並在甲午戰爭、日俄戰爆中接連戰勝中國、俄國等大國，躋身世界強權之列。',
+  legacy: '明治天皇在位期間的劇烈變革被稱為「明治維新」，是日本近代史上最關鍵的轉型期，他本人作為國家統一與近代化的精神象徵，對於凝聚當時日本社會接受劇烈西化改革發揮了重要作用，東京明治神宮即是為紀念他與昭憲皇太后而建立的重要神社。',
+  quote: null,
+  related: ['saigo-takamori','okubo-toshimichi']
+},
+];
+
+FIGURES.push(...FIGURES_PART4);
+// ─────────── 明治・大正 文化與科學 ───────────
+const FIGURES_PART5 = [
+{
+  id: 'natsume-soseki',
+  name: '夏目漱石', reading: 'なつめそうせき', romaji: 'Natsume Sōseki',
+  zh: '夏目漱石', era: 'meiji', field: ['culture'],
+  years: '1867–1916', yearStart: 1867,
+  oneline: '近代日本文學巨匠，《我是貓》《少爺》《心》作者，舊千元紙鈔肖像人物',
+  story: '夏目漱石原本主修英文學，曾受文部省派遣赴英國倫敦留學，但異國生活的孤獨與文化衝擊使他一度陷入嚴重的精神耗弱。返國後他先在大學任教，1905年以幽默諷刺的小說《我輩は貓である》（我是貓，藉一隻貓的視角冷眼旁觀人類社會）一鳴驚人，奠定文壇地位，隨後辭去教職、專注於朝日新聞連載小說創作，陸續發表《少爺》《三四郎》等膾炙人口的作品。他晚期作品如《心》（こころ），筆觸轉向深沉內省，細膩剖析現代化過程中日本知識分子的孤獨、罪疚與人際疏離，被視為日本近代「自我」意識覺醒的文學經典。漱石晚年提出「則天去私」的人生境界，主張超越自我執著、順應天理而活，是他歷經病痛與精神磨難後沉澱出的處世哲學。',
+  legacy: '夏目漱石被公認為日本近代文學最重要的奠基者之一，作品至今仍是日本國語教科書的必讀經典，1984年至2007年間，他的肖像曾印於日幣千元紙鈔之上，「漱石山房」（其故居書齋）也已改建為紀念館，是日本近代文學愛好者必訪之地。',
+  quote: '則天去私（順應天理，捨棄私心）',
+  related: ['higuchi-ichiyo','mori-ogai']
+},
+{
+  id: 'higuchi-ichiyo',
+  name: '樋口一葉', reading: 'ひぐちいちよう', romaji: 'Higuchi Ichiyō',
+  zh: '樋口一葉', era: 'meiji', field: ['culture'],
+  years: '1872–1896', yearStart: 1872,
+  oneline: '英年早逝的明治才女作家，五千圓紙鈔肖像人物',
+  story: '樋口一葉出身下級官吏家庭，父兄相繼早逝，年僅十七歲便扛起家計，與母親、妹妹相依為命，靠針線活與借貸艱難維生。她自幼展現過人的文學天分，拜入「萩之舍」歌塾學習和歌與古典文學，後轉而投入小說創作，企圖以稿費貼補家用。一葉的創作生涯僅僅維持了約十四個月，卻在此期間集中發表《青梅竹馬》（たけくらべ）、《濁江》（にごりえ）、《十三夜》等多部傑作，以細膩動人的筆觸描繪明治時代底層女性在貧困與社會禮教夾縫中求生存的處境，文壇譽為「奇蹟的十四個月」。然而她長期積勞與貧病交迫，最終於1896年因肺結核病逝，年僅二十四歲。',
+  legacy: '樋口一葉是日幣五千圓紙鈔（2004年版起）的肖像人物，也是繼八世紀神功皇后之後，時隔123年再度登上日本紙鈔的女性人物，她英年早逝卻成就斐然的傳奇生涯，至今仍被視為日本近代女性文學的重要先驅與象徵。',
+  quote: null,
+  related: ['natsume-soseki']
+},
+{
+  id: 'noguchi-hideyo',
+  name: '野口英世', reading: 'のぐちひでよ', romaji: 'Noguchi Hideyo',
+  zh: '野口英世', era: 'meiji', field: ['science'],
+  years: '1876–1928', yearStart: 1876,
+  oneline: '克服幼時燒傷殘疾、投身細菌學研究的世界級醫學家，千圓紙鈔肖像人物',
+  story: '野口英世出身福島貧農家庭，一歲半時不慎跌入爐火，左手嚴重燒傷導致手指沾黏變形，幾乎喪失勞動能力，也因此自幼遭同學霸凌，但母親仍堅持送他求學，期望他能憑學問安身立命。少年時期他接受了一次成功的左手矯正手術，深受醫學力量震撼，從此立志習醫，憑藉驚人的勤奮自學考取醫師執照。他先後赴美國、丹麥等地從事細菌學研究，曾任職於洛克斐勒醫學研究所，成功證明歐羅亞熱與祕魯疣是由同一種病原體引起的不同病程階段，這項成就一度使他三度獲提名角逐諾貝爾醫學獎候選人之列，是當時極少數登上世界醫學舞台中心的日本科學家。1918年，他前往南美洲與非洲深入研究當時肆虐的黃熱病，雖然他鑑定的病原體後來被證實並非真正病因（黃熱病實為病毒所致，而非他所判定的細菌），但他不畏疫區風險、親身投入研究的精神備受敬重，最終他本人也不幸於非洲迦納感染黃熱病殉職，得年五十一歲。',
+  legacy: '野口英世是首位登上日本紙鈔的科學家，自2004年起其肖像印於千圓紙鈔之上，他「努力だ、勉強だ、それが天才だ」（努力、用功，那就是天才）的名言至今仍激勵無數學子，福島縣猪苗代町建有野口英世紀念館，紀念這位克服身體殘疾、奉獻醫學研究而殉職的科學家。',
+  quote: '努力だ、勉強だ、それが天才だ（努力、用功，那就是天才）',
+  related: []
+},
+{
+  id: 'mori-ogai',
+  name: '森鴎外', reading: 'もりおうがい', romaji: 'Mori Ōgai',
+  zh: '森鷗外', era: 'meiji', field: ['culture','science'],
+  years: '1862–1922', yearStart: 1862,
+  oneline: '軍醫總監與文學巨匠的雙重身分，與夏目漱石並稱明治文壇雙璧',
+  story: '森鷗外本業為陸軍軍醫，曾赴德國留學鑽研西方醫學與衛生學，返國後在軍中官至最高階的軍醫總監，是醫學專業領域的重要人物。與此同時，他亦投入大量心力於文學創作與翻譯，將大量西方文學作品引介至日本，自身的小說創作如《舞姬》取材自他留德期間的異國戀情經歷，細膩描繪明治知識分子在西方個人主義與日本傳統道德責任之間的掙扎拉扯。森鷗外晚年轉向歷史小說創作，如《高瀨舟》《阿部一族》，以冷靜克制的筆法探討安樂死、武士殉死等深刻的倫理議題。',
+  legacy: '森鷗外與夏目漱石並稱明治文壇雙璧，兩人的創作風格、人生境遇雖大不相同，卻同樣深刻反映了明治時期日本知識分子在傳統與現代、東方與西方價值觀衝突下的精神處境，至今仍是日本近代文學研究的核心人物。',
+  quote: null,
+  related: ['natsume-soseki']
+},
+{
+  id: 'shibusawa-eiichi',
+  name: '渋沢栄一', reading: 'しぶさわえいいち', romaji: 'Shibusawa Eiichi',
+  zh: '澀澤榮一', era: 'meiji', field: ['reform'],
+  years: '1840–1931', yearStart: 1840,
+  oneline: '「日本資本主義之父」，創辦近五百家企業的近代實業先驅，新版萬元紙鈔肖像人物',
+  story: '澀澤榮一出身農商家庭，年輕時曾參與尊王攘夷運動，後輾轉效力於幕府，隨幕府使節團遠赴法國參與巴黎萬國博覽會，親眼見識西方先進的金融與企業制度，深受啟發。明治維新後，他投身新政府財政部門，主導制定近代日本的貨幣與銀行制度，其後毅然辭官投入民間實業，創辦了第一國立銀行（日本第一家股份制銀行）、東京證券交易所、王子製紙、東京瓦斯等近五百家企業，橫跨金融、製造、交通、保險等各個產業領域，奠定了日本近代資本主義經濟體系的基礎架構。他主張「論語與算盤」（道德經濟合一論），認為企業經營必須兼顧道德倫理與利潤追求，反對純粹唯利是圖的商業模式，這套思想至今仍深刻影響日本企業文化中重視誠信與社會責任的傳統。',
+  legacy: '澀澤榮一被尊為「日本資本主義之父」，2024年日本發行新版紙鈔，他的肖像正式登上最高面額的一萬圓紙鈔（取代福澤諭吉），他「論語與算盤」的經營理念至今仍是日本商學院與企業培訓中經常引用的經典思想資源。',
+  quote: '論語と算盤（論語與算盤，道德與經濟應並行不悖）',
+  related: ['fukuzawa-yukichi']
+},
+];
+
+FIGURES.push(...FIGURES_PART5);
+// ─────────── 近現代（昭和～平成）科學與文化 ───────────
+const FIGURES_PART6 = [
+{
+  id: 'yukawa-hideki',
+  name: '湯川秀樹', reading: 'ゆかわひでき', romaji: 'Yukawa Hideki',
+  zh: '湯川秀樹', era: 'modern', field: ['science'],
+  years: '1907–1981', yearStart: 1907,
+  oneline: '日本第一位諾貝爾獎得主，提出「中間子理論」的理論物理學家',
+  story: '湯川秀樹自幼熟讀《論語》《莊子》等漢學經典，培養出深厚的邏輯思辨能力，京都帝國大學物理系畢業後，因國內缺乏該領域的指導學者，幾乎是獨自摸索鑽研最前沿的量子物理學說。1934年，年僅二十七歲的他提出「中間子理論」，大膽假設原子核內的質子與中子之間，是透過交換一種此前未被發現的粒子（中間子）所產生的核力相互結合，這個理論起初並未受到國際學界重視。直到1947年，英國物理學家鮑威爾在宇宙射線中真正觀測到湯川所預言的粒子，他的理論才獲得實證確認。1949年，湯川秀樹獲頒諾貝爾物理學獎，成為第一位獲得諾貝爾獎的日本人，當時正值二戰戰敗後百廢待舉的艱困時期，這項殊榮為飽受挫折的日本國民帶來莫大的振奮與自信。湯川晚年積極投入反核武運動，多次出席世界科學家會議，呼籲全面禁止核武器。',
+  legacy: '湯川秀樹作為日本首位諾貝爾獎得主，象徵著日本科學研究實力獲得世界認可的關鍵時刻，他獨立鑽研、不受既有學術權威束縛而能突破創新的治學精神，至今仍是日本科學教育中經常被引用的典範案例。',
+  quote: null,
+  related: []
+},
+{
+  id: 'kurosawa-akira',
+  name: '黒澤明', reading: 'くろさわあきら', romaji: 'Kurosawa Akira',
+  zh: '黑澤明', era: 'modern', field: ['culture'],
+  years: '1910–1998', yearStart: 1910,
+  oneline: '「電影天皇」，將日本電影推向世界舞台的國際級導演',
+  story: '黑澤明自幼學習劍道與繪畫，深厚的美學素養與構圖能力日後成為其電影作品強烈視覺風格的基礎。他在1950年執導的《羅生門》，以多重視角敘事手法描繪同一事件中互相矛盾的證詞，探討真相的相對性與人性的自利本質，這部作品在威尼斯影展奪得金獅獎，是首部讓西方世界正視日本電影藝術成就的作品，「羅生門效應」一詞也成為描述各說各話、真相難辨情境的國際通用詞彙。其後他陸續執導《七武士》《用心棒》等武士片經典，運鏡明快、剪接俐落，深刻影響了好萊塢西部片與動作片的敘事美學，喬治盧卡斯曾公開表示《星際大戰》深受其作品啟發，《七武士》的故事結構也多次被好萊塢翻拍（如《豪勇七蛟龍》）。黑澤明晚年作品如《亂》《夢》則轉向更具哲思與寓言色彩的創作風格。',
+  legacy: '黑澤明被譽為「電影天皇」，是公認影響力最深遠的世界級電影導演之一，其作品至今仍是全球電影學院教學的必修經典，他對視覺敘事、場面調度的開創性貢獻，深刻形塑了此後數十年世界電影美學的發展方向。',
+  quote: null,
+  related: []
+},
+{
+  id: 'tezuka-osamu',
+  name: '手塚治虫', reading: 'てづかおさむ', romaji: 'Tezuka Osamu',
+  zh: '手塚治虫', era: 'modern', field: ['culture'],
+  years: '1928–1989', yearStart: 1928,
+  oneline: '「漫畫之神」，《原子小金剛》之父，奠定日本現代漫畫敘事語言的開創者',
+  story: '手塚治虫自幼酷愛昆蟲與電影，筆名「治虫」即取自昆蟲的「蟲」字。他本身擁有醫學博士學位，卻選擇投身漫畫創作，將電影運鏡手法（如分鏡、特寫、蒙太奇）大量引入漫畫敘事，徹底革新了當時還相對簡單樸素的日本漫畫表現形式，奠定此後日本漫畫敘事語言的基本文法。他的代表作《原子小金剛》（鐵腕アトム）描繪一個擁有人類情感的機器人少年在人機共存社會中尋求自我認同的故事，不僅是日本商業漫畫的重要里程碑，其電視動畫版更是日本第一部長篇電視動畫，開啟了日本動畫產業的序幕。他畢生創作量驚人，作品橫跨科幻、歷史、醫療（《怪醫黑傑克》）、宗教（《佛陀》）等多元題材，總頁數估計超過十五�万頁。',
+  legacy: '手塚治虫被尊稱為「漫畫之神」（マンガの神様），他所建立的敘事手法與產業模式，深刻影響了此後數代漫畫家與動畫創作者，日本漫畫、動畫產業之所以能發展成今日席捲全球的文化軟實力，手塚治虫被公認是最關鍵的奠基者之一。',
+  quote: null,
+  related: []
+},
+{
+  id: 'misora-hibari',
+  name: '美空ひばり', reading: 'みそらひばり', romaji: 'Misora Hibari',
+  zh: '美空雲雀', era: 'modern', field: ['culture'],
+  years: '1937–1989', yearStart: 1937,
+  oneline: '「歌謠界女王」，戰後日本最具代表性的國民歌姬',
+  story: '美空雲雀自幼展現驚人的歌唱天賦，九歲便登台演出，少年時期即以超齡的演唱實力轟動日本歌壇，被譽為天才少女歌手。她的歌聲音域寬廣、情感表現力細膩深刻，從演歌、爵士到流行歌曲皆能駕馭自如，一生發表超過一千兩百首歌曲，代表作《柔》《悲しい酒》《川の流れのように》（如川流不息）等，深刻陪伴了戰後日本從廢墟重建、經濟高速成長到泡沫經濟的整個世代記憶，被視為戰後日本庶民情感與時代氛圍最重要的歌聲載體。她的歌聲與奮鬥不懈的形象，恰恰呼應了戰後日本社會渴望振作復興的集體心境。',
+  legacy: '美空雲雀於1989年因病去世後，獲頒日本人首位「國民榮譽賞」女性得主，其代表作《如川流不息》至今仍是日本紅白歌合戰等重大場合最常被翻唱演繹的經典名曲，她被公認是昭和歌謠史上最具代表性、影響力最深遠的國民歌姬。',
+  quote: null,
+  related: []
+},
+{
+  id: 'matsushita-konosuke',
+  name: '松下幸之助', reading: 'まつしたこうのすけ', romaji: 'Matsushita Kōnosuke',
+  zh: '松下幸之助', era: 'modern', field: ['reform'],
+  years: '1894–1989', yearStart: 1894,
+  oneline: '「經營之神」，松下電器（Panasonic）創辦人',
+  story: '松下幸之助出身貧困家庭，自幼輟學當學徒，憑藉自學與實作經驗累積技術與商業知識，1918年以僅有的些許資金創立松下電器製作所，從改良式雙燈頭插座起家，逐步發展成橫跨家電、電池、照明等多元領域的大型企業集團（今Panasonic前身）。他首創「事業部制」管理模式，將大型企業劃分為多個獨立核算的事業單位，提升組織彈性與責任歸屬，這套管理思想後來被全球企業廣泛借鏡採用。松下幸之助主張企業經營應以「為社會創造價值」為根本使命，提出「自來水哲學」，認為企業應如自來水公司般，致力以低廉成本生產優質產品、普及於社會大眾，而非單純追求利潤極大化，這套經營哲學深刻影響了戰後日本企業文化中重視社會責任的傳統。',
+  legacy: '松下幸之助被尊為「經營之神」，他創辦的PHP研究所致力推廣其經營哲學與人才培育理念，松下政經塾更培育出多位日本政界與商界領袖，其管理思想至今仍是全球商學院研究日本式經營模式的重要案例。',
+  quote: '水道哲学（自來水哲學：企業應致力以低廉成本生產優質產品、普及於社會大眾）',
+  related: ['shibusawa-eiichi']
+},
+{
+  id: 'tanizaki-junichiro',
+  name: '谷崎潤一郎', reading: 'たにざきじゅんいちろう', romaji: 'Tanizaki Junichirō',
+  zh: '谷崎潤一郎', era: 'modern', field: ['culture'],
+  years: '1886–1965', yearStart: 1886,
+  oneline: '以耽美與官能美學著稱的近代文豪，《陰翳禮讚》闡述日本傳統美學精髓',
+  story: '谷崎潤一郎早期作品深受西方唯美主義影響，以官能、耽美、甚至帶有病態色彩的筆觸描繪人性慾望，在當時文壇獨樹一格。中年後他的創作風格轉向，開始深入挖掘日本傳統文化的美學底蘊，代表作《細雪》細膩描繪戰前大阪船場望族四姊妹的日常生活與情感糾葛，文字典雅綿密，被視為描寫日本傳統女性美與生活美學的經典之作。他的隨筆《陰翳禮讚》則從建築、器物、飲食等日常生活細節切入，闡述日本傳統美學中「以陰翳襯托幽微之美」的獨特觀點，認為西方崇尚明亮直接的審美取向，恰恰與東方含蓄內斂、講求光影層次的美感背道而馳，這部作品至今仍是研究日本傳統美學與設計思想的重要參考文獻。',
+  legacy: '谷崎潤一郎多次獲提名角逐諾貝爾文學獎，雖未能獲獎，但其作品在日本近代文學史上享有崇高地位，《陰翳禮讚》中闡述的美學觀點，至今仍深刻影響日本乃至全球建築與工業設計領域對「光與影」美學的思考方式。',
+  quote: null,
+  related: ['natsume-soseki']
+},
+];
+
+FIGURES.push(...FIGURES_PART6);
+// ─────────── 近現代補充 ───────────
+const FIGURES_PART7 = [
+{
+  id: 'kawabata-yasunari',
+  name: '川端康成', reading: 'かわばたやすなり', romaji: 'Kawabata Yasunari',
+  zh: '川端康成', era: 'modern', field: ['culture'],
+  years: '1899–1972', yearStart: 1899,
+  oneline: '日本首位諾貝爾文學獎得主，《雪國》《伊豆的舞孃》作者',
+  story: '川端康成幼年父母雙亡，由祖父母撫養長大，這段孤獨的童年經歷深刻形塑了他作品中纖細哀愁、虛無縹緲的美學基調。他早年參與「新感覺派」文學運動，講求嶄新的感官語言與意象表現，代表作《伊豆的舞孃》以一段青澀純淨的旅途邂逅，刻劃少年對純真情感的眷戀。其後的《雪國》則以日本北國溫泉鄉為背景，描繪一段虛無飄渺、終究無法圓滿的男女情緣，文字凝鍊唯美，開篇名句「穿過縣界長長的隧道，便是雪國」是日本文學史上最著名的開場白之一。1968年，川端康成憑藉其作品中展現「以敏銳的感受性表現日本人心靈精髓」的成就，獲頒諾貝爾文學獎，成為第一位獲此殊榮的日本作家，他在受獎演說中以「美しい日本の私」（美麗的日本與我）為題，向世界闡述日本傳統美學的精神底蘊。',
+  legacy: '川端康成的獲獎是日本文學首度獲得世界最高榮譽肯定的歷史時刻，深刻提升了日本文學在國際文壇的地位，他纖細唯美、講求「物哀」與「幽玄」意境的創作風格，至今仍是研究日本傳統美學如何轉化為現代文學語言的重要範本。',
+  quote: '美しい日本の私（美麗的日本與我）',
+  related: ['oe-kenzaburo','tanizaki-junichiro']
+},
+{
+  id: 'oe-kenzaburo',
+  name: '大江健三郎', reading: 'おおえけんざぶろう', romaji: 'Ōe Kenzaburō',
+  zh: '大江健三郎', era: 'modern', field: ['culture'],
+  years: '1935–2023', yearStart: 1935,
+  oneline: '日本第二位諾貝爾文學獎得主，以核爆、身障兒共生等議題深刻叩問現代人困境',
+  story: '大江健三郎出身四國森林村莊，東京大學法文系畢業，二十多歲便以犀利前衛的文筆崛起文壇。他長子大江光天生患有智能障礙，這個生命經歷深刻轉化為他此後創作的核心母題之一，多部作品如《個人的體驗》誠實面對為人父者在面對身障子女時的恐懼、逃避與最終接納的心路歷程，展現深刻的人道關懷。大江也長期關注廣島原爆、沖繩戰爭創傷、天皇制度等戰後日本社會的核心爭議議題，著有《廣島札記》等紀實文集，積極以知識分子身分介入公共議題討論。1994年，他憑藉「以詩意的想像力創造出一個現實與神話緊密凝聚的世界，深刻反映當代人類的困境」獲頒諾貝爾文學獎，是繼川端康成之後第二位獲獎的日本作家，他在受獎演說中以「あいまいな日本の私」（曖昧的日本與我）為題，刻意呼應又顛覆川端「美麗的日本」之說，強調日本作為傳統與西化兩極撕裂下「曖昧」存在的複雜本質。',
+  legacy: '大江健三郎被視為戰後日本文學最重要的代表性作家之一，他將個人家庭經歷與廣島核爆、戰爭責任等重大歷史創傷交織書寫的創作手法，深刻影響了此後日本當代文學對社會議題的介入方式。',
+  quote: 'あいまいな日本の私（曖昧的日本與我）',
+  related: ['kawabata-yasunari']
+},
+{
+  id: 'honda-soichiro',
+  name: '本田宗一郎', reading: 'ほんだそういちろう', romaji: 'Honda Sōichirō',
+  zh: '本田宗一郎', era: 'modern', field: ['reform'],
+  years: '1906–1991', yearStart: 1906,
+  oneline: '本田技研工業（HONDA）創辦人，「失敗為成功之母」精神的實踐者',
+  story: '本田宗一郎出身鐵匠之子，自幼對機械充滿狂熱興趣，年輕時自學成才，從修理汽車的小作坊起家，戰後物資匱乏時期，他將軍用發動機改裝後安裝在自行車上，發明了簡易摩托車，大受歡迎，由此正式創立本田技研工業。本田治理企業作風大膽創新，極度重視技術研發與實際動手實驗，他有句名言「成功は99%の失敗に支えられた1%」（成功是由百分之九十九的失敗所支撐的百分之一），鼓勵員工不畏失敗、勇於嘗試。本田技研後續積極投入國際賽車運動，挑戰當時被視為摩托車賽事最高殿堂的英國曼島TT大賽，從屢戰屢敗到最終登頂奪冠，這段奮鬥歷程深刻體現本田「挑戰精神」的企業文化核心，公司也由摩托車製造商逐步擴展為涵蓋汽車、飛機引擎等領域的國際級企業集團。',
+  legacy: '本田宗一郎被視為戰後日本「技術立國」精神的代表人物之一，他不畏權威、注重實作與創新挑戰的經營哲學，至今仍是HONDA企業文化的核心精神支柱，也是日本戰後白手起家、憑藉技術實力站上世界舞台的經典創業故事典範。',
+  quote: '成功は99%の失敗に支えられた1%（成功是由百分之九十九的失敗所支撐的百分之一）',
+  related: ['matsushita-konosuke']
+},
+{
+  id: 'miyazaki-hayao',
+  name: '宮崎駿', reading: 'みやざきはやお', romaji: 'Miyazaki Hayao',
+  zh: '宮崎駿', era: 'modern', field: ['culture'],
+  years: '1941–', yearStart: 1941,
+  oneline: '吉卜力工作室共同創辦人，《龍貓》《神隱少女》締造者，國際公認的動畫大師',
+  story: '宮崎駿自幼受到童年時期戰爭經歷與父親經營飛機零件工廠背景影響，作品中經常出現對飛行的浪漫想像與對戰爭暴力的反思。他在東映動畫展開職業生涯，其後與好友高畑勳、鈴木敏夫共同創立吉卜力工作室，陸續推出《風之谷》《龍貓》《魔女宅急便》《神隱少女》等深植人心的動畫長片。他的作品經常以強韌獨立的女性角色為主角，融合奇幻冒險、環境生態關懷與反戰人道精神，畫面手繪質感細膩、世界觀宏大而富有詩意。2002年的《神隱少女》在柏林影展奪得金熊獎，並榮獲奧斯卡最佳動畫長片獎，是首部獲得奧斯卡肯定的日本動畫作品，將日本動畫的藝術成就正式推向世界影壇核心舞台。2023年的《蒼鷺與少年》（君たちはどう生きるか）更使他二度奪下奧斯卡最佳動畫長片獎。',
+  legacy: '宮崎駿被公認是當代世界最重要的動畫導演之一，其作品兼具商業成功與深刻的藝術、人文厚度，吉卜力工作室所建立的手繪動畫美學典範，至今仍是全球動畫創作者景仰學習的標竿，三鷹之森吉卜力美術館也是東京最受國際遊客歡迎的文化景點之一。',
+  quote: null,
+  related: ['tezuka-osamu','kurosawa-akira']
+},
+];
+
+FIGURES.push(...FIGURES_PART7);
+
+// ══════════════════════════════════════════
+//  時代與領域標籤定義
+// ══════════════════════════════════════════
+const ERA_LABELS = {
+  kodai: { label: '古代', range: '3–6世紀', color: '#6b5b3e' },
+  asuka: { label: '飛鳥・奈良', range: '6–8世紀', color: '#8a6d3b' },
+  heian: { label: '平安時代', range: '794–1185', color: '#a8527a' },
+  sengoku: { label: '鎌倉～戰國', range: '1185–1603', color: '#b8452f' },
+  edo: { label: '江戶時代', range: '1603–1868', color: '#2f6b4f' },
+  meiji: { label: '幕末・明治', range: '1853–1912', color: '#2563a8' },
+  modern: { label: '大正～現代', range: '1912–現在', color: '#6a4fa8' },
+};
+
+const FIELD_LABELS = {
+  military: { label: '武將', icon: '' },
+  politics: { label: '政治', icon: '' },
+  culture: { label: '文化藝術', icon: '' },
+  religion: { label: '宗教思想', icon: '' },
+  science: { label: '科學技術', icon: '' },
+  reform: { label: '改革維新', icon: '' },
+};
+// ─────────── 補充人物 ───────────
+const FIGURES_PART8 = [
+{
+  id: 'himiko',
+  name: '卑弥呼', reading: 'ひみこ', romaji: 'Himiko',
+  zh: '卑彌呼', era: 'kodai', field: ['politics','religion'],
+  years: '?–248?', yearStart: 170,
+  oneline: '中國史書記載的邪馬台國女王，日本最早見於文字記錄的統治者',
+  story: '卑彌呼的事蹟並未見於日本本土的史書，而是記載於中國三國時代的史書《魏志倭人傳》中。根據記載，當時倭國（日本）境內長期戰亂紛擾，諸國共同擁立一位名為卑彌呼的女子為王，她「事鬼道，能惑眾」，意即透過某種近似薩滿巫術的宗教儀式來治理國家、安定人心，平時深居宮中、極少露面，僅由一名弟弟在外協助處理政務，這種「祭政分離」的統治模式在當時頗為特殊。239年，卑彌呼派遣使節遠赴中國，獲魏明帝冊封為「親魏倭王」，並賜予金印與大量銅鏡，這是日本最早與中國正式建立外交關係的文字記錄。',
+  legacy: '卑彌呼及其所統治的「邪馬台國」確切地理位置至今仍是日本考古學與古代史研究中最大的未解之謎之一，「畿內說」與「九州說」兩派學者長期爭論不休，她也因此成為日本古代史中最具神秘色彩、最受大眾文化（小說、漫畫、遊戲）喜愛重新詮釋的傳奇女王形象。',
+  quote: null,
+  related: []
+},
+{
+  id: 'sen-no-rikyu',
+  name: '千利休', reading: 'せんのりきゅう', romaji: 'Sen no Rikyū',
+  zh: '千利休', era: 'sengoku', field: ['culture'],
+  years: '1522–1591', yearStart: 1522,
+  oneline: '集大成「侘寂」茶道美學、奉茶於織田信長與豐臣秀吉的茶聖',
+  story: '千利休出身堺市商人家庭，自幼習茶，師承多位茶道名家，逐步將原本講求華麗器物與排場的茶會形式，提煉為強調簡樸、靜寂、不完美之美的「侘茶」美學體系，創立茶室僅容兩三人席地而坐的極簡空間設計，深刻影響日本此後數百年的建築、庭園與器物審美觀。千利休先後成為織田信長、豐臣秀吉的「茶頭」（專屬茶道顧問），在政治權力核心圈中地位崇高，秀吉統一天下的過程中，茶會常被當作重要的政治社交場合，利休的地位因此甚至凌駕一般大名。然而1591年，秀吉突然下令利休切腹自盡，確切原因眾說紛紜，可能涉及政治猜忌、利休拒絕將女兒獻給秀吉、或兩人審美與權力觀的根本衝突，至今仍是歷史學界爭論不休的謎團。',
+  legacy: '千利休所確立的「侘寂」（わびさび）美學概念，至今仍是理解日本傳統美學最核心的關鍵詞之一，深刻影響茶道、花道、庭園造景、建築設計乃至現代極簡主義美學，他創立的茶道流派（千家流）後代子孫至今仍延續其茶道宗師地位。',
+  quote: 'わび・さび（侘寂：簡樸靜寂、殘缺中見真味之美）',
+  related: ['oda-nobunaga','toyotomi-hideyoshi']
+},
+{
+  id: 'miyamoto-musashi',
+  name: '宮本武蔵', reading: 'みやもとむさし', romaji: 'Miyamoto Musashi',
+  zh: '宮本武藏', era: 'sengoku', field: ['culture','military'],
+  years: '1584?–1645', yearStart: 1584,
+  oneline: '一生未嘗敗績的劍豪，《五輪書》作者，二天一流劍術創始人',
+  story: '宮本武藏自年少時代起便遊歷各地展開「武者修行」，相傳一生經歷過六十餘場生死決鬥從未落敗，其中最著名的是與劍術名家佐佐木小次郎在巖流島的對決，武藏故意遲到激怒對手、以一支臨時削製的木刀擊敗使用長刀「物干竿」的小次郎，這段傳奇對決至今仍是日本文學與影視作品反覆描繪的經典場景。武藏獨創「二天一流」劍術流派，主張雙手各持一刀同時應戰，打破當時劍術界單手持刀的主流慣例。晚年他隱居山中洞窟，將畢生劍術心得與人生哲學寫成《五輪書》，分為地、水、火、風、空五卷，不僅探討具體劍術技巧，更深入闡述兵法策略與精神修為的關係，這部著作後世被廣泛應用於武術、企業經營乃至個人修養領域的參考典籍，並有英文等多國語言譯本。',
+  legacy: '宮本武藏被尊為日本史上最偉大的劍豪，其《五輪書》與孫子兵法並列東方兵法哲學經典，至今仍是國際間研究東方武道精神與策略思維的重要文本，他傳奇的決鬥生涯也是日本時代劇與漫畫（如《浪人劍客》）歷久不衰的創作題材。',
+  quote: null,
+  related: []
+},
+{
+  id: 'yamamoto-isoroku',
+  name: '山本五十六', reading: 'やまもといそろく', romaji: 'Yamamoto Isoroku',
+  zh: '山本五十六', era: 'modern', field: ['military'],
+  years: '1884–1943', yearStart: 1884,
+  oneline: '策劃珍珠港事變的聯合艦隊司令長官，曾留學美國而深知對美開戰之險',
+  story: '山本五十六早年曾兩度留學美國，並擔任過駐美武官，深刻了解美國龐大的工業實力與戰爭潛力，因此他在日本軍方高層中是少數反對與美國開戰的清醒聲音，多次警告「若開戰，最初半年到一年或許能橫掃太平洋，但若戰爭拖長，毫無勝算」。然而在當時軍部主戰氛圍的壓力下，他仍奉命策劃並指揮了1941年偷襲珍珠港的軍事行動，企圖以先發制人的奇襲重創美國太平洋艦隊，迫使美國儘早求和，這場奇襲雖在戰術上獲得初步成功，卻徹底激怒美國民意，促使美國全力投入太平洋戰爭，正如山本本人所預見。1943年，山本五十六搭乘的座機在所羅門群島上空遭美軍戰機伏擊擊落，當場身亡，成為太平洋戰爭中陣亡的最高階日本將領。',
+  legacy: '山本五十六這位「明知開戰必敗卻仍奉命指揮戰爭」的複雜歷史人物，至今仍是日本近代史與二戰史研究中備受關注的爭議性將領，他清醒而矛盾的形象，也經常成為戰爭題材文學與影視作品反思戰爭責任時的重要切入視角。',
+  quote: null,
+  related: []
+},
+{
+  id: 'ichiyo-and-modern-women',
+  name: '与謝野晶子', reading: 'よさのあきこ', romaji: 'Yosano Akiko',
+  zh: '與謝野晶子', era: 'meiji', field: ['culture'],
+  years: '1878–1942', yearStart: 1878,
+  oneline: '以熱情奔放詩風挑戰禮教束縛、反戰名詩〈君死にたまふことなかれ〉作者',
+  story: '與謝野晶子是明治後期最具開創性的女性詩人，她的第一部歌集《亂髮》以大膽奔放、毫不掩飾女性情慾與自我意識的詩句震驚當時保守的文壇，挑戰傳統和歌含蓄內斂的表現規範，被視為日本近代女性自我覺醒文學的先聲。1904年日俄戰爭期間，她的弟弟被徵召上戰場，與謝野晶子發表長詩〈君死にたまふことなかれ〉（你不要死去），直白懇切地呼喚弟弟珍惜生命、莫死於戰場，公然質疑當時舉國上下歌頌戰爭犧牲的主流氛圍，在當時引發極大爭議，卻也成為日本近代文學史上最早、最著名的反戰詩作之一。她畢生創作超過五萬首和歌，並耗時多年完成《源氏物語》的現代語譯，致力於將古典文學介紹給更廣大的近代讀者。',
+  legacy: '與謝野晶子被視為日本近代女性主義文學的先驅人物之一，她敢於挑戰社會禮教束縛、為個人情感與反戰立場勇敢發聲的精神，至今仍激勵著探討日本近代女性處境與言論自由議題的研究者與讀者。',
+  quote: '君死にたまふことなかれ（你不要死去）',
+  related: ['higuchi-ichiyo']
+},
+{
+  id: 'katsushika-hokusai',
+  name: '葛飾北斎', reading: 'かつしかほくさい', romaji: 'Katsushika Hokusai',
+  zh: '葛飾北齋', era: 'edo', field: ['culture'],
+  years: '1760–1849', yearStart: 1760,
+  oneline: '《富嶽三十六景》作者，影響梵谷與印象派的浮世繪巨匠',
+  story: '葛飾北齋一生筆名多達三十餘個、搬家近九十次，行事作風特立獨行，被視為「畫狂人」。他自幼學畫，曾師事浮世繪名家勝川春章，但不滿足於既有流派的技法，先後鑽研狩野派、住吉派、西洋畫法與中國畫等多元風格，逐步形成獨樹一格的個人畫風，並終生不依附任何單一畫派。他畢生創作量驚人，估計總數達三萬幅以上，題材橫跨美人畫、役者繪、插畫、乃至教學用的《北齋漫畫》。1831年，年屆七十二歲高齡的北齋發表代表作《富嶽三十六景》，以江戶、東海道沿線、富士山周邊等不同地點、季節與視角描繪富士山的四十六種樣貌（原訂三十六景因大受歡迎追加十景），其中「神奈川沖浪裏」描繪巨浪即將吞沒小舟、富士山在浪間若隱若現的瞬間，構圖大膽、線條張力十足，是浮世繪史上最具代表性的畫面之一；「凱風快晴」（通稱「赤富士」）則以鮮紅富士山搭配湛藍晴空，畫面簡潔卻極具震撼力。這個系列大量使用當時自西方傳入的「柏林藍」（プルシアンブルー）顏料，鮮豔飽和的藍色成為作品最鮮明的視覺印記。北齋晚年仍持續精進畫藝，相傳臨終前曾感嘆若上天再給他十年甚至五年壽命，必能成為真正的畫家，展現其至死不渝的藝術追求。',
+  legacy: '葛飾北齋的浮世繪作品在十九世紀後半傳入歐洲，掀起「日本主義」（ジャポニスム）風潮，深刻影響莫內、梵谷、竇加等印象派與後印象派畫家的創作手法，「神奈川沖浪裏」更成為西方世界最廣為人知的日本藝術圖像之一，2020年版日本護照內頁即採用《富嶽三十六景》系列圖案。美國《LIFE》雜誌曾評選「上一千年內最有影響力的百大人物」，北齋是唯一入選的日本人，足見其藝術成就在世界藝術史上的崇高地位。',
+  quote: null,
+  related: []
+},
+];
+
+FIGURES.push(...FIGURES_PART8);
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentView = 'cards';
+let selectedEras = new Set(Object.keys(ERA_LABELS));
+let selectedFields = new Set(Object.keys(FIELD_LABELS));
+let searchQuery = '';
+
+let quizQueue = [];
+let quizIdx = 0;
+let quizCorrect = 0;
+let quizWrong = 0;
+let quizAnswered = false;
+
+const FIGURE_MAP = {};
+FIGURES.forEach(f => FIGURE_MAP[f.id] = f);
+
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+function getFilteredFigures() {
+  return FIGURES.filter(f => {
+    if (!selectedEras.has(f.era)) return false;
+    if (!f.field.some(fl => selectedFields.has(fl))) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const hay = (f.name + f.reading + f.zh + f.oneline).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function eraFieldChipsHTML() {
+  let eraChips = Object.keys(ERA_LABELS).map(e => {
+    const sel = selectedEras.has(e) ? 'selected era-tag' : '';
+    return `<span class="chip ${sel}" data-era="${e}" onclick="toggleEra('${e}')">${ERA_LABELS[e].label}</span>`;
+  }).join('');
+  let fieldChips = Object.keys(FIELD_LABELS).map(fl => {
+    const sel = selectedFields.has(fl) ? 'selected field-tag' : '';
+    return `<span class="chip ${sel}" data-field="${fl}" onclick="toggleField('${fl}')">${FIELD_LABELS[fl].label}</span>`;
+  }).join('');
+  return `
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label">時代</span>
+      ${eraChips}
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">領域</span>
+      ${fieldChips}
+    </div>
+  </div>`;
+}
+
+function toggleEra(e) {
+  if (selectedEras.has(e)) { if (selectedEras.size > 1) selectedEras.delete(e); }
+  else selectedEras.add(e);
+  render();
+}
+function toggleField(f) {
+  if (selectedFields.has(f)) { if (selectedFields.size > 1) selectedFields.delete(f); }
+  else selectedFields.add(f);
+  render();
+}
+
+function setView(v) {
+  currentView = v;
+  if (v === 'quiz') startQuiz();
+  render();
+}
+
+// ══════════════════════════════════════════
+//  RENDER: TOP LEVEL
+// ══════════════════════════════════════════
+function render() {
+  document.querySelectorAll('.nav-tab').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === currentView);
+  });
+
+  const filterArea = document.getElementById('filter-area');
+  const main = document.getElementById('main-area');
+
+  if (currentView === 'cards') {
+    filterArea.innerHTML = eraFieldChipsHTML() + `<div style="padding:16px 24px 0"><input class="search-input" id="search-input" placeholder="搜尋人物姓名或關鍵字…" value="${searchQuery}" oninput="onSearch(this.value)"></div>`;
+    renderCards(main);
+  } else if (currentView === 'quiz') {
+    filterArea.innerHTML = eraFieldChipsHTML();
+    renderQuiz(main);
+  } else if (currentView === 'timeline') {
+    filterArea.innerHTML = eraFieldChipsHTML();
+    renderTimeline(main);
+  }
+}
+
+function onSearch(v) {
+  searchQuery = v;
+  const main = document.getElementById('main-area');
+  renderCards(main);
+  // keep focus
+  const inp = document.getElementById('search-input');
+  if (inp) { inp.focus(); inp.setSelectionRange(v.length, v.length); }
+}
+
+// ══════════════════════════════════════════
+//  RENDER: CARD GRID
+// ══════════════════════════════════════════
+function renderCards(main) {
+  const figures = getFilteredFigures();
+  if (figures.length === 0) {
+    main.innerHTML = `<div class="empty-state"><p>沒有符合條件的人物，請調整篩選範圍</p></div>`;
+    return;
+  }
+  const cardsHTML = figures.map(f => {
+    const era = ERA_LABELS[f.era];
+    const tagsHTML = f.field.map(fl => {
+      const fd = FIELD_LABELS[fl];
+      return `<span class="fc-tag" style="background:${era.color}18;color:${era.color}">${fd.label}</span>`;
+    }).join('');
+    return `
+    <div class="figure-card" onclick="openDetail('${f.id}')">
+      <div class="fc-era-bar" style="background:${era.color}"></div>
+      <div class="fc-body">
+        <div class="fc-top">
+          <div class="fc-name-wrap">
+            <span class="fc-reading">${f.reading}</span>
+            <span class="fc-name">${f.name}</span>
+          </div>
+          <span class="fc-years">${f.years}</span>
+        </div>
+        <div class="fc-oneline">${f.oneline}</div>
+        <div class="fc-tags">${tagsHTML}</div>
+      </div>
+    </div>`;
+  }).join('');
+  main.innerHTML = `<div class="card-grid">${cardsHTML}</div>`;
+}
+
+// ══════════════════════════════════════════
+//  RENDER: DETAIL PANEL
+// ══════════════════════════════════════════
+function openDetail(id) {
+  const f = FIGURE_MAP[id];
+  if (!f) return;
+  const era = ERA_LABELS[f.era];
+  const fieldTags = f.field.map(fl => {
+    const fd = FIELD_LABELS[fl];
+    return `<span class="fc-tag" style="background:${era.color}18;color:${era.color}">${fd.label}</span>`;
+  }).join('');
+
+  const relatedHTML = (f.related && f.related.length) ? `
+    <div class="detail-section">
+      <div class="detail-section-title">相關人物</div>
+      <div class="detail-related">
+        ${f.related.map(rid => {
+          const rf = FIGURE_MAP[rid];
+          return rf ? `<span class="related-chip" onclick="openDetail('${rid}')">${rf.name}</span>` : '';
+        }).join('')}
+      </div>
+    </div>` : '';
+
+  const quoteHTML = f.quote ? `
+    <div class="detail-section">
+      <div class="detail-section-title">名言</div>
+      <div class="detail-quote">「${f.quote}」</div>
+    </div>` : '';
+
+  const overlay = document.createElement('div');
+  overlay.className = 'detail-overlay';
+  overlay.id = 'detail-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) closeDetail(); };
+  overlay.innerHTML = `
+    <div class="detail-panel">
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+      <div class="detail-header">
+        <div class="detail-reading">${f.reading}</div>
+        <div class="detail-name">${f.name}<span style="font-size:0.6em;color:var(--ink-soft);font-weight:400;margin-left:10px">${f.zh}</span></div>
+        <div class="detail-romaji">${f.romaji}</div>
+        <div class="detail-meta-row">
+          <span class="detail-years">${f.years}</span>
+          <span class="chip era-tag selected" style="background:${era.color};border-color:${era.color}">${era.label}</span>
+          ${fieldTags}
+        </div>
+        <div class="detail-oneline">${f.oneline}</div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-section">
+          <div class="detail-section-title">生平故事</div>
+          <div class="detail-text">${f.story}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">歷史評價與影響</div>
+          <div class="detail-text">${f.legacy}</div>
+        </div>
+        ${quoteHTML}
+        ${relatedHTML}
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  const overlay = document.getElementById('detail-overlay');
+  if (overlay) overlay.remove();
+  document.body.style.overflow = '';
+}
+
+// ══════════════════════════════════════════
+//  RENDER: TIMELINE
+// ══════════════════════════════════════════
+function renderTimeline(main) {
+  const figures = getFilteredFigures().slice().sort((a,b) => a.yearStart - b.yearStart);
+  if (figures.length === 0) {
+    main.innerHTML = `<div class="empty-state"><p>沒有符合條件的人物，請調整篩選範圍</p></div>`;
+    return;
+  }
+  let html = '<div class="timeline-wrap"><div class="timeline-spine"></div>';
+  let lastEra = null;
+  let side = 'left';
+  figures.forEach((f, i) => {
+    if (f.era !== lastEra) {
+      const era = ERA_LABELS[f.era];
+      html += `<div class="timeline-era-marker"><div class="era-stamp"><span class="era-name" style="color:${era.color};border-color:${era.color}">${era.label}</span><span class="era-range">${era.range}</span></div></div>`;
+      lastEra = f.era;
+    }
+    side = side === 'left' ? 'right' : 'left';
+    const era = ERA_LABELS[f.era];
+    html += `
+    <div class="timeline-item ${side}">
+      <div class="timeline-dot" style="border-color:${era.color}"></div>
+      <div class="ti-card" onclick="openDetail('${f.id}')">
+        <div class="ti-year">${f.years}</div>
+        <div class="ti-name">${f.name}<span style="font-size:0.75rem;color:var(--ink-soft);font-weight:400;margin-left:6px">${f.reading}</span></div>
+        <div class="ti-oneline">${f.oneline}</div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  main.innerHTML = html;
+}
+// ══════════════════════════════════════════
+//  QUIZ LOGIC
+// ══════════════════════════════════════════
+
+const QUIZ_TYPES = ['name-to-era', 'name-to-field', 'oneline-to-name', 'years-to-name', 'quote-to-name'];
+
+function shuffleArr(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRandom(arr, n, excludeIds=[]) {
+  const pool = arr.filter(x => !excludeIds.includes(x.id));
+  return shuffleArr(pool).slice(0, n);
+}
+
+function buildQuizQuestion(figure, pool) {
+  // choose a quiz type; quote type only if figure has a quote
+  let availableTypes = QUIZ_TYPES.filter(t => t !== 'quote-to-name' || figure.quote);
+  const type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+
+  if (type === 'name-to-era') {
+    const correctEra = ERA_LABELS[figure.era].label;
+    const otherEras = shuffleArr(Object.keys(ERA_LABELS).filter(e => e !== figure.era))
+      .slice(0, 3).map(e => ERA_LABELS[e].label);
+    const options = shuffleArr([correctEra, ...otherEras]);
+    return {
+      qType: '時代判斷',
+      question: `「<strong>${figure.name}</strong>」（${figure.reading}）屬於哪個時代？`,
+      options, correct: correctEra,
+      explain: `${figure.name}：${figure.oneline}`
+    };
+  }
+  if (type === 'name-to-field') {
+    const correctField = FIELD_LABELS[figure.field[0]].label;
+    const otherFields = shuffleArr(Object.keys(FIELD_LABELS).filter(fl => fl !== figure.field[0]))
+      .slice(0, 3).map(fl => FIELD_LABELS[fl].label);
+    const options = shuffleArr([correctField, ...otherFields]);
+    return {
+      qType: '領域判斷',
+      question: `「<strong>${figure.name}</strong>」最主要的身分／領域是？`,
+      options, correct: correctField,
+      explain: `${figure.name}：${figure.oneline}`
+    };
+  }
+  if (type === 'oneline-to-name') {
+    const distractors = pickRandom(pool, 3, [figure.id]).map(f => f.name);
+    const options = shuffleArr([figure.name, ...distractors]);
+    return {
+      qType: '人物辨識',
+      question: `下列哪位人物符合敘述：「${figure.oneline}」？`,
+      options, correct: figure.name,
+      explain: `${figure.name}（${figure.reading}）：${figure.years}`
+    };
+  }
+  if (type === 'years-to-name') {
+    const distractors = pickRandom(pool.filter(f => f.era === figure.era), 3, [figure.id]);
+    const finalDistractors = distractors.length >= 3 ? distractors : pickRandom(pool, 3, [figure.id]);
+    const options = shuffleArr([figure.name, ...finalDistractors.slice(0,3).map(f=>f.name)]);
+    return {
+      qType: '年代配對',
+      question: `生卒年為「<strong>${figure.years}</strong>」的人物是？`,
+      options, correct: figure.name,
+      explain: `${figure.name}：${figure.oneline}`
+    };
+  }
+  if (type === 'quote-to-name') {
+    const distractors = pickRandom(pool, 3, [figure.id]).map(f => f.name);
+    const options = shuffleArr([figure.name, ...distractors]);
+    return {
+      qType: '名言配對',
+      question: `「${figure.quote}」是誰留下的名言？`,
+      options, correct: figure.name,
+      explain: `${figure.name}：${figure.oneline}`
+    };
+  }
+}
+
+function startQuiz() {
+  const pool = getFilteredFigures();
+  if (pool.length < 4) {
+    quizQueue = [];
+    return;
+  }
+  quizQueue = shuffleArr(pool).map(f => buildQuizQuestion(f, pool));
+  quizIdx = 0;
+  quizCorrect = 0;
+  quizWrong = 0;
+  quizAnswered = false;
+  updateQuizStats();
+}
+
+function updateQuizStats() {
+  const c = document.getElementById('stat-correct');
+  const w = document.getElementById('stat-wrong');
+  if (c) c.textContent = '✓ ' + quizCorrect;
+  if (w) w.textContent = '✗ ' + quizWrong;
+}
+
+function renderQuiz(main) {
+  if (quizQueue.length === 0) {
+    main.innerHTML = `<div class="empty-state"><p>請至少選擇涵蓋 4 位以上人物的篩選範圍才能開始測驗</p></div>`;
+    return;
+  }
+  if (quizIdx >= quizQueue.length) {
+    renderQuizDone(main);
+    return;
+  }
+  const q = quizQueue[quizIdx];
+  const progress = `<div class="quiz-progress-row">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${(quizIdx/quizQueue.length*100).toFixed(1)}%"></div></div>
+    <span class="progress-label">${quizIdx}／${quizQueue.length}</span>
+  </div>`;
+  const optionsHTML = q.options.map(opt => `<button class="quiz-option" onclick="answerQuiz(this, '${escapeQ(opt)}')">${opt}</button>`).join('');
+
+  main.innerHTML = `
+  <div class="quiz-card">
+    ${progress}
+    <div class="quiz-q-type">${q.qType}</div>
+    <div class="quiz-question">${q.question}</div>
+    <div class="quiz-options" id="quiz-options">${optionsHTML}</div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <button class="btn-next-q" id="btn-next-q" onclick="nextQuizQ()">下一題 →</button>
+  </div>`;
+}
+
+function escapeQ(s) {
+  return s.replace(/'/g, "\\'").replace(/"/g,'&quot;');
+}
+
+function answerQuiz(btn, val) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQueue[quizIdx];
+  const opts = document.querySelectorAll('#quiz-options .quiz-option');
+  opts.forEach(o => {
+    o.classList.add('disabled');
+    if (o.textContent === q.correct) o.classList.add('correct-option');
+  });
+  const fb = document.getElementById('quiz-feedback');
+  if (val === q.correct) {
+    quizCorrect++;
+    fb.innerHTML = `<strong style="color:var(--gold)">✓ 正確！</strong> ${q.explain}`;
+  } else {
+    quizWrong++;
+    btn.classList.add('wrong-option');
+    fb.innerHTML = `<strong style="color:var(--vermillion)">✗ 不正確</strong>　正確答案：${q.correct}<br>${q.explain}`;
+  }
+  updateQuizStats();
+  document.getElementById('btn-next-q').style.display = 'inline-block';
+}
+
+function nextQuizQ() {
+  quizIdx++;
+  quizAnswered = false;
+  renderQuiz(document.getElementById('main-area'));
+}
+
+function renderQuizDone(main) {
+  const total = quizCorrect + quizWrong;
+  const pct = total > 0 ? Math.round(quizCorrect / total * 100) : 0;
+  main.innerHTML = `
+  <div class="quiz-card">
+    <div class="done-state">
+      <h2>測驗完成！</h2>
+      <p>答對 ${quizCorrect} 題，答錯 ${quizWrong} 題（正確率 ${pct}%）</p>
+      <button class="btn-restart" onclick="startQuiz(); renderQuiz(document.getElementById('main-area'))">重新測驗</button>
+    </div>
+  </div>`;
+}
+// ══════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════
+function setTheme(t) {
+  document.body.classList.remove('dark', 'grayscale');
+  if (t === 'dark') document.body.classList.add('dark');
+  else if (t === 'gray') document.body.classList.add('grayscale');
+  ['light','dark','gray'].forEach(x => {
+    const el = document.getElementById('theme-'+x);
+    if (el) el.classList.toggle('active', x === t);
+  });
+  try { localStorage.setItem('jpfig-theme', t); } catch(e) {}
+}
+
+(function(){
+  try {
+    const saved = localStorage.getItem('jpfig-theme');
+    if (saved) setTheme(saved);
+  } catch(e) {}
+})();
+
+render();
+</script>
+</body>
+</html>

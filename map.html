@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本地理特訓</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F5F0E8; --dot: #DDD5BD; --app-bg: rgba(255,255,255,0.45);
+    --ink: #2B2B2B; --ink-soft: #6B6457; --card: #fff; --border: #EFE8D6;
+    --border-strong: #E2DCC8; --map-bg: rgba(255,255,255,0.3); --green: #2E8B57;
+    --furi-dot: #B8AE96; --shadow: rgba(0,0,0,0.07); --tile-stroke: rgba(255,255,255,0.9);
+  }
+  body.dark {
+    --bg: #1C1B19; --dot: #2A2825; --app-bg: rgba(40,38,34,0.6);
+    --ink: #EDE8DE; --ink-soft: #A39A8A; --card: #2A2825; --border: #3A372F;
+    --border-strong: #4A463C; --map-bg: rgba(255,255,255,0.04); --green: #4FAE78;
+    --furi-dot: #6B6457; --shadow: rgba(0,0,0,0.3); --tile-stroke: rgba(20,18,16,0.55);
+  }
+  body {
+    font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+    background: var(--bg);
+    background-image: radial-gradient(var(--dot) 1.5px, transparent 1.5px);
+    background-size: 16px 16px;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px;
+    transition: background-color .2s ease;
+  }
+  .app {
+    position: relative;
+    width: 100%; max-width: 900px;
+    background: var(--app-bg); backdrop-filter: blur(4px);
+    border-radius: 24px; padding: 22px 24px 28px; box-shadow: 0 8px 32px var(--shadow);
+  }
+  .theme-toggle {
+    position: absolute; top: 18px; right: 18px;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--card); border: 1.5px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: border-color .15s, transform .15s;
+  }
+  .theme-toggle:hover { border-color: var(--green); transform: scale(1.06); }
+  .theme-toggle svg { width: 18px; height: 18px; stroke: var(--ink); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; padding-right: 46px; }
+  .badge {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--card); border: 3px solid var(--green);
+    display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;
+  }
+  .title { font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 21px; font-weight: 800; line-height: 1.1; color: var(--ink); }
+  .title small { display: block; font-size: 12px; font-weight: 500; color: var(--ink-soft); margin-top: 2px; }
+  .toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .btn-back {
+    background: var(--card); border: 2px solid var(--border-strong); border-radius: 999px; padding: 8px 16px;
+    font-size: 13.5px; font-weight: 700; cursor: pointer; color: var(--ink); font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px; transition: border-color .15s, transform .15s;
+  }
+  .btn-back:hover { border-color: var(--green); transform: translateX(-2px); }
+  .modes { display: inline-flex; background: var(--border); border-radius: 999px; padding: 4px; gap: 2px; }
+  .mode-btn {
+    border: none; background: transparent; padding: 7px 16px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 700; cursor: pointer; color: var(--ink-soft); font-family: inherit; transition: background .15s;
+  }
+  .mode-btn.active { background: var(--card); color: var(--ink); box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+  .score-badge { font-size: 13.5px; font-weight: 700; color: var(--ink-soft); background: var(--card); border-radius: 999px; padding: 8px 16px; border: 2px solid var(--border-strong); }
+  .map-wrap { position: relative; background: var(--map-bg); border-radius: 18px; overflow: hidden; min-height: 340px; }
+  .map-wrap svg { display: block; width: 100%; }
+  .pref-shape { cursor: pointer; stroke: var(--tile-stroke); stroke-width: 2px; transition: filter .12s; }
+  .pref-shape:hover { filter: brightness(1.12); }
+  .pref-shape.selected { stroke: var(--ink); stroke-width: 2.5px; }
+  .pref-shape.flash-ok { fill: #3FA34D !important; }
+  .pref-shape.flash-bad { animation: shake .35s; fill: #D9483D !important; }
+  .pref-label {
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700; fill: #fff;
+    pointer-events: none; text-anchor: middle; dominant-baseline: middle;
+    text-shadow: 0 1px 2px rgba(0,0,0,.4), 0 0 4px rgba(0,0,0,.25);
+  }
+  .region-label-text {
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 800; fill: var(--ink);
+    text-anchor: middle; dominant-baseline: middle; pointer-events: none;
+  }
+  @keyframes shake {
+    0%,100%{ transform: translateX(0); } 20%{ transform: translateX(-5px); }
+    40%{ transform: translateX(4px); } 60%{ transform: translateX(-3px); } 80%{ transform: translateX(2px); }
+  }
+  .panel {
+    position: relative;
+    margin-top: 14px; background: var(--card); border-radius: 16px; padding: 16px 20px;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.04); border: 2px solid var(--border);
+    min-height: 72px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .map-btn {
+    position: absolute; left: -16px; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--card); border: 1.5px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; text-decoration: none; transition: border-color .15s, transform .15s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .map-btn:hover { border-color: var(--green); transform: translateY(-50%) scale(1.07); }
+  .map-btn svg { width: 16px; height: 16px; stroke: var(--ink); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .panel-empty { color: var(--ink-soft); font-size: 14px; text-align: center; }
+  .pref-name { font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 22px; font-weight: 800; color: var(--ink); }
+  .pref-kana { color: var(--ink-soft); font-size: 13px; margin-top: 2px; }
+  .pref-row { margin-top: 8px; font-size: 14px; display:flex; gap:6px; color: var(--ink); }
+  .pref-row b { color: var(--ink-soft); font-weight: 700; min-width: 90px; }
+  .furi-term { border-bottom: 1.5px dotted var(--furi-dot); cursor: help; position: relative; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .furi-tooltip {
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: var(--bg); padding: 4px 9px; border-radius: 7px;
+    font-size: 12px; font-weight: 500; white-space: nowrap; pointer-events: none; z-index: 20;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .furi-tooltip::after {
+    content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: var(--ink);
+  }
+  .quiz-prompt { font-size: 16px; font-weight: 700; text-align: center; color: var(--ink); }
+  .quiz-target { font-family: 'M PLUS Rounded 1c', sans-serif; color: var(--green); font-size: 20px; }
+  .quiz-feedback { text-align:center; font-size: 13.5px; margin-top: 5px; min-height: 18px; font-weight: 700; }
+  .quiz-feedback.ok { color: #3FA34D; }
+  .quiz-feedback.bad { color: #D9483D; }
+  .result { text-align:center; }
+  .result .big { font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 28px; font-weight: 800; color: var(--green); }
+  .result .sub { color: var(--ink-soft); font-size: 13px; margin-top: 4px; }
+  .btn-retry {
+    margin-top: 12px; background: var(--green); color: #fff; border: none; border-radius: 999px;
+    padding: 10px 22px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+  }
+  .legend-note { margin-bottom: 14px; font-size: 13px; color: var(--ink-soft); text-align: center; }
+  .top-toggle-row { display: flex; justify-content: center; margin-bottom: 16px; }
+  .flash-card {
+    position: relative;
+    background: var(--card); border-radius: 18px; padding: 36px 20px 28px;
+    text-align: center; border: 2px solid var(--border); box-shadow: 0 3px 0 rgba(0,0,0,0.04);
+  }
+  .flash-term { font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 38px; font-weight: 800; color: var(--ink); }
+  .flash-sub { color: var(--ink-soft); font-size: 13px; margin-top: 8px; }
+  .card-hint {
+    position: absolute; bottom: 10px; right: 14px;
+    font-size: 11.5px; font-weight: 700; color: var(--ink-soft);
+    background: var(--border); padding: 3px 9px; border-radius: 999px;
+  }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .quiz-opt {
+    background: var(--card); border: 2px solid var(--border-strong); border-radius: 14px; padding: 14px 10px;
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 17px; font-weight: 700; color: var(--ink);
+    cursor: pointer; transition: border-color .15s, transform .1s, background .15s;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--green); transform: translateY(-1px); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-opt.opt-correct { background: #3FA34D; border-color: #3FA34D; color: #fff; }
+  .quiz-opt.opt-wrong { background: #D9483D; border-color: #D9483D; color: #fff; }
+  .flash-progress { text-align: center; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleBtn" aria-label="切換晝夜模式"></button>
+  <div class="header">
+    <div class="badge">⛩️</div>
+    <div class="title">日本地理特訓<small>都道府県學習地圖</small></div>
+  </div>
+  <div id="screen"></div>
+</div>
+
+<script>
+// ── Data: real lat/lng centroids ──────────────────────────────────────────
+const PREF_DATA = {
+  'JP-01':{  name:'北海道', kana:'ほっかいどう', capital:'札幌市', lat:43.06, lng:141.35 , famous:'札幌・函館・小樽' },
+  'JP-02':{  name:'青森県', kana:'あおもりけん', capital:'青森市', lat:40.82, lng:140.74 , famous:'弘前・十和田湖' },
+  'JP-03':{  name:'岩手県', kana:'いわてけん',   capital:'盛岡市', lat:39.70, lng:141.15 , famous:'盛岡・平泉' },
+  'JP-04':{  name:'宮城県', kana:'みやぎけん',   capital:'仙台市', lat:38.27, lng:140.87 , famous:'仙台・松島' },
+  'JP-05':{  name:'秋田県', kana:'あきたけん',   capital:'秋田市', lat:39.72, lng:140.10 , famous:'角館・田沢湖' },
+  'JP-06':{  name:'山形県', kana:'やまがたけん', capital:'山形市', lat:38.24, lng:140.36 , famous:'山寺・蔵王' },
+  'JP-07':{  name:'福島県', kana:'ふくしまけん', capital:'福島市', lat:37.75, lng:140.47 , famous:'会津若松・磐梯山' },
+  'JP-08':{  name:'茨城県', kana:'いばらきけん', capital:'水戸市', lat:36.34, lng:140.45 , famous:'つくば・偕楽園' },
+  'JP-09':{  name:'栃木県', kana:'とちぎけん',   capital:'宇都宮市', lat:36.57, lng:139.88 , famous:'日光・那須' },
+  'JP-10':{  name:'群馬県', kana:'ぐんまけん',   capital:'前橋市', lat:36.39, lng:139.06 , famous:'草津温泉・伊香保' },
+  'JP-11':{  name:'埼玉県', kana:'さいたまけん', capital:'さいたま市', lat:35.86, lng:139.65 , famous:'川越・秩父' },
+  'JP-12':{  name:'千葉県', kana:'ちばけん',     capital:'千葉市', lat:35.61, lng:140.12 , famous:'成田・ディズニーランド' },
+  'JP-13':{  name:'東京都', kana:'とうきょうと', capital:'新宿区', lat:35.69, lng:139.69 , famous:'渋谷・浅草・新宿' },
+  'JP-14':{  name:'神奈川県',kana:'かながわけん',capital:'横浜市', lat:35.45, lng:139.64 , famous:'横浜・鎌倉・箱根' },
+  'JP-15':{  name:'新潟県', kana:'にいがたけん', capital:'新潟市', lat:37.90, lng:139.02 , famous:'佐渡島・燕三条' },
+  'JP-16':{  name:'富山県', kana:'とやまけん',   capital:'富山市', lat:36.70, lng:137.21 , famous:'立山・黒部峡谷' },
+  'JP-17':{  name:'石川県', kana:'いしかわけん', capital:'金沢市', lat:36.59, lng:136.63 , famous:'金沢・兼六園' },
+  'JP-18':{  name:'福井県', kana:'ふくいけん',   capital:'福井市', lat:36.07, lng:136.22 , famous:'東尋坊・恐竜博物館' },
+  'JP-19':{  name:'山梨県', kana:'やまなしけん', capital:'甲府市', lat:35.66, lng:138.57 , famous:'富士山・河口湖' },
+  'JP-20':{  name:'長野県', kana:'ながのけん',   capital:'長野市', lat:36.65, lng:138.18 , famous:'軽井沢・松本城' },
+  'JP-21':{  name:'岐阜県', kana:'ぎふけん',     capital:'岐阜市', lat:35.39, lng:136.72 , famous:'高山・白川郷' },
+  'JP-22':{  name:'静岡県', kana:'しずおかけん', capital:'静岡市', lat:34.98, lng:138.38 , famous:'熱海・浜松' },
+  'JP-23':{  name:'愛知県', kana:'あいちけん',   capital:'名古屋市', lat:35.18, lng:136.91 , famous:'名古屋城・熱田神宮' },
+  'JP-24':{  name:'三重県', kana:'みえけん',     capital:'津市', lat:34.73, lng:136.51 , famous:'伊勢神宮・志摩' },
+  'JP-25':{  name:'滋賀県', kana:'しがけん',     capital:'大津市', lat:35.00, lng:135.87 , famous:'琵琶湖・彦根城' },
+  'JP-26':{  name:'京都府', kana:'きょうとふ',   capital:'京都市', lat:35.02, lng:135.76 , famous:'金閣寺・嵐山・祇園' },
+  'JP-27':{  name:'大阪府', kana:'おおさかふ',   capital:'大阪市', lat:34.69, lng:135.50 , famous:'大阪城・道頓堀' },
+  'JP-28':{  name:'兵庫県', kana:'ひょうごけん', capital:'神戸市', lat:34.69, lng:135.18 , famous:'姫路城・有馬温泉' },
+  'JP-29':{  name:'奈良県', kana:'ならけん',     capital:'奈良市', lat:34.69, lng:135.83 , famous:'東大寺・奈良公園' },
+  'JP-30':{  name:'和歌山県',kana:'わかやまけん',capital:'和歌山市', lat:34.23, lng:135.17 , famous:'高野山・白浜' },
+  'JP-31':{  name:'鳥取県', kana:'とっとりけん', capital:'鳥取市', lat:35.50, lng:134.24 , famous:'鳥取砂丘' },
+  'JP-32':{  name:'島根県', kana:'しまねけん',   capital:'松江市', lat:35.47, lng:133.05 , famous:'出雲大社・松江城' },
+  'JP-33':{  name:'岡山県', kana:'おかやまけん', capital:'岡山市', lat:34.66, lng:133.93 , famous:'倉敷・後楽園' },
+  'JP-34':{  name:'広島県', kana:'ひろしまけん', capital:'広島市', lat:34.40, lng:132.46 , famous:'宮島・原爆ドーム' },
+  'JP-35':{  name:'山口県', kana:'やまぐちけん', capital:'山口市', lat:34.19, lng:131.47 , famous:'下関・秋吉台' },
+  'JP-36':{  name:'徳島県', kana:'とくしまけん', capital:'徳島市', lat:34.07, lng:134.56 , famous:'鳴門の渦潮・祖谷' },
+  'JP-37':{  name:'香川県', kana:'かがわけん',   capital:'高松市', lat:34.34, lng:134.04 , famous:'金刀比羅宮・栗林公園' },
+  'JP-38':{  name:'愛媛県', kana:'えひめけん',   capital:'松山市', lat:33.84, lng:132.77 , famous:'道後温泉・松山城' },
+  'JP-39':{  name:'高知県', kana:'こうちけん',   capital:'高知市', lat:33.56, lng:133.53 , famous:'桂浜・四万十川' },
+  'JP-40':{  name:'福岡県', kana:'ふくおかけん', capital:'福岡市', lat:33.61, lng:130.42 , famous:'博多・太宰府天満宮' },
+  'JP-41':{  name:'佐賀県', kana:'さがけん',     capital:'佐賀市', lat:33.25, lng:130.30 , famous:'吉野ヶ里・嬉野温泉' },
+  'JP-42':{  name:'長崎県', kana:'ながさきけん', capital:'長崎市', lat:32.74, lng:129.87 , famous:'ハウステンボス・出島' },
+  'JP-43':{  name:'熊本県', kana:'くまもとけん', capital:'熊本市', lat:32.79, lng:130.74 , famous:'熊本城・阿蘇山' },
+  'JP-44':{  name:'大分県', kana:'おおいたけん', capital:'大分市', lat:33.24, lng:131.61 , famous:'別府温泉・湯布院' },
+  'JP-45':{  name:'宮崎県', kana:'みやざきけん', capital:'宮崎市', lat:31.91, lng:131.42 , famous:'高千穂峡・青島' },
+  'JP-46':{  name:'鹿児島県',kana:'かごしまけん',capital:'鹿児島市', lat:31.56, lng:130.56 , famous:'桜島・指宿温泉' },
+  'JP-47':{  name:'沖縄県', kana:'おきなわけん', capital:'那覇市', lat:26.21, lng:127.68 , famous:'首里城・美ら海水族館' },
+};
+
+const REGION_INFO = {
+  'ht': { name:'北海道・東北', color:'#4DACD6', prefs:['JP-01','JP-02','JP-03','JP-04','JP-05','JP-06','JP-07'] },
+  'kt': { name:'関東',         color:'#F2A93B', prefs:['JP-08','JP-09','JP-10','JP-11','JP-12','JP-13','JP-14'] },
+  'cb': { name:'中部',         color:'#6BB85C', prefs:['JP-15','JP-16','JP-17','JP-18','JP-19','JP-20','JP-21','JP-22','JP-23'] },
+  'kk': { name:'近畿',         color:'#E2622E', prefs:['JP-24','JP-25','JP-26','JP-27','JP-28','JP-29','JP-30'] },
+  'cs': { name:'中国・四国',   color:'#F0CE2E', prefs:['JP-31','JP-32','JP-33','JP-34','JP-35','JP-36','JP-37','JP-38','JP-39'] },
+  'ko': { name:'九州・沖縄',   color:'#D6347A', prefs:['JP-40','JP-41','JP-42','JP-43','JP-44','JP-45','JP-46','JP-47'] },
+};
+const PREF_TO_REGION = {};
+Object.entries(REGION_INFO).forEach(([rid, r]) => r.prefs.forEach(p => PREF_TO_REGION[p] = rid));
+
+// ── Furigana dictionary: kanji term -> hiragana reading, used for the
+//    hover (desktop) / long-press (touch) tooltip on capital & famous-place names ──
+const FURIGANA = {
+  '札幌市':'さっぽろし', '青森市':'あおもりし', '盛岡市':'もりおかし', '仙台市':'せんだいし',
+  '秋田市':'あきたし', '山形市':'やまがたし', '福島市':'ふくしまし', '水戸市':'みとし',
+  '宇都宮市':'うつのみやし', '前橋市':'まえばしし', '千葉市':'ちばし', '新宿区':'しんじゅくく',
+  '横浜市':'よこはまし', '新潟市':'にいがたし', '富山市':'とやまし', '金沢市':'かなざわし',
+  '福井市':'ふくいし', '甲府市':'こうふし', '長野市':'ながのし', '岐阜市':'ぎふし',
+  '静岡市':'しずおかし', '名古屋市':'なごやし', '津市':'つし', '大津市':'おおつし',
+  '京都市':'きょうとし', '大阪市':'おおさかし', '神戸市':'こうべし', '奈良市':'ならし',
+  '和歌山市':'わかやまし', '鳥取市':'とっとりし', '松江市':'まつえし', '岡山市':'おかやまし',
+  '広島市':'ひろしまし', '山口市':'やまぐちし', '徳島市':'とくしまし', '高松市':'たかまつし',
+  '松山市':'まつやまし', '高知市':'こうちし', '福岡市':'ふくおかし', '佐賀市':'さがし',
+  '長崎市':'ながさきし', '熊本市':'くまもとし', '大分市':'おおいたし', '宮崎市':'みやざきし',
+  '鹿児島市':'かごしまし', '那覇市':'なはし',
+  '札幌':'さっぽろ', '函館':'はこだて', '小樽':'おたる', '弘前':'ひろさき', '十和田湖':'とわだこ',
+  '盛岡':'もりおか', '平泉':'ひらいずみ', '仙台':'せんだい', '松島':'まつしま',
+  '角館':'かくのだて', '田沢湖':'たざわこ', '山寺':'やまでら', '蔵王':'ざおう',
+  '会津若松':'あいづわかまつ', '磐梯山':'ばんだいさん', '偕楽園':'かいらくえん',
+  '日光':'にっこう', '那須':'なす', '草津温泉':'くさつおんせん', '伊香保':'いかほ',
+  '川越':'かわごえ', '秩父':'ちちぶ', '成田':'なりた',
+  '渋谷':'しぶや', '浅草':'あさくさ', '新宿':'しんじゅく',
+  '横浜':'よこはま', '鎌倉':'かまくら', '箱根':'はこね',
+  '佐渡島':'さどがしま', '燕三条':'つばめさんじょう',
+  '立山':'たてやま', '黒部峡谷':'くろべきょうこく',
+  '兼六園':'けんろくえん', '東尋坊':'とうじんぼう', '恐竜博物館':'きょうりゅうはくぶつかん',
+  '富士山':'ふじさん', '河口湖':'かわぐちこ', '軽井沢':'かるいざわ', '松本城':'まつもとじょう',
+  '高山':'たかやま', '白川郷':'しらかわごう', '熱海':'あたみ', '浜松':'はままつ',
+  '名古屋城':'なごやじょう', '熱田神宮':'あつたじんぐう',
+  '伊勢神宮':'いせじんぐう', '志摩':'しま', '琵琶湖':'びわこ', '彦根城':'ひこねじょう',
+  '金閣寺':'きんかくじ', '嵐山':'あらしやま', '祇園':'ぎおん',
+  '大阪城':'おおさかじょう', '道頓堀':'どうとんぼり',
+  '姫路城':'ひめじじょう', '有馬温泉':'ありまおんせん',
+  '東大寺':'とうだいじ', '奈良公園':'ならこうえん', '高野山':'こうやさん', '白浜':'しらはま',
+  '鳥取砂丘':'とっとりさきゅう', '出雲大社':'いずもたいしゃ', '松江城':'まつえじょう',
+  '倉敷':'くらしき', '後楽園':'こうらくえん', '宮島':'みやじま',
+  '下関':'しものせき', '秋吉台':'あきよしだい',
+  '鳴門の渦潮':'なるとのうずしお', '祖谷':'いや',
+  '金刀比羅宮':'ことひらぐう', '栗林公園':'りつりんこうえん',
+  '道後温泉':'どうごおんせん', '松山城':'まつやまじょう',
+  '桂浜':'かつらはま', '四万十川':'しまんとがわ',
+  '博多':'はかた', '太宰府天満宮':'だざいふてんまんぐう',
+  '吉野ヶ里':'よしのがり', '嬉野温泉':'うれしのおんせん', '出島':'でじま',
+  '熊本城':'くまもとじょう', '阿蘇山':'あそさん',
+  '別府温泉':'べっぷおんせん', '湯布院':'ゆふいん',
+  '高千穂峡':'たかちほきょう', '青島':'あおしま',
+  '桜島':'さくらじま', '指宿温泉':'いぶすきおんせん',
+  '首里城':'しゅりじょう', '美ら海水族館':'ちゅらうみすいぞくかん',
+  '原爆ドーム':'げんばくどーむ',
+};
+
+// ── Google Maps link helper (left-side button on study panel & flashcards) ──
+const PIN_ICON = `<svg viewBox="0 0 24 24"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>`;
+function gmapsLink(query) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+function mapButton(query) {
+  const url = gmapsLink(query);
+  return `<a class="map-btn" href="${url}" target="_blank" rel="noopener" title="在 Google 地圖開啟"
+    onclick="event.stopPropagation(); window.open('${url}', '_blank'); return false;">${PIN_ICON}</a>`;
+}
+
+// wrap every ・-separated kanji term with a hover/long-press furigana tooltip span
+function withFurigana(text) {
+  if (!text) return '';
+  return text.split('・').map(term => {
+    const kana = FURIGANA[term];
+    if (!kana) return term;
+    return `<span class="furi-term" data-kana="${kana}">${term}</span>`;
+  }).join('・');
+}
+
+// bind hover (desktop) + long-press (touch) tooltip behaviour to .furi-term spans
+function bindFurigana(root) {
+  root.querySelectorAll('.furi-term').forEach(el => {
+    let tip = null, timer = null;
+    const show = () => {
+      if (tip) return;
+      tip = document.createElement('span');
+      tip.className = 'furi-tooltip';
+      tip.textContent = el.dataset.kana;
+      el.appendChild(tip);
+    };
+    const hide = () => { if (tip) { tip.remove(); tip = null; } };
+    el.addEventListener('mouseenter', show);
+    el.addEventListener('mouseleave', hide);
+    el.addEventListener('touchstart', (e) => {
+      timer = setTimeout(show, 420);
+    }, { passive: true });
+    el.addEventListener('touchend', () => { clearTimeout(timer); hide(); });
+    el.addEventListener('touchcancel', () => { clearTimeout(timer); hide(); });
+  });
+}
+
+// ── Quiz term pool: every kanji term we have a reading for (prefecture
+//    names, capitals, famous places) feeds the flashcard quiz. ────────────
+const QUIZ_POOL = (() => {
+  const pool = [];
+  const seen = new Set();
+  Object.entries(PREF_DATA).forEach(([pid, p]) => {
+    const rid = PREF_TO_REGION[pid];
+    if (!seen.has(p.name)) { pool.push({ term: p.name, kana: p.kana, rid, type: 'name', pref: p.name }); seen.add(p.name); }
+    if (FURIGANA[p.capital] && !seen.has(p.capital)) { pool.push({ term: p.capital, kana: FURIGANA[p.capital], rid, type: 'capital', pref: p.name }); seen.add(p.capital); }
+    (p.famous || '').split('・').forEach(t => {
+      if (FURIGANA[t] && !seen.has(t)) { pool.push({ term: t, kana: FURIGANA[t], rid, type: 'famous', pref: p.name }); seen.add(t); }
+    });
+  });
+  return pool;
+})();
+
+// ── State ───────────────────────────────────────────────────────────────
+let appMode = 'study'; // 'study' | 'cards' | 'quiz'
+let regionId = null, selectedPref = null, mastered = {};
+let flashQuiz = null, quizScope = null;
+let cardsState = null;
+
+function shuffle(a) {
+  const arr = a.slice();
+  for (let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+function renderTopToggle() {
+  return `<div class="top-toggle-row"><div class="modes">
+    <button class="mode-btn ${appMode==='study'?'active':''}" onclick="setAppMode('study')">學習</button>
+    <button class="mode-btn ${appMode==='cards'?'active':''}" onclick="setAppMode('cards')">單字卡</button>
+    <button class="mode-btn ${appMode==='quiz'?'active':''}" onclick="setAppMode('quiz')">測驗</button>
+  </div></div>`;
+}
+
+window.setAppMode = function(m) {
+  appMode = m;
+  if (m === 'quiz') { quizScope = null; flashQuiz = null; renderQuizScopeSelect(); }
+  else if (m === 'cards') { cardsState = null; renderCardsScopeSelect(); }
+  else { regionId = null; selectedPref = null; renderSelect(); }
+};
+
+// ── Shared scope-selection screen (used by both quiz and flashcard mode) ──
+function renderScopeSelect(promptText, onPick) {
+  const scopeOptions = [
+    { key: 'all', label: '全國 47 都道府県' },
+    ...Object.entries(REGION_INFO).map(([rid, r]) => ({ key: rid, label: r.name })),
+  ];
+  const btns = scopeOptions.map(o =>
+    `<button class="quiz-opt" onclick="${onPick}('${o.key}')">${o.label}</button>`
+  ).join('');
+  document.getElementById('screen').innerHTML = renderTopToggle() + `
+    <div class="legend-note">／ ${promptText} ／</div>
+    <div class="quiz-options">${btns}</div>`;
+}
+
+// ── Quiz scope selection screen ───────────────────────────────────────────
+function renderQuizScopeSelect() {
+  renderScopeSelect('請選擇測驗範圍', 'startFlashQuiz');
+}
+
+// ── Flashcard quiz: show a kanji term, pick the correct hiragana reading ──
+function buildOptions(q) {
+  const distractorsPool = QUIZ_POOL.filter(x => x.kana !== q.kana);
+  const distractors = shuffle(distractorsPool).slice(0, 3).map(x => x.kana);
+  return shuffle([q.kana, ...distractors]);
+}
+
+function startFlashQuiz(scope) {
+  quizScope = scope;
+  const pool = scope === 'all' ? QUIZ_POOL : QUIZ_POOL.filter(x => x.rid === scope);
+  const order = shuffle(pool).slice(0, Math.min(12, pool.length));
+  flashQuiz = {
+    queue: order.slice(1), current: order[0],
+    correct: 0, wrong: 0, total: order.length, answered: false, chosen: null,
+  };
+  flashQuiz.options = buildOptions(flashQuiz.current);
+  renderFlashQuiz();
+}
+window.startFlashQuiz = startFlashQuiz;
+
+window.answerFlash = function(choice) {
+  if (!flashQuiz || flashQuiz.answered) return;
+  flashQuiz.answered = true;
+  flashQuiz.chosen = choice;
+  if (choice === flashQuiz.current.kana) flashQuiz.correct++; else flashQuiz.wrong++;
+  renderFlashQuiz();
+  setTimeout(() => {
+    if (flashQuiz.queue.length > 0) {
+      flashQuiz.current = flashQuiz.queue.shift();
+      flashQuiz.options = buildOptions(flashQuiz.current);
+      flashQuiz.answered = false; flashQuiz.chosen = null;
+    } else {
+      flashQuiz.current = null;
+    }
+    renderFlashQuiz();
+  }, 900);
+};
+
+function renderFlashQuiz() {
+  let body;
+  if (!flashQuiz.current) {
+    const perfect = flashQuiz.wrong === 0;
+    body = `<div class="panel"><div class="result">
+      <div class="big">${perfect ? '🎉 滿分！' : '測驗完成'}</div>
+      <div class="sub">共 ${flashQuiz.total} 題，答對 ${flashQuiz.correct} 題</div>
+      <button class="btn-retry" onclick="startFlashQuiz('${quizScope}')">再測一次</button>
+      <button class="btn-back" style="margin-top:10px;" onclick="renderQuizScopeSelect()">更換範圍</button>
+    </div></div>`;
+  } else {
+    const q = flashQuiz.current;
+    const optsHtml = flashQuiz.options.map(opt => {
+      let cls = 'quiz-opt';
+      if (flashQuiz.answered) {
+        if (opt === q.kana) cls += ' opt-correct';
+        else if (opt === flashQuiz.chosen) cls += ' opt-wrong';
+      }
+      return `<button class="${cls}" ${flashQuiz.answered ? 'disabled' : ''} onclick="answerFlash('${opt}')">${opt}</button>`;
+    }).join('');
+    body = `
+      <div class="flash-progress"><span class="score-badge">第 ${flashQuiz.total - flashQuiz.queue.length}／${flashQuiz.total} 題　得分 ${flashQuiz.correct}</span></div>
+      <div class="flash-card">
+        <div class="flash-term">${q.term}</div>
+        <div class="flash-sub">這個怎麼念？選出正確的平假名</div>
+        ${q.type === 'famous' ? `<div class="card-hint">${q.pref}</div>` : ''}
+      </div>
+      <div class="quiz-options">${optsHtml}</div>`;
+  }
+  document.getElementById('screen').innerHTML = renderTopToggle() + body;
+}
+window.renderQuizScopeSelect = renderQuizScopeSelect;
+
+// ── Flashcard browsing mode: tap a card to flip between kanji and kana ────
+function renderCardsScopeSelect() {
+  renderScopeSelect('請選擇單字卡範圍', 'startFlashCards');
+}
+window.renderCardsScopeSelect = renderCardsScopeSelect;
+
+function startFlashCards(scope) {
+  const pool = scope === 'all' ? QUIZ_POOL : QUIZ_POOL.filter(x => x.rid === scope);
+  cardsState = { scope, order: shuffle(pool), index: 0, flipped: false };
+  renderFlashCards();
+}
+window.startFlashCards = startFlashCards;
+
+window.flipCard = () => { if (!cardsState) return; cardsState.flipped = !cardsState.flipped; renderFlashCards(); };
+window.nextCard = () => {
+  if (!cardsState) return;
+  cardsState.index = (cardsState.index + 1) % cardsState.order.length;
+  cardsState.flipped = false; renderFlashCards();
+};
+window.prevCard = () => {
+  if (!cardsState) return;
+  cardsState.index = (cardsState.index - 1 + cardsState.order.length) % cardsState.order.length;
+  cardsState.flipped = false; renderFlashCards();
+};
+window.shuffleCards = () => {
+  if (!cardsState) return;
+  cardsState.order = shuffle(cardsState.order); cardsState.index = 0; cardsState.flipped = false;
+  renderFlashCards();
+};
+
+function renderFlashCards() {
+  const card = cardsState.order[cardsState.index];
+  const mapQuery = card.type === 'famous' ? `${card.pref} ${card.term}` : card.term;
+  const body = `
+    <div class="flash-progress"><span class="score-badge">第 ${cardsState.index + 1}／${cardsState.order.length} 張</span></div>
+    <div class="flash-card" style="cursor:pointer;" onclick="flipCard()">
+      ${mapButton(mapQuery)}
+      <div class="flash-term">${cardsState.flipped ? card.kana : card.term}</div>
+      <div class="flash-sub">${cardsState.flipped ? '點擊看漢字' : '點擊看平假名'}</div>
+      ${card.type === 'famous' ? `<div class="card-hint">${card.pref}</div>` : ''}
+    </div>
+    <div style="display:flex; gap:10px; margin-top:14px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn-back" onclick="prevCard()">← 上一個</button>
+      <button class="btn-back" onclick="shuffleCards()">洗牌</button>
+      <button class="btn-back" onclick="nextCard()">下一個 →</button>
+    </div>
+    <div style="text-align:center; margin-top:10px;">
+      <button class="btn-back" onclick="renderCardsScopeSelect()">更換範圍</button>
+    </div>`;
+  document.getElementById('screen').innerHTML = renderTopToggle() + body;
+}
+
+// ── Raw grid placement from real lat/lng (collision-resolved, no connectivity fix yet) ──
+function rawGridPlacement(prefIds) {
+  const MEAN_LAT = 36.5;
+  const cosLat = Math.cos(MEAN_LAT * Math.PI / 180);
+  const pts = prefIds.map(id => {
+    const p = PREF_DATA[id];
+    return { id, rx: p.lng * cosLat, ry: -p.lat };
+  });
+  const minX = Math.min(...pts.map(p=>p.rx)), maxX = Math.max(...pts.map(p=>p.rx));
+  const minY = Math.min(...pts.map(p=>p.ry)), maxY = Math.max(...pts.map(p=>p.ry));
+  const spanX = Math.max(maxX-minX, 0.01), spanY = Math.max(maxY-minY, 0.01);
+  const n = pts.length;
+  const bin = Math.sqrt((spanX*spanY) / n) * 0.92;
+
+  const occupied = new Map();
+  const cellOf = {};
+  const ordered = pts.slice().sort((a,b) => a.ry - b.ry);
+  ordered.forEach(p => {
+    let col = Math.round((p.rx - minX) / bin);
+    let row = Math.round((p.ry - minY) / bin);
+    if (!occupied.has(col+','+row)) {
+      occupied.set(col+','+row, p.id);
+      cellOf[p.id] = { col, row };
+      return;
+    }
+    let placed = false;
+    for (let radius = 1; radius <= 10 && !placed; radius++) {
+      for (let dx = -radius; dx <= radius && !placed; dx++) {
+        for (let dy = -radius; dy <= radius && !placed; dy++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) continue;
+          const c = col+dx, r = row+dy;
+          const key = c+','+r;
+          if (!occupied.has(key)) {
+            occupied.set(key, p.id);
+            cellOf[p.id] = { col: c, row: r };
+            placed = true;
+          }
+        }
+      }
+    }
+    if (!placed) { cellOf[p.id] = { col, row }; occupied.set(col+','+row+'_f', p.id); }
+  });
+  return cellOf;
+}
+
+function normalizeCells(cellOf, prefIds) {
+  const cols = prefIds.map(id=>cellOf[id].col);
+  const rows = prefIds.map(id=>cellOf[id].row);
+  const minCol = Math.min(...cols), minRow = Math.min(...rows);
+  const out = {};
+  prefIds.forEach(id => { out[id] = { col: cellOf[id].col-minCol, row: cellOf[id].row-minRow }; });
+  return { cells: out, cols: Math.max(...cols)-minCol+1, rows: Math.max(...rows)-minRow+1 };
+}
+
+// single-region grid: build + make sure it's all one connected blob
+function buildGrid(prefIds) {
+  const cellOf = rawGridPlacement(prefIds);
+  ensureConnected(cellOf, prefIds);
+  return normalizeCells(cellOf, prefIds);
+}
+
+// whole-country grid: ALL prefectures share one grid (one connected landmass),
+// each region's own tiles are repaired to stay mutually touching.
+function buildWholeCountryGrid(allIds, regionOfId) {
+  const cellOf = rawGridPlacement(allIds);
+  ensureRegionsConnected(cellOf, allIds, regionOfId);
+  return normalizeCells(cellOf, allIds);
+}
+
+// ── Connectivity repair: make sure every cell in the set forms ONE
+//    4-directionally connected blob (same-color tiles always touch). ──────
+function ensureConnected(cellOf, ids) {
+  const key = (c,r) => c+','+r;
+  const neighbors = (c,r) => [[c+1,r],[c-1,r],[c,r+1],[c,r-1]];
+  function occupiedMap() {
+    const m = {};
+    ids.forEach(id => { m[key(cellOf[id].col, cellOf[id].row)] = id; });
+    return m;
+  }
+  function components(occ) {
+    const visited = new Set(); const comps = [];
+    ids.forEach(id => {
+      if (visited.has(id)) return;
+      const comp = []; const stack = [id]; visited.add(id);
+      while (stack.length) {
+        const cur = stack.pop(); comp.push(cur);
+        const { col, row } = cellOf[cur];
+        neighbors(col,row).forEach(([c,r]) => {
+          const nid = occ[key(c,r)];
+          if (nid && !visited.has(nid)) { visited.add(nid); stack.push(nid); }
+        });
+      }
+      comps.push(comp);
+    });
+    return comps;
+  }
+  let guard = 0;
+  while (guard < 200) {
+    guard++;
+    let occ = occupiedMap();
+    let comps = components(occ);
+    if (comps.length <= 1) break;
+    comps.sort((a,b) => b.length - a.length);
+    const main = comps[0];
+    const strayId = comps[1][0];
+    let target = null;
+    outer:
+    for (const mid of main) {
+      const { col, row } = cellOf[mid];
+      for (const [c,r] of neighbors(col,row)) {
+        if (!occ[key(c,r)]) { target = [c,r]; break outer; }
+      }
+    }
+    if (!target) break;
+    cellOf[strayId] = { col: target[0], row: target[1] };
+  }
+}
+
+// ── Multi-region connectivity repair on ONE shared grid: keeps the whole
+//    map as a single touching landmass while making sure every region's
+//    own tiles are mutually connected (same colour always touches). ──────
+function ensureRegionsConnected(cellOf, allIds, regionOfId) {
+  const key = (c,r) => c+','+r;
+  const neighbors = (c,r) => [[c+1,r],[c-1,r],[c,r+1],[c,r-1]];
+  function occupiedMap() {
+    const m = {};
+    allIds.forEach(id => { m[key(cellOf[id].col, cellOf[id].row)] = id; });
+    return m;
+  }
+  function regionComponents(rid) {
+    const ids = allIds.filter(id => regionOfId[id] === rid);
+    const occ = occupiedMap();
+    const visited = new Set(); const comps = [];
+    ids.forEach(id => {
+      if (visited.has(id)) return;
+      const comp = []; const stack = [id]; visited.add(id);
+      while (stack.length) {
+        const cur = stack.pop(); comp.push(cur);
+        const { col, row } = cellOf[cur];
+        neighbors(col,row).forEach(([c,r]) => {
+          const nid = occ[key(c,r)];
+          if (nid && regionOfId[nid] === rid && !visited.has(nid)) { visited.add(nid); stack.push(nid); }
+        });
+      }
+      comps.push(comp);
+    });
+    return comps;
+  }
+  const regionIds = [...new Set(allIds.map(id => regionOfId[id]))];
+  for (let pass = 0; pass < 4; pass++) {
+    let anyMoved = false;
+    for (const rid of regionIds) {
+      let tries = 0;
+      while (tries < 60) {
+        tries++;
+        const comps = regionComponents(rid);
+        if (comps.length <= 1) break;
+        comps.sort((a,b) => b.length - a.length);
+        const main = comps[0];
+        const strayId = comps[1][0];
+        const occ = occupiedMap();
+        let target = null;
+        outer:
+        for (const mid of main) {
+          const { col, row } = cellOf[mid];
+          for (const [c,r] of neighbors(col,row)) {
+            if (!occ[key(c,r)]) { target = [c,r]; break outer; }
+          }
+        }
+        if (!target) break;
+        cellOf[strayId] = { col: target[0], row: target[1] };
+        anyMoved = true;
+      }
+    }
+    if (!anyMoved) break;
+  }
+}
+
+function tileRectPath(x, y, w, h, r) {
+  return `M${x+r},${y} h${w-2*r} a${r},${r} 0 0 1 ${r},${r} v${h-2*r} a${r},${r} 0 0 1 ${-r},${r} h${-(w-2*r)} a${r},${r} 0 0 1 ${-r},${-r} v${-(h-2*r)} a${r},${r} 0 0 1 ${r},${-r} Z`;
+}
+function okinawaPath(cx, cy, r) {
+  return tileRectPath(cx-r, cy-r*0.7, r*2, r*1.4, 6);
+}
+
+// ── Select screen ────────────────────────────────────────────────────────
+function renderSelect() {
+  const cellPx = 38, gap = 3, padOuter = 20;
+  const allIds = Object.keys(PREF_DATA).filter(id => id !== 'JP-47');
+  const { cells, cols, rows } = buildWholeCountryGrid(allIds, PREF_TO_REGION);
+  const W = cols*cellPx + padOuter*2, H = rows*cellPx + padOuter*2;
+
+  const shapes = allIds.map(id => {
+    const rid = PREF_TO_REGION[id];
+    const color = REGION_INFO[rid].color;
+    const c = cells[id];
+    const x = padOuter + c.col*cellPx + gap/2;
+    const y = padOuter + c.row*cellPx + gap/2;
+    const w = cellPx - gap, h = cellPx - gap;
+    return `<g onclick="clickRegion('${rid}')">
+      <path class="pref-shape" d="${tileRectPath(x,y,w,h,5)}" fill="${color}"/>
+    </g>`;
+  }).join('');
+
+  const regionLabels = Object.entries(REGION_INFO).map(([rid, r]) => {
+    const ids = r.prefs.filter(id => id !== 'JP-47');
+    let cx=0, cy=0;
+    ids.forEach(id => { const c = cells[id]; cx += padOuter + (c.col+0.5)*cellPx; cy += padOuter + (c.row+0.5)*cellPx; });
+    cx/=ids.length; cy/=ids.length;
+    const tw = r.name.length * 14 + 24;
+    return `<g pointer-events="none">
+      <rect x="${cx-tw/2}" y="${cy-14}" width="${tw}" height="28" rx="14" fill="var(--card)" stroke="${r.color}" stroke-width="2" opacity="0.95"/>
+      <text x="${cx}" y="${cy+1}" class="region-label-text" font-size="13">${r.name}</text>
+    </g>`;
+  }).join('');
+
+  const okFill = REGION_INFO.ko.color;
+  const okW=64, okH=46;
+  const okX = padOuter, okY = padOuter;
+  const okInset = `
+    <g onclick="clickRegion('ko')">
+      <path class="pref-shape" d="${tileRectPath(okX,okY,okW,okH,5)}" fill="${okFill}"/>
+      <text class="pref-label" x="${okX+okW/2}" y="${okY+okH/2}" font-size="13">沖縄県</text>
+    </g>`;
+
+  document.getElementById('screen').innerHTML = renderTopToggle() + `
+    <div class="legend-note">／ 請點選一個地區開始探索都道府県 ／</div>
+    <div class="map-wrap">
+      <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        ${shapes}
+        ${regionLabels}
+        ${okInset}
+      </svg>
+    </div>`;
+}
+
+window.clickRegion = function(rid) {
+  regionId = rid; selectedPref = null;
+  renderDetail();
+};
+
+// ── Detail screen ────────────────────────────────────────────────────────
+function renderDetail() {
+  const r = REGION_INFO[regionId];
+  const ids = r.prefs.filter(id => id !== 'JP-47');
+  const { cells, cols, rows } = buildGrid(ids);
+  const cellPx = 68, gap = 4, padOuter = 20;
+  const okW=130, okH=90;
+  const W = cols*cellPx + padOuter*2, H = rows*cellPx + padOuter*2;
+
+  const shapes = ids.map(id => {
+    const fill = r.color;
+    const selClass = selectedPref === id ? ' selected' : '';
+    const c = cells[id];
+    const x = padOuter + c.col*cellPx + gap/2;
+    const y = padOuter + c.row*cellPx + gap/2;
+    const w = cellPx - gap, h = cellPx - gap;
+    const pname = PREF_DATA[id].name;
+    const pkana = PREF_DATA[id].kana;
+    const fontSize = pname.length <= 3 ? 16 : 14;
+    const showKana = selectedPref === id;
+    const labelSvg = showKana
+      ? `<text class="pref-label" x="${x+w/2}" y="${y+h/2-9}" font-size="${fontSize}">${pname}</text>
+         <text class="pref-label" x="${x+w/2}" y="${y+h/2+11}" font-size="11" font-weight="500">${pkana}</text>`
+      : `<text class="pref-label" x="${x+w/2}" y="${y+h/2}" font-size="${fontSize}">${pname}</text>`;
+    return `
+      <g onclick="clickPref('${id}')">
+        <path class="pref-shape${selClass}" d="${tileRectPath(x,y,w,h,8)}" fill="${fill}"/>
+        ${labelSvg}
+      </g>`;
+  }).join('');
+
+  let okInset = '';
+  if (regionId === 'ko') {
+    const pid = 'JP-47';
+    const fill = r.color;
+    const selClass = selectedPref === pid ? ' selected' : '';
+    const okX = padOuter, okY = padOuter;
+    const okOw = cellPx - gap, okOh = cellPx - gap;
+    okInset = `
+      <g onclick="clickPref('${pid}')">
+        <path class="pref-shape${selClass}" d="${tileRectPath(okX,okY,okOw,okOh,8)}" fill="${fill}"/>
+        <text class="pref-label" x="${okX+okOw/2}" y="${okY+okOh/2}" font-size="14">沖縄県</text>
+      </g>`;
+  }
+
+  const toolbar = `
+    <div class="toolbar">
+      <button class="btn-back" onclick="goBack()">← 返回地區選擇</button>
+      <div></div>
+      <div></div>
+    </div>`;
+
+  let panel = '';
+  if (selectedPref) {
+    const p = PREF_DATA[selectedPref];
+    panel = `<div class="panel">
+      ${mapButton(p.name)}
+      <div class="pref-name">${p.name}</div>
+      <div class="pref-kana">${p.kana}</div>
+      <div class="pref-row"><b>県庁所在地</b><span>${withFurigana(p.capital)}</span></div>
+      <div class="pref-row"><b>有名な場所</b><span>${withFurigana(p.famous || '')}</span></div>
+    </div>`;
+  } else {
+    panel = `<div class="panel"><div class="panel-empty">點選地圖上的縣份，查看名稱、縣廳所在地與知名城市/景點</div></div>`;
+  }
+
+  document.getElementById('screen').innerHTML = renderTopToggle() + `
+    ${toolbar}
+    <div class="map-wrap" style="max-width:460px; margin:0 auto;">
+      <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        ${shapes}
+        ${okInset}
+      </svg>
+    </div>
+    ${panel}`;
+  bindFurigana(document.getElementById('screen'));
+}
+
+window.goBack = () => { regionId=null; selectedPref=null; renderSelect(); };
+
+window.clickPref = function(pid) {
+  selectedPref = pid;
+  renderDetail();
+};
+
+// ── Dark / light theme toggle (simple line-icon sun/moon) ────────────────
+let isDark = false;
+const SUN_ICON = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>`;
+const MOON_ICON = `<svg viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>`;
+function applyTheme() {
+  document.body.classList.toggle('dark', isDark);
+  document.getElementById('themeToggleBtn').innerHTML = isDark ? SUN_ICON : MOON_ICON;
+}
+window.toggleTheme = function() { isDark = !isDark; applyTheme(); };
+applyTheme();
+
+renderSelect();
+</script>
+</body>
+</html>

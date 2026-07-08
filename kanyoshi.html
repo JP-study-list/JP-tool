@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日文慣用句學習卡片</title>
+<style>
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f4f0;
+    --bg-tertiary: #efeee8;
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --text-tertiary: #888780;
+    --text-info: #185fa5;
+    --text-success: #27500a;
+    --text-danger: #791f1f;
+    --bg-success: #eaf3de;
+    --bg-danger: #fcebeb;
+    --border-tertiary: rgba(0,0,0,0.12);
+    --border-secondary: rgba(0,0,0,0.25);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  html[data-theme="dark"] {
+    --bg-primary: #2c2c2a;
+    --bg-secondary: #232321;
+    --bg-tertiary: #1c1c1a;
+    --text-primary: #f1efe8;
+    --text-secondary: #b4b2a9;
+    --text-tertiary: #888780;
+    --text-info: #85b7eb;
+    --text-success: #c0dd97;
+    --text-danger: #f7c1c1;
+    --bg-success: #173404;
+    --bg-danger: #501313;
+    --border-tertiary: rgba(255,255,255,0.15);
+    --border-secondary: rgba(255,255,255,0.3);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1.5rem;
+    background: var(--bg-tertiary);
+    font-family: "Hiragino Sans", "Noto Sans CJK TC", "Microsoft JhengHei", system-ui, sans-serif;
+    color: var(--text-primary);
+    transition: background 0.2s, color 0.2s;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.25rem;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0 0 0.25rem;
+  }
+  #theme-toggle {
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-secondary);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  #theme-toggle:hover { background: var(--bg-secondary); }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem;
+  }
+  #cat-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  #cat-bar button {
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-secondary);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  #cat-bar button:hover { background: var(--bg-secondary); }
+  #cat-bar button.active {
+    background: var(--bg-secondary);
+    border-color: var(--border-secondary);
+    font-weight: 500;
+  }
+  #level-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  #level-bar button {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-tertiary);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  #level-bar button:hover { background: var(--bg-secondary); }
+  #level-bar button.active {
+    background: var(--text-info);
+    border-color: var(--text-info);
+    color: var(--bg-primary);
+    font-weight: 500;
+  }
+  #mode-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1rem;
+  }
+  #mode-bar button {
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-tertiary);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  #mode-bar button:hover { background: var(--bg-secondary); }
+  #mode-bar button.active {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+    color: var(--bg-primary);
+    font-weight: 500;
+  }
+  .quiz-card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-tertiary);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .quiz-progress {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 0.75rem;
+  }
+  .quiz-question {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    text-align: center;
+  }
+  .quiz-question-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .quiz-option {
+    font-size: 14px;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-tertiary);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    line-height: 1.5;
+  }
+  .quiz-option:hover { background: var(--bg-secondary); }
+  .quiz-option.correct {
+    background: var(--bg-success);
+    border-color: var(--text-success);
+    color: var(--text-success);
+    font-weight: 500;
+  }
+  .quiz-option.wrong {
+    background: var(--bg-danger);
+    border-color: var(--text-danger);
+    color: var(--text-danger);
+    font-weight: 500;
+  }
+  .quiz-option:disabled { cursor: default; }
+  .quiz-next {
+    margin-top: 1.25rem;
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-secondary);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .quiz-next:hover { background: var(--bg-tertiary); }
+  .quiz-empty {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding: 3rem 1rem;
+  }
+  .quiz-score {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .quiz-score .score-num {
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .quiz-score .score-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .level-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  #card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-tertiary);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: border-color 0.15s;
+  }
+  .card:hover { border-color: var(--border-secondary); }
+  .card-tag {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+  .idiom-front {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .reading-front {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+  .hint {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .idiom-back {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .meaning {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .example {
+    font-size: 13px;
+    color: var(--text-info);
+    margin-bottom: 4px;
+  }
+  .trans {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin-left: 6px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-tertiary);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    vertical-align: -5px;
+    flex-shrink: 0;
+  }
+  .speak-btn svg { display: block; }
+  .speak-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+  .speak-btn.playing { color: var(--text-info); border-color: var(--text-info); }
+  .speak-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .example-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+  .example-row .example { margin-bottom: 0; flex: 1; }
+  .idiom-front-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 6px;
+  }
+  .idiom-front-row .idiom-front { margin-bottom: 0; }
+  .quiz-question-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 0.25rem;
+  }
+  .quiz-question-row .quiz-question { margin-bottom: 0; }
+  .footer-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  #reset-btn {
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-secondary);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  #reset-btn:hover { background: var(--bg-secondary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header-row">
+    <div>
+      <h1>日文慣用句學習卡片</h1>
+      <p class="subtitle">依情境分類 · N5-N1 程度 · 三種模式練習</p>
+    </div>
+    <button id="theme-toggle" aria-label="切換晝夜模式" title="切換晝夜模式">☀</button>
+  </div>
+
+  <div id="mode-bar"></div>
+  <div id="cat-bar"></div>
+  <div id="level-bar"></div>
+
+  <div id="card-grid"></div>
+  <div id="quiz-area" style="display:none;"></div>
+
+  <div class="footer-bar">
+    <span id="progress-label">0 / 0 看過</span>
+    <button id="reset-btn">重新洗牌</button>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  "職場": [
+    {idiom:"頑張る", reading:"がんばる", level:"n5", meaning:"努力、加油，盡力做好一件事。", example:"明日のテストのために頑張ります。", trans:"為了明天的考試會努力的。"},
+    {idiom:"お疲れ様です", reading:"おつかれさまです", level:"n5", meaning:"職場常用問候語，慰勞對方的辛苦，下班或工作中都可使用。", example:"今日も一日お疲れ様でした。", trans:"今天一天也辛苦了。"},
+    {idiom:"手伝う", reading:"てつだう", level:"n5", meaning:"幫忙、協助別人做事。", example:"忙しそうなので手伝いましょう。", trans:"看起來很忙，我來幫忙吧。"},
+    {idiom:"気をつける", reading:"きをつける", level:"n4", meaning:"小心、注意，留意安全或細節。", example:"仕事中は事故に気をつけてください。", trans:"工作中請小心注意意外。"},
+    {idiom:"頭が上がらない", reading:"あたまがあがらない", level:"n2", meaning:"因為欠人情或實力不如人，在對方面前無法擺出強硬態度、抬不起頭。", example:"いつも助けてもらっているので、彼女には頭が上がらない。", trans:"因為總是受她幫助，在她面前抬不起頭來。"},
+    {idiom:"骨が折れる", reading:"ほねがおれる", level:"n2", meaning:"形容事情非常費力、辛苦麻煩。", example:"この資料を一人でまとめるのは骨が折れる。", trans:"一個人整理這份資料很費力。"},
+    {idiom:"板に付く", reading:"いたにつく", level:"n1", meaning:"經驗或技能熟練到與身份、職位相稱，做起來很自然。", example:"課長になって一年、もう板に付いている。", trans:"當課長一年了，已經很有架式了。"},
+    {idiom:"水に流す", reading:"みずにながす", level:"n2", meaning:"把過去的糾紛、過錯當作沒發生過，一筆勾銷。", example:"昔のことは水に流して、これから頑張りましょう。", trans:"過去的事就一筆勾銷，從現在開始努力吧。"}
+  ],
+  "日常對話": [
+    {idiom:"お元気ですか", reading:"おげんきですか", level:"n5", meaning:"最基本的問候語，詢問對方近況是否健康、過得好嗎。", example:"久しぶりですね。お元気ですか。", trans:"好久不見了，你最近好嗎？"},
+    {idiom:"気にしない", reading:"きにしない", level:"n5", meaning:"不在意、不放在心上，常用來安慰對方。", example:"小さいミスだから気にしないでください。", trans:"只是小失誤，請不要在意。"},
+    {idiom:"楽しみにする", reading:"たのしみにする", level:"n4", meaning:"期待、盼望某件即將發生的事。", example:"今度の旅行を楽しみにしています。", trans:"很期待這次的旅行。"},
+    {idiom:"気が合う", reading:"きがあう", level:"n3", meaning:"彼此性格、想法投合，相處愉快。", example:"彼とは初めて会った時から気が合った。", trans:"和他第一次見面就很合得來。"},
+    {idiom:"目が離せない", reading:"めがはなせない", level:"n2", meaning:"因為太擔心或太精彩而不能將視線移開，需要一直注意。", example:"小さい子供は目が離せない。", trans:"小孩子一刻也不能不看著。"},
+    {idiom:"口が滑る", reading:"くちがすべる", level:"n2", meaning:"不小心說出不該說的話。", example:"つい口が滑って、秘密を話してしまった。", trans:"不小心說溜嘴，把秘密說出去了。"},
+    {idiom:"耳が痛い", reading:"みみがいたい", level:"n2", meaning:"聽到別人說中自己的缺點或弱點，感到不好意思。", example:"その指摘は耳が痛い。", trans:"那個指正真讓人不好意思（說中要害）。"}
+  ],
+  "情緒感受": [
+    {idiom:"嬉しい", reading:"うれしい", level:"n5", meaning:"開心、高興，表達正面的喜悅情緒。", example:"プレゼントをもらって嬉しいです。", trans:"收到禮物很開心。"},
+    {idiom:"心配する", reading:"しんぱいする", level:"n5", meaning:"擔心、憂慮某件事或某個人。", example:"連絡がないので心配しています。", trans:"因為沒有聯絡而感到擔心。"},
+    {idiom:"びっくりする", reading:"びっくりする", level:"n4", meaning:"嚇一跳、感到驚訝。", example:"急に名前を呼ばれてびっくりした。", trans:"突然被叫到名字嚇了一跳。"},
+    {idiom:"肩の荷が下りる", reading:"かたのにがおりる", level:"n2", meaning:"卸下責任或負擔後感到輕鬆。", example:"プロジェクトが終わって、肩の荷が下りた。", trans:"專案結束後，肩上的負擔卸下了。"},
+    {idiom:"胸を撫でる", reading:"むねをなでる", level:"n1", meaning:"擔心的事情解決後鬆一口氣（常用「胸を撫で下ろす」）。", example:"無事に着いたと聞いて胸を撫で下ろした。", trans:"聽說平安抵達後鬆了一口氣。"},
+    {idiom:"気が重い", reading:"きがおもい", level:"n3", meaning:"心情沉重，對要做的事感到有壓力、不情願。", example:"明日の会議のことを考えると気が重い。", trans:"一想到明天的會議就心情沉重。"},
+    {idiom:"腹が立つ", reading:"はらがたつ", level:"n3", meaning:"生氣、憤怒。", example:"あの態度には本当に腹が立つ。", trans:"那種態度真讓人生氣。"}
+  ],
+  "人際關係": [
+    {idiom:"仲がいい", reading:"なかがいい", level:"n5", meaning:"關係好、感情融洽。", example:"彼女とは昔から仲がいい。", trans:"和她從以前感情就很好。"},
+    {idiom:"お世話になる", reading:"おせわになる", level:"n4", meaning:"受到對方的照顧、幫助，常用於正式或客氣的表達。", example:"留学中は先生にお世話になりました。", trans:"留學期間受到老師的照顧。"},
+    {idiom:"気を使う", reading:"きをつかう", level:"n3", meaning:"為了顧及對方感受而費心、小心應對。", example:"上司には何かと気を使ってしまう。", trans:"對上司總是要費心應對。"},
+    {idiom:"顔が広い", reading:"かおがひろい", level:"n2", meaning:"認識的人很多，人脈廣。", example:"彼は業界で顔が広い。", trans:"他在業界人脈很廣。"},
+    {idiom:"足を引っ張る", reading:"あしをひっぱる", level:"n2", meaning:"拖累別人，妨礙他人順利進行事情。", example:"私のミスでチームの足を引っ張ってしまった。", trans:"因為我的失誤拖累了團隊。"},
+    {idiom:"気を遣う", reading:"きをつかう", level:"n3", meaning:"細心顧慮對方的心情或立場。", example:"新人には気を遣って優しく教える。", trans:"對新人會細心顧慮、溫和教導。"}
+  ],
+  "金錢與時間": [
+    {idiom:"時間がない", reading:"じかんがない", level:"n5", meaning:"沒有時間，時間不夠用。", example:"今日は時間がないので、また連絡します。", trans:"今天沒有時間，之後再聯絡。"},
+    {idiom:"お金がかかる", reading:"おかねがかかる", level:"n4", meaning:"花費金錢，某件事需要支出。", example:"子供の教育にはお金がかかる。", trans:"養育孩子的教育費用很高。"},
+    {idiom:"懐が痛い", reading:"ふところがいたい", level:"n2", meaning:"花費金錢讓自己經濟上感到吃力。", example:"この買い物は懐が痛い。", trans:"這次購物讓錢包很吃緊。"},
+    {idiom:"時間に追われる", reading:"じかんにおわれる", level:"n3", meaning:"被時間追趕，忙得沒有餘裕。", example:"締め切り前は時間に追われている。", trans:"截止日前被時間追著跑。"},
+    {idiom:"財布の紐が固い", reading:"さいふのひもがかたい", level:"n1", meaning:"花錢謹慎、不輕易花費。", example:"彼は財布の紐が固いので、無駄遣いしない。", trans:"他花錢謹慎，不會亂花。"}
+  ]
+};
+
+const LEVEL_LABELS = { n5: "N5", n4: "N4", n3: "N3", n2: "N2", n1: "N1" };
+const LEVEL_ORDER = ["n5", "n4", "n3", "n2", "n1"];
+
+const state = {
+  seen: new Set(), order: [], flipped: new Set(),
+  catFilter: 'all', levelFilter: 'all',
+  mode: 'cards',
+  quizPool: [], quizIndex: 0, quizScore: 0, quizAnswered: false
+};
+
+let japaneseVoice = null;
+function loadJapaneseVoice() {
+  if (!window.speechSynthesis) return;
+  const voices = window.speechSynthesis.getVoices();
+  japaneseVoice = voices.find(v => v.lang === 'ja-JP') || voices.find(v => v.lang && v.lang.startsWith('ja')) || null;
+}
+if (window.speechSynthesis) {
+  loadJapaneseVoice();
+  window.speechSynthesis.onvoiceschanged = loadJapaneseVoice;
+}
+
+function speakJapanese(text, btn) {
+  if (!window.speechSynthesis) {
+    if (btn) { btn.disabled = true; btn.title = '此瀏覽器不支援語音朗讀'; }
+    return;
+  }
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.speak-btn.playing').forEach(b => b.classList.remove('playing'));
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP';
+  if (japaneseVoice) utter.voice = japaneseVoice;
+  utter.rate = 0.9;
+
+  if (btn) {
+    btn.classList.add('playing');
+    utter.onend = () => btn.classList.remove('playing');
+    utter.onerror = () => btn.classList.remove('playing');
+  }
+  window.speechSynthesis.speak(utter);
+}
+
+const SPEAK_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9a3 3 0 0 1 0 6"/><path d="M18.5 7a6.5 6.5 0 0 1 0 10"/></svg>';
+
+function makeSpeakBtn(text) {
+  const btn = document.createElement('button');
+  btn.className = 'speak-btn';
+  btn.innerHTML = SPEAK_ICON;
+  btn.title = '播放發音';
+  btn.setAttribute('aria-label', '播放發音');
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    speakJapanese(text, btn);
+  });
+  return btn;
+}
+
+function initTheme() {
+  const saved = sessionStorage_safe_get();
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  applyTheme(theme);
+}
+function sessionStorage_safe_get() {
+  try { return window.__themeMemory || null; } catch(e) { return null; }
+}
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  window.__themeMemory = theme;
+  const btn = document.getElementById('theme-toggle');
+  btn.textContent = theme === 'dark' ? '☾' : '☀';
+}
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+function buildOrder() {
+  const all = [];
+  Object.entries(DATA).forEach(([cat, items]) => {
+    items.forEach((item, i) => all.push({cat, idx: i}));
+  });
+  state.order = all;
+}
+
+const MODE_LABELS = { cards: '學習卡', fill: '填空', choice: '選擇題' };
+const MODE_ORDER = ['cards', 'fill', 'choice'];
+
+function renderModeBar() {
+  const bar = document.getElementById('mode-bar');
+  bar.innerHTML = '';
+  MODE_ORDER.forEach(m => {
+    const b = document.createElement('button');
+    b.textContent = MODE_LABELS[m];
+    b.dataset.mode = m;
+    if (m === state.mode) b.classList.add('active');
+    bar.appendChild(b);
+  });
+  bar.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'BUTTON') return;
+    state.mode = e.target.dataset.mode;
+    document.querySelectorAll('#mode-bar button').forEach(btn => btn.classList.remove('active'));
+    e.target.classList.add('active');
+    switchMode();
+  });
+}
+
+function getFilteredItems() {
+  return state.order
+    .filter(({cat, idx}) => {
+      if (state.catFilter !== 'all' && state.catFilter !== cat) return false;
+      const item = DATA[cat][idx];
+      if (state.levelFilter !== 'all' && state.levelFilter !== item.level) return false;
+      return true;
+    })
+    .map(({cat, idx}) => DATA[cat][idx]);
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function switchMode() {
+  const cardGrid = document.getElementById('card-grid');
+  const quizArea = document.getElementById('quiz-area');
+  const footerBar = document.querySelector('.footer-bar');
+  if (state.mode === 'cards') {
+    cardGrid.style.display = 'grid';
+    quizArea.style.display = 'none';
+    footerBar.style.display = 'flex';
+    renderCards();
+    updateProgress();
+  } else {
+    cardGrid.style.display = 'none';
+    quizArea.style.display = 'block';
+    footerBar.style.display = 'none';
+    startQuiz();
+  }
+}
+
+function startQuiz() {
+  const items = getFilteredItems();
+  state.quizPool = shuffle(items);
+  state.quizIndex = 0;
+  state.quizScore = 0;
+  state.quizAnswered = false;
+  renderQuizQuestion();
+}
+
+function buildOptions(correctItem, field) {
+  const pool = state.order.map(({cat, idx}) => DATA[cat][idx]).filter(it => it !== correctItem);
+  const distractors = shuffle(pool).slice(0, 3);
+  const options = shuffle([correctItem, ...distractors]);
+  return options.map(it => field === 'idiom' ? it.idiom : it.meaning);
+}
+
+function renderQuizQuestion() {
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+
+  if (state.quizPool.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'quiz-empty';
+    empty.textContent = '目前篩選範圍內沒有符合的慣用句，請調整分類或難易度。';
+    area.appendChild(empty);
+    return;
+  }
+
+  if (state.quizIndex >= state.quizPool.length) {
+    renderQuizScore();
+    return;
+  }
+
+  const item = state.quizPool[state.quizIndex];
+  const isFill = state.mode === 'fill';
+
+  const card = document.createElement('div');
+  card.className = 'quiz-card';
+
+  const progress = document.createElement('div');
+  progress.className = 'quiz-progress';
+  progress.textContent = '第 ' + (state.quizIndex + 1) + ' / ' + state.quizPool.length + ' 題　答對 ' + state.quizScore + ' 題';
+  card.appendChild(progress);
+
+  const questionRow = document.createElement('div');
+  questionRow.className = 'quiz-question-row';
+  const question = document.createElement('div');
+  question.className = 'quiz-question';
+  question.textContent = isFill ? item.meaning : item.idiom;
+  questionRow.appendChild(question);
+  if (!isFill) {
+    questionRow.appendChild(makeSpeakBtn(item.idiom));
+  }
+  card.appendChild(questionRow);
+
+  const sub = document.createElement('div');
+  sub.className = 'quiz-question-sub';
+  sub.textContent = isFill ? '請選出對應的日文慣用句' : '請選出正確的中文意思';
+  card.appendChild(sub);
+
+  const optionsWrap = document.createElement('div');
+  optionsWrap.className = 'quiz-options';
+
+  const field = isFill ? 'idiom' : 'meaning';
+  const correctAnswer = isFill ? item.idiom : item.meaning;
+  const options = buildOptions(item, field);
+
+  options.forEach(optText => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = optText;
+    btn.addEventListener('click', () => {
+      if (state.quizAnswered) return;
+      state.quizAnswered = true;
+      const isCorrect = optText === correctAnswer;
+      if (isCorrect) state.quizScore++;
+      document.querySelectorAll('.quiz-option').forEach(b => {
+        b.disabled = true;
+        if (b.textContent === correctAnswer) b.classList.add('correct');
+        else if (b === btn) b.classList.add('wrong');
+      });
+      nextBtn.style.display = 'block';
+    });
+    optionsWrap.appendChild(btn);
+  });
+  card.appendChild(optionsWrap);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'quiz-next';
+  nextBtn.textContent = state.quizIndex + 1 >= state.quizPool.length ? '查看結果' : '下一題';
+  nextBtn.style.display = 'none';
+  nextBtn.addEventListener('click', () => {
+    state.quizIndex++;
+    state.quizAnswered = false;
+    renderQuizQuestion();
+  });
+  card.appendChild(nextBtn);
+
+  area.appendChild(card);
+}
+
+function renderQuizScore() {
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+  const card = document.createElement('div');
+  card.className = 'quiz-card';
+
+  const score = document.createElement('div');
+  score.className = 'quiz-score';
+
+  const num = document.createElement('div');
+  num.className = 'score-num';
+  num.textContent = state.quizScore + ' / ' + state.quizPool.length;
+  score.appendChild(num);
+
+  const label = document.createElement('div');
+  label.className = 'score-label';
+  label.textContent = '測驗完成';
+  score.appendChild(label);
+
+  const retryBtn = document.createElement('button');
+  retryBtn.className = 'quiz-next';
+  retryBtn.textContent = '再測一次';
+  retryBtn.addEventListener('click', startQuiz);
+  score.appendChild(retryBtn);
+
+  card.appendChild(score);
+  area.appendChild(card);
+}
+
+function renderCatBar() {
+  const bar = document.getElementById('cat-bar');
+  bar.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.textContent = '全部分類';
+  allBtn.dataset.cat = 'all';
+  allBtn.classList.add('active');
+  bar.appendChild(allBtn);
+  Object.keys(DATA).forEach(cat => {
+    const b = document.createElement('button');
+    b.textContent = cat;
+    b.dataset.cat = cat;
+    bar.appendChild(b);
+  });
+  bar.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'BUTTON') return;
+    document.querySelectorAll('#cat-bar button').forEach(btn => btn.classList.remove('active'));
+    e.target.classList.add('active');
+    state.catFilter = e.target.dataset.cat;
+    onFilterChange();
+  });
+}
+
+function renderLevelBar() {
+  const bar = document.getElementById('level-bar');
+  bar.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.textContent = '全部難易度';
+  allBtn.dataset.level = 'all';
+  allBtn.classList.add('active');
+  bar.appendChild(allBtn);
+  LEVEL_ORDER.forEach(lv => {
+    const b = document.createElement('button');
+    b.textContent = LEVEL_LABELS[lv];
+    b.dataset.level = lv;
+    bar.appendChild(b);
+  });
+  bar.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'BUTTON') return;
+    document.querySelectorAll('#level-bar button').forEach(btn => btn.classList.remove('active'));
+    e.target.classList.add('active');
+    state.levelFilter = e.target.dataset.level;
+    onFilterChange();
+  });
+}
+
+function onFilterChange() {
+  if (state.mode === 'cards') {
+    renderCards();
+    updateProgress();
+  } else {
+    startQuiz();
+  }
+}
+
+function cardKey(cat, idx) { return cat + '::' + idx; }
+
+function renderCards() {
+  const grid = document.getElementById('card-grid');
+  grid.innerHTML = '';
+  state.order.forEach(({cat, idx}) => {
+    if (state.catFilter !== 'all' && state.catFilter !== cat) return;
+    const item = DATA[cat][idx];
+    if (state.levelFilter !== 'all' && state.levelFilter !== item.level) return;
+    const key = cardKey(cat, idx);
+    const isFlipped = state.flipped.has(key);
+
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const head = document.createElement('div');
+    head.className = 'card-head';
+    const tag = document.createElement('div');
+    tag.className = 'card-tag';
+    tag.textContent = cat;
+    head.appendChild(tag);
+    const badge = document.createElement('div');
+    badge.className = 'level-badge';
+    badge.textContent = LEVEL_LABELS[item.level];
+    head.appendChild(badge);
+    card.appendChild(head);
+
+    if (!isFlipped) {
+      const idiomRow = document.createElement('div');
+      idiomRow.className = 'idiom-front-row';
+      const idiom = document.createElement('div');
+      idiom.className = 'idiom-front';
+      idiom.textContent = item.idiom;
+      idiomRow.appendChild(idiom);
+      idiomRow.appendChild(makeSpeakBtn(item.idiom));
+      card.appendChild(idiomRow);
+
+      const reading = document.createElement('div');
+      reading.className = 'reading-front';
+      reading.textContent = item.reading;
+      card.appendChild(reading);
+
+      const hint = document.createElement('div');
+      hint.className = 'hint';
+      hint.textContent = '點擊看意思';
+      card.appendChild(hint);
+    } else {
+      const idiom = document.createElement('div');
+      idiom.className = 'idiom-back';
+      idiom.textContent = item.idiom + '（' + item.reading + '）';
+      card.appendChild(idiom);
+
+      const meaning = document.createElement('div');
+      meaning.className = 'meaning';
+      meaning.textContent = item.meaning;
+      card.appendChild(meaning);
+
+      const exampleRow = document.createElement('div');
+      exampleRow.className = 'example-row';
+      const example = document.createElement('div');
+      example.className = 'example';
+      example.textContent = item.example;
+      exampleRow.appendChild(example);
+      exampleRow.appendChild(makeSpeakBtn(item.example));
+      card.appendChild(exampleRow);
+
+      const trans = document.createElement('div');
+      trans.className = 'trans';
+      trans.textContent = item.trans;
+      card.appendChild(trans);
+    }
+
+    card.addEventListener('click', () => {
+      if (state.flipped.has(key)) {
+        state.flipped.delete(key);
+      } else {
+        state.flipped.add(key);
+        state.seen.add(key);
+        updateProgress();
+      }
+      renderCards();
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+function updateProgress() {
+  const visible = state.order.filter(({cat, idx}) => {
+    if (state.catFilter !== 'all' && state.catFilter !== cat) return false;
+    const item = DATA[cat][idx];
+    if (state.levelFilter !== 'all' && state.levelFilter !== item.level) return false;
+    return true;
+  });
+  const seenInView = visible.filter(({cat, idx}) => state.seen.has(cardKey(cat, idx))).length;
+  document.getElementById('progress-label').textContent = seenInView + ' / ' + visible.length + ' 看過';
+}
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  state.flipped.clear();
+  state.seen.clear();
+  updateProgress();
+  renderCards();
+});
+
+initTheme();
+buildOrder();
+renderModeBar();
+renderCatBar();
+renderLevelBar();
+renderCards();
+updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="日文敬語練習工具，涵蓋尊敬語、謙讓語、丁寧語，特殊形動詞、句型變化、判斷練習。">
+<title>keigo-drill｜日文敬語練習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: #f0f2f7;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ══ DARK MODE ══ */
+body.dark { background: #0f1117; color: #e8e8f0; }
+body.dark .header, body.dark .settings-bar, body.dark .form-filter { background: #1a1c26; border-color: #2e3044; }
+body.dark .header h1 { color: #e8e8f0; }
+body.dark .header-stats { color: #aaa; }
+body.dark .stat-badge { background: #2e3044; color: #ccc; }
+body.dark .stat-badge.correct { background: #0d3d28; color: #4ecca3; }
+body.dark .stat-badge.wrong { background: #3d0d0d; color: #f08080; }
+body.dark .settings-label { color: #666; }
+body.dark .pill-btn { background: #1a1c26; border-color: #3a3d52; color: #aaa; }
+body.dark .pill-btn:hover { border-color: #666; }
+body.dark .pill-btn.active-son { background: #162436; border-color: #4a90d9; color: #7ab8f0; }
+body.dark .pill-btn.active-ken { background: #2d1a08; border-color: #e07a2f; color: #f0a870; }
+body.dark .pill-btn.active-tei { background: #103018; border-color: #3fae6e; color: #6fd99a; }
+body.dark .pill-btn.active-both { background: #1e1228; border-color: #8a5fd9; color: #b090e8; }
+body.dark .pill-btn.active-mode { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .divider-v { background: #2e3044; }
+body.dark .form-chip { background: #1a1c26; border-color: #3a3d52; color: #888; }
+body.dark .form-chip.selected { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .select-all-btn { color: #7ab8f0; }
+body.dark .flashcard, body.dark .quiz-card, body.dark .cnjp-card, body.dark .match-card { background: #1a1c26; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+body.dark .card-prompt { color: #555; }
+body.dark .card-word { color: #e8e8f0; }
+body.dark .card-reading { color: #666; }
+body.dark .card-zh { color: #888; }
+body.dark .card-target { background: #162436; color: #7ab8f0; }
+body.dark .card-target.ken { background: #2d1a08; color: #f0a870; }
+body.dark .card-target.tei { background: #103018; color: #6fd99a; }
+body.dark .card-answer { border-top-color: #2e3044; }
+body.dark .answer-big { color: #4ecca3; }
+body.dark .answer-note { color: #666; }
+body.dark .card-tap { color: #444; }
+body.dark .btn-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .btn-wrong:hover { background: #5a1515; }
+body.dark .btn-correct { background: #0d3d28; color: #4ecca3; }
+body.dark .btn-correct:hover { background: #155c3d; }
+body.dark .quiz-target-label { color: #888; }
+body.dark .quiz-target-form { background: #162436; color: #7ab8f0; }
+body.dark .quiz-target-form.ken { background: #2d1a08; color: #f0a870; }
+body.dark .quiz-input { background: #0f1117; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .quiz-input:focus { border-color: #4a90d9; }
+body.dark .quiz-input.correct-input { background: #0d3d28; border-color: #4ecca3; }
+body.dark .quiz-input.wrong-input { background: #3d0d0d; border-color: #f08080; }
+body.dark .quiz-feedback.ok { color: #4ecca3; }
+body.dark .quiz-feedback.ng { color: #f08080; }
+body.dark .quiz-answer-reveal { color: #888; }
+body.dark .opt-btn { background: #1a1c26; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .opt-btn:hover { border-color: #666; }
+body.dark .opt-btn.opt-correct { background: #0d3d28; border-color: #4ecca3; color: #4ecca3; }
+body.dark .opt-btn.opt-wrong { background: #3d0d0d; border-color: #f08080; color: #f08080; }
+body.dark .opt-btn.opt-reveal { background: #0d3d28; border-color: #4ecca3; color: #4ecca3; }
+body.dark .ref-search { background: #1a1c26; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .ref-search:focus { border-color: #4a90d9; }
+body.dark .ref-table-wrap { background: #1a1c26; }
+body.dark .ref-adj-header.son { background: #162436; color: #7ab8f0; border-color: #2a4060; }
+body.dark .ref-adj-header.ken { background: #2d1a08; color: #f0a870; border-color: #5a3010; }
+body.dark .ref-table th { background: #0f1117; color: #666; border-color: #2e3044; }
+body.dark .ref-table td { border-color: #23253a; }
+body.dark .ref-table tr:hover td { background: #1e2030; }
+body.dark .ft-son { background: #162436; color: #7ab8f0; }
+body.dark .ft-ken { background: #2d1a08; color: #f0a870; }
+body.dark .ft-cho { background: #1e1228; color: #b090e8; }
+body.dark .ft-tei { background: #103018; color: #6fd99a; }
+body.dark .progress-bar-bg { background: #2e3044; }
+body.dark .btn-submit { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-submit:hover { background: #ccc; }
+body.dark .btn-next { background: #162436; color: #7ab8f0; }
+body.dark .btn-next:hover { background: #1e3a56; }
+body.dark .btn-restart { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-restart:hover { background: #ccc; }
+body.dark .btn-retry-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .done-state h2 { color: #e8e8f0; }
+body.dark .done-state p { color: #888; }
+body.dark .pattern-note { background: #1a1c26; color: #aaa; border-color: #2e3044; }
+body.dark .pattern-note .pn-title { color: #e8e8f0; }
+body.dark .star-row .star-filled { color: #f0c419; }
+body.dark .star-row .star-empty { color: #333; }
+
+/* ══ GRAYSCALE ══ */
+body.grayscale { filter: grayscale(1); }
+body.grayscale.dark { filter: grayscale(1); }
+
+.theme-toggle-btn {
+  border: 1.5px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.theme-toggle-btn:hover { border-color: #aaa; background: #f5f5f5; }
+body.dark .theme-toggle-btn { background: #1a1c26; border-color: #3a3d52; color: #ccc; }
+body.dark .theme-toggle-btn:hover { border-color: #666; background: #20222e; }
+
+.header { background: #fff; border-bottom: 1px solid #e4e6ef; padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.header h1 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; flex: 1; min-width: 160px; }
+.header-stats { display: flex; gap: 10px; align-items: center; font-size: 0.82rem; color: #666; }
+.stat-badge { background: #f0f2f7; border-radius: 999px; padding: 3px 10px; font-weight: 600; }
+.stat-badge.correct { background: #e6f9f0; color: #0a7a4a; }
+.stat-badge.wrong { background: #fde8e8; color: #c0392b; }
+
+.settings-bar { background: #fff; border-bottom: 1px solid #e4e6ef; padding: 10px 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.settings-label { font-size: 0.8rem; font-weight: 700; color: #888; white-space: nowrap; }
+
+.pill-btn { border: 2px solid #ddd; background: #fff; border-radius: 999px; padding: 4px 14px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s; color: #555; white-space: nowrap; }
+.pill-btn:hover { border-color: #aaa; }
+.pill-btn.active-son { background: #e8f4fd; border-color: #4a90d9; color: #2563a8; }
+.pill-btn.active-ken { background: #fef3e8; border-color: #e07a2f; color: #b85c10; }
+.pill-btn.active-tei { background: #e6f9ec; border-color: #3fae6e; color: #1a7a4a; }
+.pill-btn.active-both { background: #f0e8fd; border-color: #8a5fd9; color: #5a2ba8; }
+.pill-btn.active-mode { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+
+.divider-v { width: 1px; height: 24px; background: #e4e6ef; margin: 0 4px; }
+
+.form-filter { background: #fff; border-bottom: 1px solid #e4e6ef; padding: 8px 20px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.form-chip { border: 1.5px solid #ddd; background: #fff; border-radius: 6px; padding: 3px 10px; font-size: 0.78rem; cursor: pointer; color: #666; transition: all 0.13s; user-select: none; }
+.form-chip.selected { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+.select-all-btn { font-size: 0.75rem; color: #4a90d9; cursor: pointer; text-decoration: underline; margin-left: 4px; white-space: nowrap; }
+
+.main { padding: 24px 20px; max-width: 720px; margin: 0 auto; }
+
+.flashcard-wrap { perspective: 1000px; }
+.flashcard { width: 100%; min-height: 200px; background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 36px 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: box-shadow 0.2s; position: relative; }
+.flashcard:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.13); }
+.card-prompt { font-size: 0.82rem; color: #aaa; margin-bottom: 8px; letter-spacing: 0.05em; }
+.card-word { font-size: 2.2rem; font-weight: 700; color: #1a1a2e; letter-spacing: 0.04em; margin-bottom: 6px; }
+.card-reading { font-size: 1rem; color: #888; margin-bottom: 6px; }
+.card-zh { font-size: 1rem; color: #555; }
+.card-target { margin-top: 18px; font-size: 1rem; color: #4a90d9; font-weight: 600; background: #e8f4fd; border-radius: 8px; padding: 6px 16px; }
+.card-target.ken { color: #b85c10; background: #fef3e8; }
+.card-target.tei { color: #1a7a4a; background: #e6f9ec; }
+.card-answer { display: none; margin-top: 20px; width: 100%; border-top: 1px dashed #eee; padding-top: 18px; text-align: center; }
+.card-answer.show { display: block; }
+.answer-big { font-size: 1.9rem; font-weight: 700; color: #0a7a4a; margin-bottom: 6px; }
+.answer-note { font-size: 0.85rem; color: #888; }
+.example-box { margin-top: 14px; padding-top: 14px; border-top: 1px dashed #eee; text-align: left; }
+.example-jp { font-size: 0.95rem; color: #333; line-height: 1.7; }
+.example-r { font-size: 0.78rem; color: #aaa; margin-top: 2px; }
+.example-zh { font-size: 0.82rem; color: #888; margin-top: 4px; }
+body.dark .example-box { border-top-color: #2e3044; }
+body.dark .example-jp { color: #ddd; }
+body.dark .example-r { color: #666; }
+body.dark .example-zh { color: #888; }
+.card-tap { font-size: 0.78rem; color: #ccc; margin-top: 14px; }
+.btn-row { display: flex; gap: 12px; margin-top: 18px; justify-content: center; }
+.btn-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-wrong:hover { background: #f5c6c6; }
+.btn-correct { background: #e6f9f0; color: #0a7a4a; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-correct:hover { background: #b8edcf; }
+
+.quiz-card { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 28px 24px; }
+.quiz-sentence { font-size: 1.05rem; line-height: 1.9; margin-bottom: 14px; color: #333; }
+.quiz-target-label { font-size: 0.95rem; color: #444; margin-bottom: 14px; line-height: 1.7; }
+.quiz-target-form { display: inline-block; font-weight: 700; color: #4a90d9; background: #e8f4fd; border-radius: 6px; padding: 2px 10px; }
+.quiz-target-form.ken { color: #b85c10; background: #fef3e8; }
+.quiz-input { width: 100%; border: 2px solid #ddd; border-radius: 10px; padding: 10px 14px; font-size: 1.1rem; outline: none; transition: border 0.15s; font-family: inherit; color: #1a1a2e; }
+.quiz-input:focus { border-color: #4a90d9; }
+.quiz-input.correct-input { border-color: #0a7a4a; background: #e6f9f0; }
+.quiz-input.wrong-input { border-color: #c0392b; background: #fde8e8; }
+.quiz-feedback { margin-top: 12px; font-size: 0.95rem; min-height: 24px; font-weight: 600; }
+.quiz-feedback.ok { color: #0a7a4a; }
+.quiz-feedback.ng { color: #c0392b; }
+.quiz-answer-reveal { font-size: 0.9rem; color: #555; margin-top: 6px; line-height: 1.6; }
+
+.match-card { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 28px 24px; text-align: center; }
+.match-word { font-size: 1.9rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+.match-hint { font-size: 0.85rem; color: #aaa; margin-bottom: 4px; }
+.match-q { font-size: 0.95rem; color: #555; margin-bottom: 18px; line-height: 1.6; }
+.opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .opt-grid { grid-template-columns: 1fr; } }
+.opt-btn { border: 2px solid #ddd; background: #fff; border-radius: 12px; padding: 12px 14px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.15s; color: #1a1a2e; }
+.opt-btn:hover { border-color: #4a90d9; }
+.opt-btn.opt-correct { background: #e6f9f0; border-color: #0a7a4a; color: #0a7a4a; }
+.opt-btn.opt-wrong { background: #fde8e8; border-color: #c0392b; color: #c0392b; }
+.opt-btn.opt-reveal { background: #e6f9f0; border-color: #0a7a4a; color: #0a7a4a; }
+.opt-btn:disabled { cursor: default; }
+
+.ref-search { width: 100%; border: 2px solid #ddd; border-radius: 10px; padding: 10px 16px; font-size: 1rem; outline: none; margin-bottom: 16px; font-family: inherit; transition: border 0.15s; }
+.ref-search:focus { border-color: #4a90d9; }
+.ref-table-wrap { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
+.ref-adj-header { padding: 12px 18px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+.ref-adj-header.son { background: #e8f4fd; color: #2563a8; border-bottom: 1px solid #b8d9f5; }
+.ref-adj-header.ken { background: #fef3e8; color: #b85c10; border-bottom: 1px solid #f5c89a; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.ref-table th { padding: 8px 12px; background: #f5f6fa; text-align: left; color: #666; font-weight: 700; border-bottom: 1px solid #eee; }
+.ref-table td { padding: 7px 12px; border-bottom: 1px solid #f0f0f0; }
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table tr:hover td { background: #fafbff; }
+.form-tag { display: inline-block; font-size: 0.7rem; padding: 1px 7px; border-radius: 999px; font-weight: 700; white-space: nowrap; }
+.ft-son { background: #e8f4fd; color: #2563a8; }
+.ft-ken { background: #fef3e8; color: #b85c10; }
+.ft-cho { background: #f0e8fd; color: #6a2ba8; }
+.ft-tei { background: #e6f9ec; color: #1a7a4a; }
+.star-row { font-size: 0.85rem; }
+.star-filled { color: #d4a017; }
+.star-empty { color: #ddd; }
+
+.pattern-note { background: #fff; border: 1px solid #e4e6ef; border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; font-size: 0.88rem; line-height: 1.7; color: #555; }
+.pattern-note .pn-title { font-weight: 700; color: #1a1a2e; margin-bottom: 6px; font-size: 0.95rem; }
+
+/* ── Furigana tooltip (hover / long-press) ── */
+.fg {
+  position: relative;
+  border-bottom: 1px dotted #aaa;
+  cursor: help;
+}
+.fg::after {
+  content: attr(data-r);
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%) translateY(-6px) scale(0.92);
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 7px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s, transform 0.12s;
+  z-index: 20;
+}
+.fg::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%) translateY(2px);
+  border: 5px solid transparent;
+  border-top-color: #1a1a2e;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+  z-index: 20;
+}
+.fg:hover::after, .fg:hover::before,
+.fg.fg-active::after, .fg.fg-active::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px) scale(1);
+}
+body.dark .fg::after { background: #e8e8f0; color: #1a1c26; }
+body.dark .fg::before { border-top-color: #e8e8f0; }
+body.dark .fg { border-bottom-color: #555; }
+
+.progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.progress-bar-bg { flex: 1; height: 8px; background: #e4e6ef; border-radius: 999px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #4a90d9, #6ab0f5); border-radius: 999px; transition: width 0.3s; }
+.progress-label { font-size: 0.8rem; color: #888; white-space: nowrap; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+.empty-state .big { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 1rem; }
+.done-state { text-align: center; padding: 40px 20px; }
+.done-state .big { font-size: 3.5rem; margin-bottom: 10px; }
+.done-state h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.done-state p { color: #666; margin-bottom: 20px; }
+.btn-restart { background: #1a1a2e; color: #fff; border: none; border-radius: 10px; padding: 12px 32px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.btn-restart:hover { background: #2d2d4e; }
+.btn-retry-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-right: 10px; }
+
+.btn-submit { background: #1a1a2e; color: #fff; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 14px; transition: background 0.15s; }
+.btn-submit:hover { background: #2d2d4e; }
+.btn-next { background: #e8f4fd; color: #2563a8; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 14px; margin-left: 10px; transition: background 0.15s; display: none; }
+.btn-next:hover { background: #c5e0f8; }
+
+@media (max-width: 500px) {
+  .card-word { font-size: 1.7rem; }
+  .main { padding: 16px 12px; }
+  .settings-bar, .form-filter { padding: 8px 12px; }
+  .header { padding: 10px 12px; }
+  .opt-grid { gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>日文敬語練習</h1>
+  <div class="header-stats">
+    <span class="stat-badge correct" id="stat-correct">✓ 0</span>
+    <span class="stat-badge wrong" id="stat-wrong">✗ 0</span>
+    <span class="stat-badge" id="stat-total">共 0 題</span>
+  </div>
+  <button class="theme-toggle-btn" id="theme-toggle" onclick="cycleTheme()" title="切換主題" aria-label="切換主題">
+    <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+  </button>
+</div>
+
+<div class="settings-bar">
+  <span class="settings-label">範圍</span>
+  <button class="pill-btn active-son" id="type-son" onclick="setType('son')">尊敬語</button>
+  <button class="pill-btn" id="type-ken" onclick="setType('ken')">謙讓語</button>
+  <button class="pill-btn" id="type-both" onclick="setType('both')">全部混合</button>
+  <div class="divider-v"></div>
+  <span class="settings-label">模式</span>
+  <button class="pill-btn active-mode" id="mode-flash" onclick="setMode('flash')">單字卡</button>
+  <button class="pill-btn" id="mode-quiz" onclick="setMode('quiz')">填空</button>
+  <button class="pill-btn" id="mode-match" onclick="setMode('match')">配對選擇</button>
+  <button class="pill-btn" id="mode-judge" onclick="setMode('judge')">敬語判斷</button>
+  <button class="pill-btn" id="mode-ref" onclick="setMode('ref')">參考表</button>
+</div>
+
+<div class="form-filter" id="form-filter">
+  <span class="settings-label">詞型</span>
+  <span class="form-chip selected" data-form="special" onclick="toggleForm(this)">特殊形動詞</span>
+  <span class="form-chip selected" data-form="general" onclick="toggleForm(this)">一般形句型</span>
+  <span class="select-all-btn" onclick="selectAllForms()">全選</span>
+</div>
+
+<div class="main" id="main-area"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA — 特殊形敬語動詞
+//  son = 尊敬語, ken = 謙讓語(I), cho = 丁重語(謙讓語II)
+// ══════════════════════════════════════════
+const SPECIAL_VERBS = [
+  {base:'行く／来る', baser:'いく／くる', zh:'去／來', son:'いらっしゃる', sonR:null, son2:'おいでになる', son2R:null, ken:null, cho:'参る', choR:'まいる',
+    sonEx:'社長は来週こちらにいらっしゃいます。', sonExR:'しゃちょうはらいしゅうこちらにいらっしゃいます。', sonExZh:'社長下週會來這裡。',
+    choEx:'明日10時に伺います。',choExR:null, choExZh:'',
+    cho2Ex:'会合に参ります。', cho2ExR:'かいごうにまいります。', cho2ExZh:'我會出席聚會。'},
+  {base:'いる', baser:'いる', zh:'在', son:'いらっしゃる', sonR:null, son2:null, ken:null, cho:'おる', choR:'おる',
+    sonEx:'先生は今、職員室にいらっしゃいます。', sonExR:'せんせいはいま、しょくいんしつにいらっしゃいます。', sonExZh:'老師現在在辦公室裡。',
+    choEx:'本日は終日社内におります。', choExR:'ほんじつはしゅうじつしゃないにおります。', choExZh:'今天我整天都在公司裡。'},
+  {base:'言う', baser:'いう', zh:'說', son:'おっしゃる', sonR:null, ken:'申し上げる', kenR:'もうしあげる', cho:'申す', choR:'もうす',
+    sonEx:'部長がおっしゃるとおりです。', sonExR:'ぶちょうがおっしゃるとおりです。', sonExZh:'就如部長所說的那樣。',
+    kenEx:'私がご説明を申し上げます。', kenExR:'わたしがごせつめいをもうしあげます。', kenExZh:'由我來為您說明。',
+    choEx:'先ほど、弊社の田中が御社の件について申しました。', choExR:null, choExZh:'剛才敝公司的田中已經針對貴公司的事情說明過了。'},
+  {base:'する', baser:'する', zh:'做', son:'なさる', sonR:null, son2:null, ken:null, cho:'いたす', choR:'いたす',
+    sonEx:'部長は来週、出張なさるそうです。', sonExR:'ぶちょうはらいしゅう、しゅっちょうなさるそうです。', sonExZh:'聽說部長下週要出差。',
+    choEx:'後ほど資料をお届けいたします。', choExR:'のちほどしりょうをおとどけいたします。', choExZh:'稍後我會將資料送達。'},
+  {base:'食べる／飲む', baser:'たべる／のむ', zh:'吃／喝', son:'召し上がる', sonR:'めしあがる', ken:'頂く', kenR:'いただく', cho:'頂く', choR:'いただく',
+    sonEx:'どうぞ温かいうちに召し上がってください。', sonExR:'どうぞあたたかいうちにめしあがってください。', sonExZh:'請趁熱享用。',
+    kenEx:'お先に頂きます。', kenExR:'おさきにいただきます。', kenExZh:'我先吃了（不好意思先用了）。'},
+  {base:'くれる', baser:'くれる', zh:'給（我／我方）', son:'下さる', sonR:'くださる', son2:null, ken:null, cho:null, choR:null,
+    sonEx:'先生が推薦状を書いてくださいました。', sonExR:'せんせいがすいせんじょうをかいてくださいました。', sonExZh:'老師為我寫了推薦信。'},
+  {base:'聞く／尋ねる／訪ねる', baser:'きく／たずねる', zh:'聽到、聽說／詢問／訪問', son:null, ken:'伺う', kenR:'うかがう', cho:null, choR:null,
+    kenEx:'ご質問を伺ってもよろしいでしょうか。', kenExR:'ごしつもんをうかがってもよろしいでしょうか。', kenExZh:'可以請教您一個問題嗎？'},
+  {base:'知る', baser:'しる', zh:'知道', son:'ご存じだ', sonR:'ごぞんじだ', ken:'存じ上げる', kenR:'ぞんじあげる', cho:'存じる', choR:'ぞんじる',
+    sonEx:'この件について、部長はご存じですか。', sonExR:'このけんについて、ぶちょうはごぞんじですか。', sonExZh:'部長知道這件事嗎？',
+    kenEx:'お名前は存じ上げております。', kenExR:'おなまえはぞんじあげております。', kenExZh:'我知道您的大名（久仰大名）。',
+    choEx:'企業理念は存じております。', choExR:'きぎょうりねんはぞんじております。', choExZh:'我了解貴公司的經營理念。'},
+  {base:'思う', baser:'おもう', zh:'想、覺得、認為', son:null, ken:null, cho:'存じる', choR:'ぞんじる',
+    choEx:'大変光栄に存じます。', choExR:'たいへんこうえいにぞんじます。', choExZh:'我深感榮幸。'},
+  {base:'上げる', baser:'あげる', zh:'給', son:null, ken:'差し上げる', kenR:'さしあげる', cho:null, choR:null,
+    kenEx:'こちらの資料を差し上げます。', kenExR:'こちらのしりょうをさしあげます。', kenExZh:'這份資料送給您。'},
+  {base:'もらう', baser:'もらう', zh:'得到', son:null, ken:'頂く', kenR:'いただく', cho:null, choR:null,
+    kenEx:'貴重なお時間を頂き、誠にありがとうございました。', kenExR:'きちょうなおじかんをいただき、まことにありがとうございました。', kenExZh:'承蒙您撥冗，萬分感謝。'},
+  {base:'会う', baser:'あう', zh:'見面', son:null, ken:'お目に掛かる', kenR:'おめにかかる', cho:null, choR:null,
+    kenEx:'またお目に掛かれるのを楽しみにしております。', kenExR:'またおめにかかれるのをたのしみにしております。', kenExZh:'期待再次與您見面。'},
+  {base:'見る', baser:'みる', zh:'看', son:'ご覧になる', sonR:'ごらんになる', ken:'拝見する', kenR:'はいけんする', cho:null, choR:null,
+    sonEx:'社長がご覧になった資料はこちらです。', sonExR:'しゃちょうがごらんになったしりょうはこちらです。', sonExZh:'這是社長看過的資料。',
+    kenEx:'お送りいただいた資料を拝見しました。', kenExR:'おおくりいただいたしりょうをはいけんしました。', kenExZh:'我已經拜讀了您寄來的資料。'},
+  {base:'借りる', baser:'かりる', zh:'借', son:null, ken:'拝借する', kenR:'はいしゃくする', cho:null, choR:null,
+    kenEx:'お手洗いを拝借してもよろしいでしょうか。', kenExR:'おてあらいをはいしゃくしてもよろしいでしょうか。', kenExZh:'可以借用一下洗手間嗎？'},
+];
+
+// ══════════════════════════════════════════
+//  DATA — 一般形句型範例（規則動詞套用句型）
+// ══════════════════════════════════════════
+const GENERAL_VERBS = [
+  {base:'読む', baser:'よむ', zh:'讀', stem:'読み', group:1},
+  {base:'書く', baser:'かく', zh:'寫', stem:'書き', group:1},
+  {base:'待つ', baser:'まつ', zh:'等待', stem:'待ち', group:1},
+  {base:'呼ぶ', baser:'よぶ', zh:'呼叫', stem:'呼び', group:1},
+  {base:'使う', baser:'つかう', zh:'使用', stem:'使い', group:1},
+  {base:'願う', baser:'ねがう', zh:'請求、希望', stem:'願い', group:1},
+  {base:'見せる', baser:'みせる', zh:'讓人看、出示', stem:'見せ', group:2},
+  {base:'伝える', baser:'つたえる', zh:'傳達', stem:'伝え', group:2},
+  {base:'考える', baser:'かんがえる', zh:'思考', stem:'考え', group:2},
+  {base:'説明する', baser:'せつめいする', zh:'說明', stem:'説明', group:3, kanji:true},
+  {base:'案内する', baser:'あんないする', zh:'引導、嚮導', stem:'案内', group:3, kanji:true},
+  {base:'利用する', baser:'りようする', zh:'使用、利用', stem:'利用', group:3, kanji:true},
+  {base:'連絡する', baser:'れんらくする', zh:'聯絡', stem:'連絡', group:3, kanji:true},
+  {base:'注意する', baser:'ちゅういする', zh:'注意', stem:'注意', group:3, kanji:true},
+  {base:'紹介する', baser:'しょうかいする', zh:'介紹', stem:'紹介', group:3, kanji:true},
+];
+
+const GENERAL_PATTERNS = [
+  {key:'son_ninaru', type:'son', label:'尊敬語：お／ご〜になる', build:(v)=> (v.kanji?'ご':'お') + v.stem + 'になる', note:'一般形尊敬語，敬意★★★'},
+  {key:'son_kudasaru', type:'son', label:'尊敬語：お／ご〜くださる', build:(v)=> (v.kanji?'ご':'お') + v.stem + 'くださる', note:'用於對方為我方做某事，敬意★★★'},
+  {key:'son_rareru', type:'son', label:'尊敬語：〜（ら）れる', build:(v)=>{
+      if (v.group===3) return v.stem + 'される';
+      if (v.group===2) return v.base.slice(0,-1) + 'られる';
+      // group 1 godan -> あ段+れる
+      const map = {'う':'わ','く':'か','す':'さ','つ':'た','ぬ':'な','ぶ':'ば','む':'ま','ぐ':'が','る':'ら'};
+      const last = v.base.slice(-1);
+      const stem2 = v.base.slice(0,-1) + (map[last]||last);
+      return stem2 + 'れる';
+    }, note:'一般形尊敬語，敬意★★（最低調）'},
+  {key:'ken_suru', type:'ken', label:'謙讓語I：お／ご〜する', build:(v)=> (v.kanji?'ご':'お') + v.stem + 'する', note:'一般形謙讓語，敬意★★'},
+  {key:'ken_itasu', type:'ken', label:'謙讓語I：お／ご〜いたす', build:(v)=> (v.kanji?'ご':'お') + v.stem + 'いたす', note:'一般形謙讓語，敬意★★★，較正式'},
+  {key:'ken_moshiageru', type:'ken', label:'謙讓語I：お／ご〜申し上げる', build:(v)=> (v.kanji?'ご':'お') + v.stem + '申し上げる', note:'一般形謙讓語，敬意★★★★（最高）'},
+];
+
+const CHIP_GROUPS = { special: 'special', general: 'general' };
+
+// ══════════════════════════════════════════
+//  判斷練習資料 — 句子分類成尊敬語／謙讓語／丁寧語
+// ══════════════════════════════════════════
+const JUDGE_ITEMS = [
+  {sentence:'先生は教室にいらっしゃいます。', answer:'son', note:'「いらっしゃる」是老師（對方）的動作 → 尊敬語'},
+  {sentence:'私は明日先生のご自宅へ伺います。', answer:'ken', note:'「伺う」是我（自己）的動作 → 謙讓語'},
+  {sentence:'あなたは、お酒を飲みますか。', answer:'tei', note:'單純用「ます」表禮貌，沒有抬高或降低任何人 → 丁寧語'},
+  {sentence:'社長はもうお帰りになりました。', answer:'son', note:'「お帰りになる」描述社長（對方）的動作 → 尊敬語'},
+  {sentence:'部長に資料をお渡ししました。', answer:'ken', note:'「お渡しする」是我為部長做的動作，降低自己 → 謙讓語'},
+  {sentence:'わたしも、お酒を飲みます。', answer:'tei', note:'單純禮貌語氣，描述自己也喝酒 → 丁寧語'},
+  {sentence:'課長はこの資料をご覧になりましたか。', answer:'son', note:'「ご覧になる」是課長（對方）「看」的尊敬語 → 尊敬語'},
+  {sentence:'資料を拝見しました。', answer:'ken', note:'「拝見する」是自己「看」的謙讓語 → 謙讓語'},
+  {sentence:'明日は雨が降るでしょう。', answer:'tei', note:'丁寧的推測語氣，沒有涉及尊敬或謙讓對象 → 丁寧語'},
+  {sentence:'お客様、こちらの席にどうぞお座りください。', answer:'son', note:'「お座りください」請對方（客人）坐下，尊敬對方的動作 → 尊敬語'},
+  {sentence:'お忙しいところ恐れ入りますが、少々お待ちいただけますか。', answer:'ken', note:'「いただく」表示自己承蒙對方等待，是謙讓語的恩惠授受表現 → 謙讓語'},
+  {sentence:'本日はお越しいただきありがとうございます。', answer:'ken', note:'「いただく」表示自己承蒙對方前來，整句以說話者承蒙的角度表現 → 謙讓語'},
+  {sentence:'部長は明日出張なさるそうです。', answer:'son', note:'「なさる」是部長（對方）「する」的尊敬語特殊形 → 尊敬語'},
+  {sentence:'私はそれを存じております。', answer:'ken', note:'「存じておる」是自己「知る」的謙讓語（丁重語） → 謙讓語'},
+  {sentence:'今日はとても暑いですね。', answer:'tei', note:'單純用「です」表禮貌，描述事實 → 丁寧語'},
+];
+
+const JUDGE_LABELS = { son:'尊敬語', ken:'謙讓語', tei:'丁寧語' };
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentType = 'son'; // son | ken | both
+let currentMode = 'flash';
+let selectedChips = new Set(['special','general']);
+let queue = [];
+let currentIdx = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let wrongList = [];
+let cardFlipped = false;
+let answered = false;
+
+// ══════════════════════════════════════════
+//  QUEUE BUILDING
+// ══════════════════════════════════════════
+function buildSpecialItems(type) {
+  let items = [];
+  SPECIAL_VERBS.forEach(v => {
+    if ((type==='son' || type==='both') && v.son) {
+      items.push({kind:'special', verb:v, target:'son', answer:v.son, answerR:v.sonR||null});
+    }
+    if ((type==='son' || type==='both') && v.son2) {
+      items.push({kind:'special', verb:v, target:'son', answer:v.son2, answerR:null, alt:true});
+    }
+    if ((type==='ken' || type==='both') && v.ken) {
+      items.push({kind:'special', verb:v, target:'ken', answer:v.ken, answerR:v.kenR||null});
+    }
+    if ((type==='ken' || type==='both') && v.cho) {
+      items.push({kind:'special', verb:v, target:'cho', answer:v.cho, answerR:v.choR||null});
+    }
+  });
+  return items;
+}
+
+function buildGeneralItems(type) {
+  let items = [];
+  const patterns = GENERAL_PATTERNS.filter(p => type==='both' || p.type===type);
+  GENERAL_VERBS.forEach(v => {
+    patterns.forEach(p => {
+      items.push({kind:'general', verb:v, pattern:p, target:p.type, answer:p.build(v)});
+    });
+  });
+  return items;
+}
+
+function getEnabledKinds() {
+  return Array.from(selectedChips);
+}
+
+function buildQueue(retryWrong = false) {
+  if (retryWrong) return [...wrongList];
+
+  const kinds = getEnabledKinds();
+  if (kinds.length === 0) return [];
+
+  let items = [];
+  if (kinds.includes('special')) items = items.concat(buildSpecialItems(currentType));
+  if (kinds.includes('general')) items = items.concat(buildGeneralItems(currentType));
+
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  return items;
+}
+
+function updateStats() {
+  document.getElementById('stat-correct').textContent = '✓ ' + correctCount;
+  document.getElementById('stat-wrong').textContent = '✗ ' + wrongCount;
+  document.getElementById('stat-total').textContent = '共 ' + queue.length + ' 題';
+}
+
+// ══════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════
+function setType(t) {
+  currentType = t;
+  ['son','ken','both'].forEach(x => {
+    const btn = document.getElementById('type-'+x);
+    btn.className = 'pill-btn';
+    if (x === t) {
+      if (t==='son') btn.classList.add('active-son');
+      else if (t==='ken') btn.classList.add('active-ken');
+      else btn.classList.add('active-both');
+    }
+  });
+  restart();
+}
+
+function setMode(m) {
+  currentMode = m;
+  ['flash','quiz','match','judge','ref'].forEach(x => {
+    const btn = document.getElementById('mode-'+x);
+    btn.className = 'pill-btn';
+    if (x === m) btn.classList.add('active-mode');
+  });
+  const ff = document.getElementById('form-filter');
+  ff.style.display = (m === 'ref' || m === 'judge') ? 'none' : 'flex';
+  restart();
+}
+
+function toggleForm(el) {
+  const f = el.dataset.form;
+  if (selectedChips.has(f)) {
+    if (selectedChips.size <= 1) return;
+    selectedChips.delete(f);
+    el.classList.remove('selected');
+  } else {
+    selectedChips.add(f);
+    el.classList.add('selected');
+  }
+  restart();
+}
+
+function selectAllForms() {
+  document.querySelectorAll('.form-chip').forEach(el => {
+    selectedChips.add(el.dataset.form);
+    el.classList.add('selected');
+  });
+  restart();
+}
+
+function restart(retryWrong = false) {
+  if (!retryWrong) {
+    correctCount = 0;
+    wrongCount = 0;
+    wrongList = [];
+  }
+  if (currentMode === 'judge') {
+    queue = retryWrong ? [...wrongList] : shuffleArr([...JUDGE_ITEMS]);
+  } else {
+    queue = buildQueue(retryWrong);
+  }
+  currentIdx = 0;
+  answered = false;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+function shuffleArr(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// Wrap a Japanese word with a hover/long-press furigana tooltip.
+// fg(word, reading) -> <span class="fg" data-r="reading">word</span>
+function fg(word, reading) {
+  if (!reading) return word;
+  return `<span class="fg" data-r="${escapeHtml(reading)}">${word}</span>`;
+}
+
+// Long-press support for touch devices (hover doesn't fire on mobile taps)
+function setupFuriganaLongPress() {
+  const area = document.getElementById('main-area');
+  if (!area || area._fgBound) return;
+  area._fgBound = true;
+  let pressTimer = null;
+  let activeEl = null;
+
+  function clearActive() {
+    if (activeEl) { activeEl.classList.remove('fg-active'); activeEl = null; }
+  }
+
+  area.addEventListener('touchstart', (e) => {
+    const target = e.target.closest('.fg');
+    if (!target) return;
+    pressTimer = setTimeout(() => {
+      clearActive();
+      target.classList.add('fg-active');
+      activeEl = target;
+    }, 350);
+  }, {passive: true});
+
+  area.addEventListener('touchend', () => {
+    clearTimeout(pressTimer);
+    setTimeout(clearActive, 1200);
+  }, {passive: true});
+
+  area.addEventListener('touchmove', () => {
+    clearTimeout(pressTimer);
+  }, {passive: true});
+}
+
+// ══════════════════════════════════════════
+//  RENDER ROUTER
+// ══════════════════════════════════════════
+function render() {
+  const area = document.getElementById('main-area');
+  if (currentMode === 'ref') { renderRef(area); return; }
+  if (queue.length === 0) {
+    area.innerHTML = `<div class="empty-state"><p>請至少選擇一種詞型！</p></div>`;
+    return;
+  }
+  if (currentIdx >= queue.length) { renderDone(area); return; }
+
+  const progress = `<div class="progress-row">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${(currentIdx/queue.length*100).toFixed(1)}%"></div></div>
+    <span class="progress-label">${currentIdx}／${queue.length}</span>
+  </div>`;
+
+  if (currentMode === 'flash') renderFlash(area, progress);
+  else if (currentMode === 'quiz') renderQuiz(area, progress);
+  else if (currentMode === 'match') renderMatch(area, progress);
+  else if (currentMode === 'judge') renderJudge(area, progress);
+}
+
+// ══════════════════════════════════════════
+//  FLASHCARD MODE
+// ══════════════════════════════════════════
+const TARGET_LABEL = { son:'尊敬語', ken:'謙讓語 I', cho:'丁重語（謙讓語II）' };
+
+// Returns {sentence, reading, zh} example for a special-form item, or null
+function getExample(item) {
+  if (item.kind !== 'special') return null;
+  const v = item.verb;
+  if (item.target === 'son') return v.sonEx ? {s:v.sonEx, r:v.sonExR, zh:v.sonExZh} : null;
+  if (item.target === 'ken') return v.kenEx ? {s:v.kenEx, r:v.kenExR, zh:v.kenExZh} : null;
+  if (item.target === 'cho') {
+    if (item.alt && v.cho2Ex) return {s:v.cho2Ex, r:v.cho2ExR, zh:v.cho2ExZh};
+    return v.choEx ? {s:v.choEx, r:v.choExR, zh:v.choExZh} : null;
+  }
+  return null;
+}
+
+function renderFlash(area, progress) {
+  const item = queue[currentIdx];
+  const isKen = item.target === 'ken' || item.target === 'cho';
+  let word, reading, zh, targetLabel, note;
+
+  if (item.kind === 'special') {
+    word = item.verb.base; reading = item.verb.baser; zh = item.verb.zh;
+    targetLabel = TARGET_LABEL[item.target] + (item.alt ? '（另一說法）' : '');
+    note = '特殊形動詞';
+  } else {
+    word = item.verb.base; reading = item.verb.baser; zh = item.verb.zh;
+    targetLabel = item.pattern.label;
+    note = item.pattern.note;
+  }
+
+  const ex = getExample(item);
+  const exHtml = ex ? `<div class="example-box">
+      <div class="example-jp">${ex.s.replace(item.answer, '<strong>'+item.answer+'</strong>')}</div>
+      ${ex.zh ? `<div class="example-zh">${ex.zh}</div>` : ''}
+    </div>` : '';
+
+  area.innerHTML = progress + `
+  <div class="flashcard-wrap">
+    <div class="flashcard" onclick="flipCard()">
+      <div class="card-prompt">請說出敬語形</div>
+      <div class="card-word">${word}</div>
+      <div class="card-reading">${reading}</div>
+      <div class="card-zh">${zh}</div>
+      <div class="card-target ${isKen?'ken':''}">${targetLabel}</div>
+      <div class="card-answer" id="card-answer">
+        <div class="answer-big">${item.answer}${item.answerR ? '（'+item.answerR+'）' : ''}</div>
+        <div class="answer-note">${note}</div>
+        ${exHtml}
+      </div>
+      <div class="card-tap" id="card-tap">點擊卡片顯示答案</div>
+    </div>
+    <div class="btn-row" id="btn-row" style="display:none">
+      <button class="btn-wrong" onclick="markWrong()">✗ 不會</button>
+      <button class="btn-correct" onclick="markCorrect()">✓ 會了</button>
+    </div>
+  </div>`;
+}
+
+function flipCard() {
+  if (cardFlipped) return;
+  cardFlipped = true;
+  document.getElementById('card-answer').classList.add('show');
+  document.getElementById('card-tap').style.display = 'none';
+  document.getElementById('btn-row').style.display = 'flex';
+}
+
+function markCorrect() {
+  correctCount++;
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+function markWrong() {
+  wrongCount++;
+  wrongList.push(queue[currentIdx]);
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// ══════════════════════════════════════════
+//  QUIZ MODE (typing)
+// ══════════════════════════════════════════
+function renderQuiz(area, progress) {
+  const item = queue[currentIdx];
+  const isKen = item.target === 'ken' || item.target === 'cho';
+  let prompt;
+
+  if (item.kind === 'special') {
+    const label = TARGET_LABEL[item.target] + (item.alt ? '（另一說法）' : '');
+    prompt = `「<strong>${item.verb.base}</strong>」（${item.verb.baser}）${item.verb.zh}的<span class="quiz-target-form ${isKen?'ken':''}">${label}</span>是什麼？`;
+  } else {
+    prompt = `請用「<span class="quiz-target-form ${isKen?'ken':''}">${item.pattern.label}</span>」句型，把「<strong>${item.verb.base}</strong>」（${item.verb.baser}）${item.verb.zh}改成敬語？`;
+  }
+
+  area.innerHTML = progress + `
+  <div class="quiz-card">
+    <div class="quiz-target-label">${prompt}</div>
+    <input class="quiz-input" id="quiz-input" type="text" placeholder="輸入答案…" onkeydown="if(event.key==='Enter')checkQuiz()">
+    <div><button class="btn-submit" onclick="checkQuiz()">確認</button>
+    <button class="btn-next" id="btn-next" onclick="nextQuiz()">下一題 →</button></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-answer-reveal" id="quiz-reveal"></div>
+  </div>`;
+
+  setTimeout(() => { const inp = document.getElementById('quiz-input'); if(inp) inp.focus(); }, 50);
+}
+
+function checkQuiz() {
+  if (answered) return;
+  const item = queue[currentIdx];
+  const input = document.getElementById('quiz-input');
+  const val = input.value.trim();
+  const fb = document.getElementById('quiz-feedback');
+  const rev = document.getElementById('quiz-reveal');
+  const btnNext = document.getElementById('btn-next');
+
+  const accepted = [item.answer];
+  if (item.answerR) accepted.push(item.answerR);
+
+  if (accepted.includes(val)) {
+    input.classList.add('correct-input');
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+  } else {
+    input.classList.add('wrong-input');
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = '✗ 不正確';
+    rev.textContent = `正確答案：${item.answer}${item.answerR ? '（'+item.answerR+'）' : ''}`;
+    wrongCount++;
+    wrongList.push(item);
+  }
+  const ex = getExample(item);
+  if (ex) {
+    const exDiv = document.createElement('div');
+    exDiv.className = 'example-box';
+    exDiv.innerHTML = `<div class="example-jp">${ex.s.replace(item.answer, '<strong>'+item.answer+'</strong>')}</div>${ex.zh ? `<div class="example-zh">${ex.zh}</div>` : ''}`;
+    rev.after(exDiv);
+  }
+  answered = true;
+  btnNext.style.display = 'inline-block';
+  updateStats();
+}
+
+function nextQuiz() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// ══════════════════════════════════════════
+//  MATCH MODE (multiple choice)
+// ══════════════════════════════════════════
+function renderMatch(area, progress) {
+  const item = queue[currentIdx];
+  const isKen = item.target === 'ken' || item.target === 'cho';
+  let qText;
+
+  if (item.kind === 'special') {
+    const label = TARGET_LABEL[item.target] + (item.alt ? '（另一說法）' : '');
+    qText = `「<strong>${item.verb.base}</strong>」（${item.verb.zh}）的<span class="quiz-target-form ${isKen?'ken':''}">${label}</span>是？`;
+  } else {
+    qText = `「<strong>${item.verb.base}</strong>」（${item.verb.zh}）套用「<span class="quiz-target-form ${isKen?'ken':''}">${item.pattern.label}</span>」是？`;
+  }
+
+  const correctAns = item.answer;
+  const distractors = generateDistractors(item, correctAns);
+  const options = shuffleArr([correctAns, ...distractors]);
+
+  area.innerHTML = progress + `
+  <div class="match-card">
+    <div class="match-q">${qText}</div>
+    <div class="opt-grid" id="opt-grid">
+      ${options.map((opt,i) => `<button class="opt-btn" data-opt="${escapeHtml(opt)}" onclick="checkMatch(this,'${escapeHtml(correctAns)}')">${opt}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback" style="margin-top:16px"></div>
+    <button class="btn-next" id="btn-next" onclick="nextMatch()">下一題 →</button>
+  </div>`;
+}
+
+function escapeHtml(s) { return s.replace(/'/g, '&#39;'); }
+
+function generateDistractors(item, correctAns) {
+  let pool = [];
+  if (item.kind === 'special') {
+    SPECIAL_VERBS.forEach(v => {
+      [v.son, v.son2, v.ken, v.cho].forEach(x => { if (x && x !== correctAns) pool.push(x); });
+    });
+  } else {
+    GENERAL_VERBS.forEach(v => {
+      GENERAL_PATTERNS.forEach(p => {
+        const a = p.build(v);
+        if (a !== correctAns) pool.push(a);
+      });
+    });
+  }
+  pool = Array.from(new Set(pool));
+  shuffleArr(pool);
+  return pool.slice(0, 3);
+}
+
+function checkMatch(el, correctAns) {
+  if (answered) return;
+  answered = true;
+  const item = queue[currentIdx];
+  const buttons = document.querySelectorAll('#opt-grid .opt-btn');
+  buttons.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('quiz-feedback');
+  const selected = el.dataset.opt;
+  const isCorrect = selected === correctAns;
+
+  buttons.forEach(b => {
+    if (b.dataset.opt === correctAns) b.classList.add('opt-reveal');
+  });
+  if (!isCorrect) el.classList.add('opt-wrong');
+
+  if (isCorrect) {
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+  } else {
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = `✗ 不正確，正確答案是「${correctAns}」`;
+    wrongCount++;
+    wrongList.push(item);
+  }
+  document.getElementById('btn-next').style.display = 'inline-block';
+  updateStats();
+}
+
+function nextMatch() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// ══════════════════════════════════════════
+//  JUDGE MODE — 句子判斷尊敬語/謙讓語/丁寧語
+// ══════════════════════════════════════════
+function renderJudge(area, progress) {
+  const item = queue[currentIdx];
+  area.innerHTML = progress + `
+  <div class="match-card">
+    <div class="match-q" style="font-size:1.1rem;line-height:1.8;color:#1a1a2e">${item.sentence}</div>
+    <div class="opt-grid" id="opt-grid" style="grid-template-columns:1fr 1fr 1fr">
+      <button class="opt-btn" data-opt="son" onclick="checkJudge(this,'${item.answer}')">尊敬語</button>
+      <button class="opt-btn" data-opt="ken" onclick="checkJudge(this,'${item.answer}')">謙讓語</button>
+      <button class="opt-btn" data-opt="tei" onclick="checkJudge(this,'${item.answer}')">丁寧語</button>
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback" style="margin-top:16px"></div>
+    <div class="quiz-answer-reveal" id="quiz-reveal"></div>
+    <button class="btn-next" id="btn-next" onclick="nextJudge()">下一題 →</button>
+  </div>`;
+}
+
+function checkJudge(el, correctAns) {
+  if (answered) return;
+  answered = true;
+  const item = queue[currentIdx];
+  const buttons = document.querySelectorAll('#opt-grid .opt-btn');
+  buttons.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('quiz-feedback');
+  const rev = document.getElementById('quiz-reveal');
+  const selected = el.dataset.opt;
+  const isCorrect = selected === correctAns;
+
+  buttons.forEach(b => {
+    if (b.dataset.opt === correctAns) b.classList.add('opt-reveal');
+  });
+  if (!isCorrect) el.classList.add('opt-wrong');
+
+  if (isCorrect) {
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+  } else {
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = `✗ 不正確，正確答案是「${JUDGE_LABELS[correctAns]}」`;
+    wrongCount++;
+    wrongList.push(item);
+  }
+  rev.textContent = item.note;
+  document.getElementById('btn-next').style.display = 'inline-block';
+  updateStats();
+}
+
+function nextJudge() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// ══════════════════════════════════════════
+//  DONE SCREEN
+// ══════════════════════════════════════════
+function renderDone(area) {
+  const total = correctCount + wrongCount;
+  const pct = total > 0 ? Math.round(correctCount / total * 100) : 0;
+  area.innerHTML = `<div class="done-state">
+    <h2>練習完成！</h2>
+    <p>正確 ${correctCount} 題，錯誤 ${wrongCount} 題（正確率 ${pct}%）</p>
+    ${wrongCount > 0 ? `<button class="btn-retry-wrong" onclick="restart(true)">重練錯題（${wrongCount}題）</button>` : ''}
+    <button class="btn-restart" onclick="restart(false)">重新開始</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+//  REFERENCE TABLE
+// ══════════════════════════════════════════
+function renderRef(area) {
+  const noteHtml = `
+    <div class="pattern-note">
+      <div class="pn-title">敬語三大分類</div>
+      尊敬語：抬高對方地位，用於對方的動作。謙讓語：降低自己地位，用於自己的動作（細分謙讓語I／謙讓語II丁重語）。丁寧語：單純使用禮貌措辭（です・ます），不抬高也不降低任何人。
+    </div>
+    <div class="pattern-note">
+      <div class="pn-title">「お」與「ご」原則</div>
+      原則上和語（日本原有語彙）用「お」，漢語（中國傳來語彙）用「ご」。例外：お返事／ご返事皆可、お電話（漢語但用お）、ごゆっくり（和語但用ご）。
+    </div>
+  `;
+
+  let specialHtml = `<div class="ref-table-wrap" style="margin-bottom:14px">
+    <div class="ref-adj-header son">特殊形敬語動詞一覽</div>
+    <table class="ref-table"><thead><tr><th>動詞</th><th>尊敬語</th><th>謙讓語 I</th><th>丁重語(謙讓語II)</th></tr></thead><tbody>
+    ${SPECIAL_VERBS.map(v => `<tr>
+      <td><strong>${fg(v.base, v.baser)}</strong><br><span style="color:#999;font-size:0.78rem">${v.zh}</span></td>
+      <td>${v.son ? '<span class="form-tag ft-son">尊敬</span> '+fg(v.son, v.sonR)+(v.son2?'<br><span style="color:#999;font-size:0.78rem">'+fg(v.son2, v.son2R)+'</span>':'') : '—'}</td>
+      <td>${v.ken ? '<span class="form-tag ft-ken">謙讓I</span> '+fg(v.ken, v.kenR) : '—'}</td>
+      <td>${v.cho ? '<span class="form-tag ft-cho">丁重</span> '+fg(v.cho, v.choR) : '—'}</td>
+    </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+
+  let patternHtml = `<div class="ref-table-wrap" style="margin-bottom:14px">
+    <div class="ref-adj-header ken">一般形句型（套用範例：${fg('説明する','せつめいする')}／${fg('読む','よむ')}）</div>
+    <table class="ref-table"><thead><tr><th>句型</th><th>範例</th><th>敬意</th></tr></thead><tbody>
+    ${GENERAL_PATTERNS.map(p => {
+      const exV = p.type==='son' ? GENERAL_VERBS.find(v=>v.base==='読む') : GENERAL_VERBS.find(v=>v.base==='説明する');
+      const tc = p.type==='son' ? 'ft-son' : 'ft-ken';
+      const stars = p.key.includes('moshiageru') ? '★★★★' : (p.key.includes('itasu') ? '★★★' : (p.key.includes('ninaru')||p.key.includes('kudasaru') ? '★★★' : '★★'));
+      return `<tr><td><span class="form-tag ${tc}">${p.type==='son'?'尊敬':'謙讓'}</span> ${p.label}</td><td>${p.build(exV)}</td><td class="star-row">${stars}</td></tr>`;
+    }).join('')}
+    </tbody></table>
+  </div>`;
+
+  let judgeHtml = `<div class="ref-table-wrap" style="margin-bottom:14px">
+    <div class="ref-adj-header son" style="background:#e6f9ec;color:#1a7a4a;border-color:#bfe8cf">恩惠授受敬語對照</div>
+    <table class="ref-table"><tbody>
+      <tr><td><span class="form-tag ft-son">尊敬</span> お（ご）〜くださる</td><td>對方為我方做某事，對給予者表敬意。例：${fg('教授','きょうじゅ')}は${fg('推薦状','すいせんじょう')}を${fg('書','か')}いてくださった。</td></tr>
+      <tr><td><span class="form-tag ft-ken">謙讓</span> 〜ていただく／お（ご）〜いただく</td><td>我方承蒙對方做某事。例：サービスを${fg('ご利用','ごりよう')}いただきありがとうございます。</td></tr>
+      <tr><td><span class="form-tag ft-ken">謙讓</span> 〜させていただく</td><td>向對方請求許可做某動作。例：${fg('本日','ほんじつ')}より${fg('価格','かかく')}を${fg('変更','へんこう')}させていただきました。</td></tr>
+    </tbody></table>
+  </div>`;
+
+  let exampleHtml = `<div class="ref-table-wrap" style="margin-bottom:14px">
+    <div class="ref-adj-header son" style="background:#fef3e8;color:#b85c10;border-color:#f5c89a">例句一覽</div>
+    <table class="ref-table"><tbody>
+    ${SPECIAL_VERBS.flatMap(v => {
+      const rows = [];
+      if (v.sonEx) rows.push({tag:'ft-son', label:'尊敬', s:v.sonEx, r:v.sonExR, zh:v.sonExZh, word:v.son});
+      if (v.kenEx) rows.push({tag:'ft-ken', label:'謙讓I', s:v.kenEx, r:v.kenExR, zh:v.kenExZh, word:v.ken});
+      if (v.choEx) rows.push({tag:'ft-cho', label:'丁重', s:v.choEx, r:v.choExR, zh:v.choExZh, word:v.cho});
+      if (v.cho2Ex) rows.push({tag:'ft-cho', label:'丁重', s:v.cho2Ex, r:v.cho2ExR, zh:v.cho2ExZh, word:v.cho});
+      return rows;
+    }).map(r => `<tr>
+      <td style="white-space:nowrap;vertical-align:top"><span class="form-tag ${r.tag}">${r.label}</span></td>
+      <td>
+        <div style="font-size:0.95rem">${r.s.replace(r.word, '<strong>'+r.word+'</strong>')}</div>
+        <div style="font-size:0.78rem;color:#999;margin-top:2px">${r.zh}</div>
+      </td>
+    </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+
+  area.innerHTML = `
+    <input class="ref-search" id="ref-search" placeholder="搜尋動詞（日文或中文）…" oninput="filterRef(this.value)">
+    ${noteHtml}
+    <div id="ref-content">${specialHtml}${patternHtml}${judgeHtml}${exampleHtml}</div>`;
+}
+
+function filterRef(val) {
+  const v = val.trim().toLowerCase();
+  document.querySelectorAll('#ref-content .ref-table-wrap').forEach(el => {
+    if (!v) { el.style.display = ''; return; }
+    const text = el.textContent.toLowerCase();
+    el.style.display = text.includes(v) ? '' : 'none';
+  });
+}
+
+// ══════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════
+const THEME_ORDER = ['light', 'dark', 'gray'];
+const THEME_ICONS = {
+  light: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>',
+  dark: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>',
+  gray: '<circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path>'
+};
+const THEME_TITLES = { light: '亮色模式', dark: '深色模式', gray: '黑白模式' };
+
+function setTheme(t) {
+  document.body.classList.remove('dark', 'grayscale');
+  if (t === 'dark') document.body.classList.add('dark');
+  else if (t === 'gray') document.body.classList.add('grayscale');
+
+  const icon = document.getElementById('theme-icon');
+  if (icon) icon.innerHTML = THEME_ICONS[t];
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.title = THEME_TITLES[t];
+
+  try { localStorage.setItem('keigo-theme', t); } catch(e) {}
+}
+
+function cycleTheme() {
+  let current = 'light';
+  try { current = localStorage.getItem('keigo-theme') || 'light'; } catch(e) {}
+  const idx = THEME_ORDER.indexOf(current);
+  const next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];
+  setTheme(next);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+(function(){
+  try {
+    const saved = localStorage.getItem('keigo-theme');
+    setTheme(saved || 'light');
+  } catch(e) { setTheme('light'); }
+})();
+setupFuriganaLongPress();
+restart();
+</script>
+</body>
+</html>

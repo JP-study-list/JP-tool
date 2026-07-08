@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>日文助數詞學習工具</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: #E0DAD0;
+  --border2: #C8C0B0;
+  --text: #1A1814;
+  --text2: #6B6558;
+  --text3: #9E9589;
+  --accent: #3D4A2E;
+  --accent2: #6B7D52;
+  --accent-bg: #EDF1E6;
+  --red: #8B2E1A;
+  --red-bg: #FAF0EC;
+  --blue: #1A3A6B;
+  --blue-bg: #EDF2FA;
+  --amber: #7A4A10;
+  --amber-bg: #FBF3E6;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark {
+  --bg: #15140F;
+  --surface: #211F18;
+  --surface2: #2A2820;
+  --border: #3A372C;
+  --border2: #4E4A3B;
+  --text: #EDEAE2;
+  --text2: #A8A294;
+  --text3: #7A7568;
+  --accent: #9CB87E;
+  --accent2: #7E9763;
+  --accent-bg: #243325;
+  --red: #E3A28F;
+  --red-bg: #3A2620;
+  --blue: #9CC0EE;
+  --blue-bg: #1F2C3D;
+  --amber: #E8C387;
+  --amber-bg: #3A2E18;
+  --shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+body.dark .header { background: #1C2317; }
+body.dark .sp-item { background: var(--surface2); }
+body.dark .sp-j { color: var(--text); }
+body.dark .sp-r { color: var(--text2); }
+body.dark .next-btn { color: #15140F; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Noto Sans TC', 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+  transition: background .2s, color .2s;
+}
+
+/* ── header ── */
+.header {
+  background: var(--accent);
+  color: #fff;
+  padding: 18px 16px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  transition: background .2s;
+}
+.header h1 { font-size: 17px; font-weight: 700; letter-spacing: .04em; }
+.header p  { font-size: 12px; opacity: .7; margin-top: 2px; }
+.theme-toggle {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,.85);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: color .15s, background .15s;
+  padding: 0;
+}
+.theme-toggle:active { background: rgba(255,255,255,.1); }
+.theme-toggle svg { display: block; }
+body.dark .theme-toggle { color: rgba(255,255,255,.75); }
+
+/* ── tabs ── */
+.tabs {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 65px;
+  z-index: 90;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1; min-width: 60px;
+  padding: 11px 8px;
+  font-size: 12px; font-weight: 500;
+  border: none; background: transparent;
+  color: var(--text2);
+  border-bottom: 2.5px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+  font-family: inherit;
+  transition: color .15s;
+}
+.tab.on { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── sections ── */
+.sec { display: none; padding: 14px 14px 32px; }
+.sec.on { display: block; }
+
+/* ── cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 13px 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+.card-title { font-size: 22px; font-weight: 700; color: var(--text); }
+.card-sub   { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.card-ex    { font-size: 12px; color: var(--text3); margin-top: 5px; }
+
+.badge {
+  display: inline-block;
+  font-size: 11px; font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.bg { background: var(--accent-bg); color: var(--accent); }
+.br { background: var(--red-bg);    color: var(--red); }
+.bb { background: var(--blue-bg);   color: var(--blue); }
+.ba { background: var(--amber-bg);  color: var(--amber); }
+
+.section-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--text3);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin: 16px 0 8px;
+}
+
+/* ── 1~10 read section ── */
+.csel {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.csel-btn {
+  padding: 9px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 13px; font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  text-align: center;
+  font-family: inherit;
+  transition: all .15s;
+}
+.csel-btn.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.num-header {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 10px;
+}
+.num-title  { font-size: 20px; font-weight: 700; }
+.num-sub    { font-size: 12px; color: var(--text2); }
+.num-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+.num-cell {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 10px 8px;
+  text-align: center;
+}
+.num-j { font-size: 19px; font-weight: 700; color: var(--text); }
+.num-r { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.num-c { font-size: 10px; margin-top: 3px; font-weight: 500; }
+
+/* ── flip cards ── */
+.flip-wrap { perspective: 700px; margin-bottom: 10px; }
+.flip-inner {
+  position: relative;
+  width: 100%; min-height: 180px;
+  transition: transform .38s cubic-bezier(.4,0,.2,1);
+  transform-style: preserve-3d;
+}
+.flip-wrap.flipped .flip-inner { transform: rotateY(180deg); }
+.face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 20px 16px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 7px; min-height: 180px;
+  box-shadow: var(--shadow);
+}
+.face-front { background: var(--surface); cursor: pointer; }
+.face-back  {
+  transform: rotateY(180deg);
+  background: var(--surface2);
+  position: absolute; top: 0; left: 0; width: 100%;
+  cursor: pointer;
+}
+.flip-main  { font-size: 30px; font-weight: 700; }
+.flip-sub   { font-size: 13px; color: var(--text2); }
+.flip-body  { font-size: 14px; color: var(--text); white-space: pre-line; text-align: center; line-height: 1.8; }
+.flip-hint  { font-size: 11px; color: var(--text3); }
+
+.nav-row {
+  display: flex; gap: 8px;
+  align-items: center; justify-content: space-between;
+  margin-top: 6px;
+}
+.nav-btn {
+  flex: 1; padding: 11px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 13px; font-weight: 500;
+  color: var(--text); cursor: pointer;
+  text-align: center; font-family: inherit;
+  transition: background .12s;
+}
+.nav-btn:active { background: var(--surface2); }
+.nav-count { font-size: 12px; color: var(--text2); white-space: nowrap; }
+
+/* ── quiz ── */
+.scores {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 7px; margin-bottom: 12px;
+}
+.sc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 6px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.sc-n { font-size: 24px; font-weight: 700; color: var(--text); }
+.sc-l { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+.prog-wrap { height: 5px; background: var(--border); border-radius: 3px; margin-bottom: 14px; }
+.prog-bar  { height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
+
+.q-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 14px; box-shadow: var(--shadow); }
+.q-num  { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+.q-text { font-size: 18px; font-weight: 700; text-align: center; color: var(--text); line-height: 1.4; margin-bottom: 6px; }
+.q-hint { font-size: 11px; color: var(--text3); text-align: center; margin-bottom: 12px; }
+.opts   { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.opt {
+  padding: 13px 8px; min-height: 54px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 13px; font-weight: 500;
+  color: var(--text); cursor: pointer;
+  text-align: center; font-family: inherit;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1.3;
+  transition: all .12s;
+}
+.opt:active { transform: scale(.97); }
+.opt.ok { background: var(--accent-bg); border-color: var(--accent2); color: var(--accent); }
+.opt.ng { background: var(--red-bg);    border-color: #C0806A;         color: var(--red); }
+.opt:disabled { cursor: default; }
+.next-btn, .reset-btn {
+  width: 100%; padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 14px; font-weight: 500;
+  color: var(--text); cursor: pointer;
+  text-align: center; font-family: inherit;
+  margin-top: 9px;
+  transition: background .12s;
+}
+.next-btn { background: var(--accent); color: #fff; border-color: var(--accent); display: none; }
+.next-btn:active  { background: var(--accent2); }
+.reset-btn:active { background: var(--surface2); }
+
+/* ── diff section ── */
+.diff-pair {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 7px; margin: 9px 0;
+}
+.diff-no  { background: var(--red-bg);    border-radius: var(--radius-sm); padding: 9px 10px; }
+.diff-yes { background: var(--accent-bg); border-radius: var(--radius-sm); padding: 9px 10px; }
+.diff-lbl { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+.diff-txt { font-size: 13px; line-height: 1.5; }
+.warn-box { background: var(--surface2); border-radius: var(--radius-sm); padding: 11px 13px; font-size: 13px; margin-top: 7px; line-height: 1.8; }
+.warn-no  { color: var(--red); }
+.warn-yes { color: var(--accent); margin-top: 4px; }
+
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 9px 0; }
+.trio-item { background: var(--surface2); border-radius: var(--radius-sm); padding: 9px 6px; text-align: center; }
+.trio-l { font-size: 11px; color: var(--text2); }
+.trio-v { font-size: 16px; font-weight: 700; margin-top: 3px; color: var(--text); }
+
+.sp-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 10px; }
+.sp-item { background: var(--accent); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+.sp-j { font-size: 20px; font-weight: 700; color: #fff; }
+.sp-r { font-size: 14px; color: rgba(255,255,255,.75); margin-top: 3px; }
+
+/* ── chapter select ── */
+.chapter-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 13px 14px;
+  margin-bottom: 9px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  transition: all .12s;
+  box-shadow: var(--shadow);
+}
+.chapter-card.on { border-color: var(--accent); background: var(--accent-bg); }
+.chapter-check {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  border: 1.5px solid var(--border2);
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: transparent;
+  transition: all .12s;
+}
+.chapter-card.on .chapter-check { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chapter-info { flex: 1; }
+.chapter-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.chapter-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🇯🇵 日文助數詞學習工具</h1>
+    <p>速查 · 1〜10讀法 · 記憶卡 · 測驗 · 易混淆點</p>
+  </div>
+  <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" aria-label="切換晝夜模式">
+    <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+    </svg>
+    <svg id="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+      <circle cx="12" cy="12" r="4"/>
+      <line x1="12" y1="2" x2="12" y2="5"/>
+      <line x1="12" y1="19" x2="12" y2="22"/>
+      <line x1="2" y1="12" x2="5" y2="12"/>
+      <line x1="19" y1="12" x2="22" y2="12"/>
+      <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+      <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+      <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+      <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+</div>
+
+<div class="tabs">
+  <button class="tab on"  onclick="sw('ref')">速查表</button>
+  <button class="tab"     onclick="sw('read')">1〜10讀法</button>
+  <button class="tab"     onclick="sw('cards')">記憶卡</button>
+  <button class="tab"     onclick="sw('quiz')">測驗</button>
+  <button class="tab"     onclick="sw('diff')">易混淆</button>
+</div>
+
+<!-- ══ 速查表 ══ -->
+<div id="ref" class="sec on">
+  <p class="section-label">數東西</p>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">〜つ</span><span class="badge bg">萬用 1〜9</span>
+    </div>
+    <div class="card-sub">ひとつ・ふたつ・みっつ… 不限形狀</div>
+    <div class="card-ex">例：りんごが三つ・椅子が五つ</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">個（こ）</span><span class="badge bb">塊狀 ■</span>
+    </div>
+    <div class="card-sub">いっこ・にこ… 塊狀具體物品</div>
+    <div class="card-ex">例：橡皮擦・蛋・蛋糕・糖果</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">本（ほん）</span><span class="badge br">細長 |</span>
+    </div>
+    <div class="card-sub">いっぽん・にほん… 細長形的東西</div>
+    <div class="card-ex">例：鉛筆・傘・寶特瓶・花</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">枚（まい）</span><span class="badge bb">扁平 ▬</span>
+    </div>
+    <div class="card-sub">いちまい・にまい… 薄薄扁扁的東西</div>
+    <div class="card-ex">例：紙・T恤・郵票・盤子</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">冊（さつ）</span><span class="badge ba">裝訂 📖</span>
+    </div>
+    <div class="card-sub">いっさつ・にさつ… 裝訂成冊的東西</div>
+    <div class="card-ex">例：書・雜誌・筆記本</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">台（だい）</span><span class="badge bg">機器 ⚙</span>
+    </div>
+    <div class="card-sub">いちだい・にだい… 機器・交通工具</div>
+    <div class="card-ex">例：車・電腦・手機・冰箱</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">杯（はい）</span><span class="badge bg">飲料 🥤</span>
+    </div>
+    <div class="card-sub">いっぱい・にはい… 飲料・容器裡的東西</div>
+    <div class="card-ex">例：咖啡・茶・飯</div>
+  </div>
+
+  <p class="section-label">數生物</p>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">人（にん）</span><span class="badge bb">人</span>
+    </div>
+    <div class="card-sub">3人〜：さんにん・よにん…</div>
+    <div class="card-ex" style="color:var(--red)">⚠ 1人＝ひとり・2人＝ふたり 特殊！</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">匹（ひき）</span><span class="badge br">小〜中型動物</span>
+    </div>
+    <div class="card-sub">いっぴき・にひき…</div>
+    <div class="card-ex">例：狗・貓・魚・兔子</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">頭（とう）</span><span class="badge ba">大型動物</span>
+    </div>
+    <div class="card-sub">いっとう・にとう…</div>
+    <div class="card-ex">例：馬・象・牛</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">羽（わ）</span><span class="badge bg">鳥類・兔子</span>
+    </div>
+    <div class="card-sub">いちわ・にわ… 發音規律，無特殊變化</div>
+    <div class="card-ex">例：雞・麻雀・鴿子</div>
+  </div>
+
+  <p class="section-label">數次數</p>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">回（かい）</span><span class="badge bb">次數</span>
+    </div>
+    <div class="card-sub">いっかい・にかい…</div>
+    <div class="card-ex">例：練習了3回（3次）</div>
+  </div>
+
+  <p class="section-label">數年齡</p>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span class="card-title">歳（さい）</span><span class="badge br">年齡</span>
+    </div>
+    <div class="card-sub">いっさい・にさい… 1・8・10→促音</div>
+    <div class="card-ex" style="color:var(--red)">⚠ 20歳＝はたち（特殊讀法，不是にじゅっさい）</div>
+  </div>
+
+  <p class="section-label">物品分類速查（依章節）</p>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:10px">點選章節按鈕切換，快速確認每個物品該用哪個助數詞</p>
+  <div class="csel" id="refChapterSel"></div>
+  <div id="refItemList"></div>
+</div>
+
+<!-- ══ 1〜10讀法 ══ -->
+<div id="read" class="sec">
+  <p style="font-size:12px;color:var(--text2);margin-bottom:12px">選擇助數詞查看 1〜10 完整讀法</p>
+  <div class="csel" id="csel"></div>
+  <div id="numtable"></div>
+</div>
+
+<!-- ══ 記憶卡 ══ -->
+<div id="cards" class="sec">
+  <p style="font-size:12px;color:var(--text2);margin-bottom:10px">選擇卡牌組</p>
+  <div class="csel" id="deckSel"></div>
+  <div id="flipbox"></div>
+  <div class="nav-row">
+    <button class="nav-btn" onclick="pc()">← 上一張</button>
+    <span class="nav-count" id="ccnt">1 / 12</span>
+    <button class="nav-btn" onclick="nc()">下一張 →</button>
+  </div>
+  <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">點擊卡片翻面查看詳細說明</p>
+</div>
+
+<!-- ══ 測驗 ══ -->
+<div id="quiz" class="sec">
+  <div id="quiz-select">
+    <p style="font-size:12px;color:var(--text2);margin-bottom:10px">請選擇要測驗的章節（可多選），選擇完成後按下開始測驗</p>
+    <div id="chapter-list"></div>
+    <button class="next-btn" id="startQuizBtn" style="display:block;margin-top:12px" onclick="startQuiz()">開始測驗 →</button>
+    <p id="chapterWarn" style="font-size:12px;color:var(--red);text-align:center;margin-top:8px;display:none">請至少選擇一個章節</p>
+  </div>
+  <div id="quiz-play" style="display:none">
+    <div class="scores">
+      <div class="sc"><div class="sc-n" id="qc">0</div><div class="sc-l">答對</div></div>
+      <div class="sc"><div class="sc-n" id="qt">0</div><div class="sc-l">總題數</div></div>
+      <div class="sc"><div class="sc-n" id="qp">—</div><div class="sc-l">正確率</div></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="qpb" style="width:0%"></div></div>
+    <div id="qarea"></div>
+    <button class="next-btn" id="nqb" onclick="nq()">下一題 →</button>
+    <button class="reset-btn" onclick="backToChapters()">↺ 重新選擇章節</button>
+  </div>
+</div>
+
+<!-- ══ 易混淆 ══ -->
+<div id="diff" class="sec">
+
+  <div class="card">
+    <p style="font-weight:700;margin-bottom:4px">書要用「冊」，不是「本」</p>
+    <div class="diff-pair">
+      <div class="diff-no">
+        <div class="diff-lbl" style="color:var(--red)">✗ 中文直覺</div>
+        <div class="diff-txt">書を1本</div>
+      </div>
+      <div class="diff-yes">
+        <div class="diff-lbl" style="color:var(--accent)">✓ 正確日文</div>
+        <div class="diff-txt">書を1冊<br><span style="font-size:11px">(いっさつ)</span></div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text2)">日文「本（ほん）」是數細長形東西的，不是數書的！</p>
+  </div>
+
+  <div class="card">
+    <p style="font-weight:700;margin-bottom:4px">「個」不像中文那樣萬用</p>
+    <div class="diff-pair">
+      <div class="diff-no">
+        <div class="diff-lbl" style="color:var(--red)">✗ 中文直覺</div>
+        <div class="diff-txt">一個人<br>一個問題</div>
+      </div>
+      <div class="diff-yes">
+        <div class="diff-lbl" style="color:var(--accent)">✓ 正確日文</div>
+        <div class="diff-txt">一人（ひとり）<br>質問が一つ</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text2)">日文「個」只用於塊狀具體物品，不能數人或抽象事物。</p>
+  </div>
+
+  <div class="card">
+    <p style="font-weight:700;margin-bottom:4px">同樣是巧克力，形狀決定助數詞</p>
+    <div class="trio">
+      <div class="trio-item"><div class="trio-l">片裝（薄扁）</div><div class="trio-v">枚</div></div>
+      <div class="trio-item"><div class="trio-l">方塊（塊狀）</div><div class="trio-v">個</div></div>
+      <div class="trio-item"><div class="trio-l">手指（細長）</div><div class="trio-v">本</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text2)">看形狀來決定助數詞，養成這個習慣最重要！</p>
+  </div>
+
+  <div class="card">
+    <p style="font-weight:700;margin-bottom:4px">助詞「が」的位置</p>
+    <div class="warn-box">
+      <p class="warn-no">✗ 卵が五つ<b>が</b>あります</p>
+      <p class="warn-yes">✓ 卵<b>が</b>五つあります</p>
+    </div>
+    <p style="font-size:12px;color:var(--text2);margin-top:8px">量詞（助數詞）後面不需要再加助詞「が」。</p>
+  </div>
+
+  <div class="card">
+    <p style="font-weight:700;margin-bottom:4px">「〜つ」只能用到 9</p>
+    <div class="warn-box">
+      ひとつ・ふたつ・みっつ・よっつ・いつつ<br>
+      むっつ・ななつ・やっつ・ここのつ<br>
+      <span class="warn-no">✗ 10個 → とおつ（不存在！）</span><br>
+      <span class="warn-yes">✓ 10以上 → 個/枚/本 等具體助數詞</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p style="font-weight:700;margin-bottom:4px">1人・2人 特殊讀法一定要記！</p>
+    <div class="sp-pair">
+      <div class="sp-item"><div class="sp-j">一人</div><div class="sp-r">ひとり</div></div>
+      <div class="sp-item"><div class="sp-j">二人</div><div class="sp-r">ふたり</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text2);margin-top:8px">3人以上才用にん（さんにん・よにん…）</p>
+  </div>
+
+</div>
+
+<script>
+const COUNTERS=[
+  {id:'tsu',name:'〜つ',sub:'萬用（1〜9）',nums:[
+    {n:'1',j:'一つ',r:'ひとつ',c:''},{n:'2',j:'二つ',r:'ふたつ',c:''},{n:'3',j:'三つ',r:'みっつ',c:'促音'},
+    {n:'4',j:'四つ',r:'よっつ',c:'促音'},{n:'5',j:'五つ',r:'いつつ',c:''},{n:'6',j:'六つ',r:'むっつ',c:'促音'},
+    {n:'7',j:'七つ',r:'ななつ',c:''},{n:'8',j:'八つ',r:'やっつ',c:'促音'},{n:'9',j:'九つ',r:'ここのつ',c:''},
+    {n:'10',j:'十',r:'とお',c:'⚠ 不能用つ！'},{n:'?',j:'幾つ',r:'いくつ',c:'疑問'},
+  ]},
+  {id:'ko',name:'個（こ）',sub:'塊狀物品',nums:[
+    {n:'1',j:'一個',r:'いっこ',c:'促音'},{n:'2',j:'二個',r:'にこ',c:''},{n:'3',j:'三個',r:'さんこ',c:''},
+    {n:'4',j:'四個',r:'よんこ',c:''},{n:'5',j:'五個',r:'ごこ',c:''},{n:'6',j:'六個',r:'ろっこ',c:'促音'},
+    {n:'7',j:'七個',r:'ななこ',c:''},{n:'8',j:'八個',r:'はっこ',c:'促音'},{n:'9',j:'九個',r:'きゅうこ',c:''},
+    {n:'10',j:'十個',r:'じゅっこ',c:'促音'},{n:'?',j:'何個',r:'なんこ',c:'疑問'},
+  ]},
+  {id:'hon',name:'本（ほん）',sub:'細長形',nums:[
+    {n:'1',j:'一本',r:'いっぽん',c:'ぽん'},{n:'2',j:'二本',r:'にほん',c:''},{n:'3',j:'三本',r:'さんぼん',c:'ぼん'},
+    {n:'4',j:'四本',r:'よんほん',c:''},{n:'5',j:'五本',r:'ごほん',c:''},{n:'6',j:'六本',r:'ろっぽん',c:'ぽん'},
+    {n:'7',j:'七本',r:'ななほん',c:''},{n:'8',j:'八本',r:'はっぽん',c:'ぽん'},{n:'9',j:'九本',r:'きゅうほん',c:''},
+    {n:'10',j:'十本',r:'じゅっぽん',c:'ぽん'},{n:'?',j:'何本',r:'なんぼん',c:'ぼん'},
+  ]},
+  {id:'mai',name:'枚（まい）',sub:'薄扁形',nums:[
+    {n:'1',j:'一枚',r:'いちまい',c:''},{n:'2',j:'二枚',r:'にまい',c:''},{n:'3',j:'三枚',r:'さんまい',c:''},
+    {n:'4',j:'四枚',r:'よんまい',c:''},{n:'5',j:'五枚',r:'ごまい',c:''},{n:'6',j:'六枚',r:'ろくまい',c:''},
+    {n:'7',j:'七枚',r:'ななまい',c:''},{n:'8',j:'八枚',r:'はちまい',c:''},{n:'9',j:'九枚',r:'きゅうまい',c:''},
+    {n:'10',j:'十枚',r:'じゅうまい',c:''},{n:'?',j:'何枚',r:'なんまい',c:'疑問'},
+  ]},
+  {id:'satsu',name:'冊（さつ）',sub:'裝訂成冊',nums:[
+    {n:'1',j:'一冊',r:'いっさつ',c:'促音'},{n:'2',j:'二冊',r:'にさつ',c:''},{n:'3',j:'三冊',r:'さんさつ',c:''},
+    {n:'4',j:'四冊',r:'よんさつ',c:''},{n:'5',j:'五冊',r:'ごさつ',c:''},{n:'6',j:'六冊',r:'ろくさつ',c:''},
+    {n:'7',j:'七冊',r:'ななさつ',c:''},{n:'8',j:'八冊',r:'はっさつ',c:'促音'},{n:'9',j:'九冊',r:'きゅうさつ',c:''},
+    {n:'10',j:'十冊',r:'じゅっさつ',c:'促音'},{n:'?',j:'何冊',r:'なんさつ',c:'疑問'},
+  ]},
+  {id:'dai',name:'台（だい）',sub:'機器・交通工具',nums:[
+    {n:'1',j:'一台',r:'いちだい',c:''},{n:'2',j:'二台',r:'にだい',c:''},{n:'3',j:'三台',r:'さんだい',c:''},
+    {n:'4',j:'四台',r:'よんだい',c:''},{n:'5',j:'五台',r:'ごだい',c:''},{n:'6',j:'六台',r:'ろくだい',c:''},
+    {n:'7',j:'七台',r:'ななだい',c:''},{n:'8',j:'八台',r:'はちだい',c:''},{n:'9',j:'九台',r:'きゅうだい',c:''},
+    {n:'10',j:'十台',r:'じゅうだい',c:''},{n:'?',j:'何台',r:'なんだい',c:'疑問'},
+  ]},
+  {id:'hai',name:'杯（はい）',sub:'飲料・容器',nums:[
+    {n:'1',j:'一杯',r:'いっぱい',c:'ぱい'},{n:'2',j:'二杯',r:'にはい',c:''},{n:'3',j:'三杯',r:'さんばい',c:'ばい'},
+    {n:'4',j:'四杯',r:'よんはい',c:''},{n:'5',j:'五杯',r:'ごはい',c:''},{n:'6',j:'六杯',r:'ろっぱい',c:'ぱい'},
+    {n:'7',j:'七杯',r:'ななはい',c:''},{n:'8',j:'八杯',r:'はっぱい',c:'ぱい'},{n:'9',j:'九杯',r:'きゅうはい',c:''},
+    {n:'10',j:'十杯',r:'じゅっぱい',c:'ぱい'},{n:'?',j:'何杯',r:'なんばい',c:'ばい'},
+  ]},
+  {id:'nin',name:'人（にん）',sub:'人',nums:[
+    {n:'1',j:'一人',r:'ひとり',c:'⚠ 特殊'},{n:'2',j:'二人',r:'ふたり',c:'⚠ 特殊'},{n:'3',j:'三人',r:'さんにん',c:''},
+    {n:'4',j:'四人',r:'よにん',c:'非よんにん'},{n:'5',j:'五人',r:'ごにん',c:''},{n:'6',j:'六人',r:'ろくにん',c:''},
+    {n:'7',j:'七人',r:'ななにん',c:''},{n:'8',j:'八人',r:'はちにん',c:''},{n:'9',j:'九人',r:'きゅうにん',c:''},
+    {n:'10',j:'十人',r:'じゅうにん',c:''},{n:'?',j:'何人',r:'なんにん',c:'疑問'},
+  ]},
+  {id:'hiki',name:'匹（ひき）',sub:'小〜中型動物',nums:[
+    {n:'1',j:'一匹',r:'いっぴき',c:'ぴき'},{n:'2',j:'二匹',r:'にひき',c:''},{n:'3',j:'三匹',r:'さんびき',c:'びき'},
+    {n:'4',j:'四匹',r:'よんひき',c:''},{n:'5',j:'五匹',r:'ごひき',c:''},{n:'6',j:'六匹',r:'ろっぴき',c:'ぴき'},
+    {n:'7',j:'七匹',r:'ななひき',c:''},{n:'8',j:'八匹',r:'はっぴき',c:'ぴき'},{n:'9',j:'九匹',r:'きゅうひき',c:''},
+    {n:'10',j:'十匹',r:'じゅっぴき',c:'ぴき'},{n:'?',j:'何匹',r:'なんびき',c:'びき'},
+  ]},
+  {id:'tou',name:'頭（とう）',sub:'大型動物',nums:[
+    {n:'1',j:'一頭',r:'いっとう',c:'促音'},{n:'2',j:'二頭',r:'にとう',c:''},{n:'3',j:'三頭',r:'さんとう',c:''},
+    {n:'4',j:'四頭',r:'よんとう',c:''},{n:'5',j:'五頭',r:'ごとう',c:''},{n:'6',j:'六頭',r:'ろくとう',c:''},
+    {n:'7',j:'七頭',r:'ななとう',c:''},{n:'8',j:'八頭',r:'はっとう',c:'促音'},{n:'9',j:'九頭',r:'きゅうとう',c:''},
+    {n:'10',j:'十頭',r:'じゅっとう',c:'促音'},{n:'?',j:'何頭',r:'なんとう',c:'疑問'},
+  ]},
+  {id:'wa',name:'羽（わ）',sub:'鳥類・兔子',nums:[
+    {n:'1',j:'一羽',r:'いちわ',c:''},{n:'2',j:'二羽',r:'にわ',c:''},{n:'3',j:'三羽',r:'さんわ',c:''},
+    {n:'4',j:'四羽',r:'よんわ',c:''},{n:'5',j:'五羽',r:'ごわ',c:''},{n:'6',j:'六羽',r:'ろくわ',c:''},
+    {n:'7',j:'七羽',r:'ななわ',c:''},{n:'8',j:'八羽',r:'はちわ',c:''},{n:'9',j:'九羽',r:'きゅうわ',c:''},
+    {n:'10',j:'十羽',r:'じゅうわ',c:''},{n:'?',j:'何羽',r:'なんわ',c:'疑問'},
+  ]},
+  {id:'kai',name:'回（かい）',sub:'次數',nums:[
+    {n:'1',j:'一回',r:'いっかい',c:'促音'},{n:'2',j:'二回',r:'にかい',c:''},{n:'3',j:'三回',r:'さんかい',c:''},
+    {n:'4',j:'四回',r:'よんかい',c:''},{n:'5',j:'五回',r:'ごかい',c:''},{n:'6',j:'六回',r:'ろっかい',c:'促音'},
+    {n:'7',j:'七回',r:'ななかい',c:''},{n:'8',j:'八回',r:'はっかい',c:'促音'},{n:'9',j:'九回',r:'きゅうかい',c:''},
+    {n:'10',j:'十回',r:'じゅっかい',c:'促音'},{n:'?',j:'何回',r:'なんかい',c:'疑問'},
+  ]},
+  {id:'sai',name:'歳（さい）',sub:'年齡',nums:[
+    {n:'1',j:'一歳',r:'いっさい',c:'促音'},{n:'2',j:'二歳',r:'にさい',c:''},{n:'3',j:'三歳',r:'さんさい',c:''},
+    {n:'4',j:'四歳',r:'よんさい',c:''},{n:'5',j:'五歳',r:'ごさい',c:''},{n:'6',j:'六歳',r:'ろくさい',c:''},
+    {n:'7',j:'七歳',r:'ななさい',c:''},{n:'8',j:'八歳',r:'はっさい',c:'促音'},{n:'9',j:'九歳',r:'きゅうさい',c:''},
+    {n:'10',j:'十歳',r:'じゅっさい',c:'促音'},{n:'20',j:'二十歳',r:'はたち',c:'⚠ 特殊'},{n:'?',j:'何歳',r:'なんさい',c:'疑問'},
+  ]},
+];
+
+/* ── 1〜10 讀法 ── */
+function buildReadSel(){
+  const el=document.getElementById('csel');
+  el.innerHTML=COUNTERS.map((c,i)=>`<button class="csel-btn${i===0?' on':''}" onclick="selC(${i})">${c.name}</button>`).join('');
+  renderNums(0);
+}
+function selC(i){
+  document.querySelectorAll('#csel .csel-btn').forEach((b,j)=>b.classList.toggle('on',j===i));
+  renderNums(i);
+}
+const changeStyle={
+  'ぽん':'color:var(--red)','ぼん':'color:var(--red)',
+  'ぴき':'color:var(--red)','びき':'color:var(--red)',
+  'ぱい':'color:var(--red)','ばい':'color:var(--red)',
+  '促音':'color:var(--blue)',
+  '⚠ 特殊':'color:var(--red)','⚠ 不能用つ！':'color:var(--red)',
+  '非よんにん':'color:var(--amber)',
+};
+function renderNums(i){
+  const c=COUNTERS[i];
+  document.getElementById('numtable').innerHTML=`
+    <div class="num-header">
+      <span class="num-title">${c.name}</span>
+      <span class="num-sub">${c.sub}</span>
+    </div>
+    <div class="num-grid">${c.nums.map(n=>`
+      <div class="num-cell">
+        <div class="num-j">${n.j}</div>
+        <div class="num-r">${n.r}</div>
+        <div class="num-c" style="${changeStyle[n.c]||'color:transparent'}">${n.c||'　'}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+/* ── 記憶卡 ── */
+const CARDS=[
+  {f:'〜つ',fr:'ひとつ〜ここのつ',b:'萬用助數詞（1〜9）\n不限形狀都能數\n不確定就用這個！\n10以上不能用',ac:'var(--accent)'},
+  {f:'個（こ）',fr:'いっこ・にこ…',b:'塊狀具體物品\n橡皮擦・蛋・蛋糕・糖果\n1・6・8・10→促音（いっこ等）',ac:'var(--blue)'},
+  {f:'本（ほん）',fr:'いっぽん・にほん…',b:'細長形的東西\n鉛筆・傘・寶特瓶・花\n1・6・8・10→ぽん\n3・何→ぼん\n⚠ 不是數書的！',ac:'var(--red)'},
+  {f:'枚（まい）',fr:'いちまい・にまい…',b:'薄薄扁扁的東西\n紙・T恤・郵票・盤子\n發音最規律！\n全部數字直接＋まい',ac:'var(--blue)'},
+  {f:'冊（さつ）',fr:'いっさつ・にさつ…',b:'裝訂成冊的東西\n書・雜誌・筆記本\n1・8・10→促音\n⚠ 中文「一本書」→日文一冊！',ac:'var(--amber)'},
+  {f:'台（だい）',fr:'いちだい・にだい…',b:'機器・交通工具\n車・電腦・手機・冰箱\n發音規律！\n數字直接＋だい',ac:'var(--accent)'},
+  {f:'杯（はい）',fr:'いっぱい・にはい…',b:'飲料・容器裡的東西\n咖啡・茶・飯\n1・6・8・10→ぱい\n3・何→ばい',ac:'var(--accent)'},
+  {f:'人（にん・り）',fr:'さんにん・よにん…',b:'人數\n1人＝ひとり ⚠\n2人＝ふたり ⚠\n4人はよにん（非よんにん）',ac:'var(--blue)'},
+  {f:'匹（ひき）',fr:'いっぴき・にひき…',b:'小〜中型動物\n狗・貓・魚・兔子\n1・6・8・10→ぴき\n3・何→びき',ac:'var(--red)'},
+  {f:'頭（とう）',fr:'いっとう・にとう…',b:'大型動物\n馬・象・牛・鯨魚\n1・8・10→促音\n其餘規律',ac:'var(--amber)'},
+  {f:'羽（わ）',fr:'いちわ・にわ…',b:'鳥類・兔子\n雞・麻雀・鴿子\n發音最規律！\n數字直接＋わ',ac:'var(--accent)'},
+  {f:'回（かい）',fr:'いっかい・にかい…',b:'次數\n練習了3回（さんかい）\n1・6・8・10→促音',ac:'var(--blue)'},
+  {f:'歳（さい）',fr:'いっさい・にさい…',b:'年齡\n1・8・10→促音（いっさい等）\n⚠ 20歳＝はたち！\n（不能念にじゅっさい）',ac:'var(--red)'},
+];
+
+/* ── 物品題庫：3 章節 × 20 個物品 ── */
+const ITEM_CHAPTERS=[
+{
+  id:1, name:'第一章：文具・書籍・日用品', short:'第一章',
+  items:[
+    {w:'鉛筆',r:'えんぴつ',zh:'鉛筆',c:'本',cr:'ほん',shape:'細長形'},
+    {w:'消しゴム',r:'けしゴム',zh:'橡皮擦',c:'個',cr:'こ',shape:'塊狀'},
+    {w:'紙',r:'かみ',zh:'紙',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'本',r:'ほん',zh:'書',c:'冊',cr:'さつ',shape:'裝訂成冊'},
+    {w:'雑誌',r:'ざっし',zh:'雜誌',c:'冊',cr:'さつ',shape:'裝訂成冊'},
+    {w:'ノート',r:'ノート',zh:'筆記本',c:'冊',cr:'さつ',shape:'裝訂成冊'},
+    {w:'傘',r:'かさ',zh:'雨傘',c:'本',cr:'ほん',shape:'細長形'},
+    {w:'ペン',r:'ペン',zh:'筆',c:'本',cr:'ほん',shape:'細長形'},
+    {w:'切手',r:'きって',zh:'郵票',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'お皿',r:'おさら',zh:'盤子',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'タオル',r:'タオル',zh:'毛巾',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'Tシャツ',r:'ティーシャツ',zh:'T恤',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'はがき',r:'はがき',zh:'明信片',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'お札',r:'おさつ',zh:'紙鈔',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'りんご',r:'りんご',zh:'蘋果',c:'個',cr:'こ',shape:'塊狀'},
+    {w:'卵',r:'たまご',zh:'雞蛋',c:'個',cr:'こ',shape:'塊狀'},
+    {w:'ケーキ',r:'ケーキ',zh:'蛋糕',c:'個',cr:'こ',shape:'塊狀'},
+    {w:'飴',r:'あめ',zh:'糖果',c:'個',cr:'こ',shape:'塊狀'},
+    {w:'おにぎり',r:'おにぎり',zh:'飯團',c:'個',cr:'こ',shape:'塊狀'},
+    {w:'バナナ',r:'バナナ',zh:'香蕉',c:'本',cr:'ほん',shape:'細長形'},
+  ]
+},
+{
+  id:2, name:'第二章：機器・家具・交通工具', short:'第二章',
+  items:[
+    {w:'車',r:'くるま',zh:'車子',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'パソコン',r:'パソコン',zh:'電腦',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'スマホ',r:'スマホ',zh:'智慧型手機',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'冷蔵庫',r:'れいぞうこ',zh:'冰箱',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'自転車',r:'じてんしゃ',zh:'腳踏車',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'テレビ',r:'テレビ',zh:'電視',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'エアコン',r:'エアコン',zh:'冷氣',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'カメラ',r:'カメラ',zh:'相機',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'洗濯機',r:'せんたくき',zh:'洗衣機',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'プリンター',r:'プリンター',zh:'印表機',c:'台',cr:'だい',shape:'機器・交通工具'},
+    {w:'椅子',r:'いす',zh:'椅子',c:'個',cr:'こ',shape:'塊狀（口語常用つ/個）'},
+    {w:'箸',r:'はし',zh:'筷子',c:'本',cr:'ほん',shape:'細長形（一對為一膳）'},
+    {w:'ネクタイ',r:'ネクタイ',zh:'領帶',c:'本',cr:'ほん',shape:'細長形'},
+    {w:'花',r:'はな',zh:'花',c:'本',cr:'ほん',shape:'細長形'},
+    {w:'ボトル',r:'ボトル',zh:'寶特瓶',c:'本',cr:'ほん',shape:'細長形'},
+    {w:'CD',r:'シーディー',zh:'CD',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'チケット',r:'チケット',zh:'票券',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'カード',r:'カード',zh:'卡片',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'写真',r:'しゃしん',zh:'照片',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'ハンカチ',r:'ハンカチ',zh:'手帕',c:'枚',cr:'まい',shape:'薄扁形'},
+  ]
+},
+{
+  id:3, name:'第三章：飲食・動物・人', short:'第三章',
+  items:[
+    {w:'コーヒー',r:'コーヒー',zh:'咖啡',c:'杯',cr:'はい',shape:'容器裡的飲料'},
+    {w:'お茶',r:'おちゃ',zh:'茶',c:'杯',cr:'はい',shape:'容器裡的飲料'},
+    {w:'水',r:'みず',zh:'水',c:'杯',cr:'はい',shape:'容器裡的飲料'},
+    {w:'ビール',r:'ビール',zh:'啤酒',c:'杯',cr:'はい',shape:'容器裡的飲料'},
+    {w:'ご飯',r:'ごはん',zh:'飯',c:'杯',cr:'はい',shape:'容器裡的食物（碗裝）'},
+    {w:'犬',r:'いぬ',zh:'狗',c:'匹',cr:'ひき',shape:'小〜中型動物'},
+    {w:'猫',r:'ねこ',zh:'貓',c:'匹',cr:'ひき',shape:'小〜中型動物'},
+    {w:'魚',r:'さかな',zh:'魚',c:'匹',cr:'ひき',shape:'小〜中型動物'},
+    {w:'うさぎ',r:'うさぎ',zh:'兔子',c:'匹',cr:'ひき',shape:'小型動物（也可用羽）'},
+    {w:'馬',r:'うま',zh:'馬',c:'頭',cr:'とう',shape:'大型動物'},
+    {w:'象',r:'ぞう',zh:'象',c:'頭',cr:'とう',shape:'大型動物'},
+    {w:'牛',r:'うし',zh:'牛',c:'頭',cr:'とう',shape:'大型動物'},
+    {w:'鳥',r:'とり',zh:'鳥',c:'羽',cr:'わ',shape:'鳥類'},
+    {w:'にわとり',r:'にわとり',zh:'雞',c:'羽',cr:'わ',shape:'鳥類'},
+    {w:'すずめ',r:'すずめ',zh:'麻雀',c:'羽',cr:'わ',shape:'鳥類'},
+    {w:'学生',r:'がくせい',zh:'學生',c:'人',cr:'にん',shape:'人'},
+    {w:'先生',r:'せんせい',zh:'老師',c:'人',cr:'にん',shape:'人'},
+    {w:'チョコ（板チョコ）',r:'チョコ',zh:'巧克力（片裝）',c:'枚',cr:'まい',shape:'薄扁形'},
+    {w:'チョコ（一粒）',r:'チョコ',zh:'巧克力（一顆）',c:'個',cr:'こ',shape:'塊狀'},
+    {w:'試験',r:'しけん',zh:'考試（次數）',c:'回',cr:'かい',shape:'動作次數'},
+  ]
+}
+];
+
+/* 各助數詞 1〜何 的讀法表（用來出讀法題） */
+const COUNTER_READINGS={
+  '個':{'1':'いっこ','2':'にこ','3':'さんこ','5':'ごこ','6':'ろっこ','8':'はっこ','10':'じゅっこ'},
+  '本':{'1':'いっぽん','2':'にほん','3':'さんぼん','5':'ごほん','6':'ろっぽん','8':'はっぽん','10':'じゅっぽん'},
+  '枚':{'1':'いちまい','2':'にまい','3':'さんまい','5':'ごまい','6':'ろくまい','8':'はちまい','10':'じゅうまい'},
+  '冊':{'1':'いっさつ','2':'にさつ','3':'さんさつ','5':'ごさつ','6':'ろくさつ','8':'はっさつ','10':'じゅっさつ'},
+  '台':{'1':'いちだい','2':'にだい','3':'さんだい','5':'ごだい','6':'ろくだい','8':'はちだい','10':'じゅうだい'},
+  '杯':{'1':'いっぱい','2':'にはい','3':'さんばい','5':'ごはい','6':'ろっぱい','8':'はっぱい','10':'じゅっぱい'},
+  '人':{'1':'ひとり','2':'ふたり','3':'さんにん','5':'ごにん','6':'ろくにん','8':'はちにん','10':'じゅうにん'},
+  '匹':{'1':'いっぴき','2':'にひき','3':'さんびき','5':'ごひき','6':'ろっぴき','8':'はっぴき','10':'じゅっぴき'},
+  '頭':{'1':'いっとう','2':'にとう','3':'さんとう','5':'ごとう','6':'ろくとう','8':'はっとう','10':'じゅっとう'},
+  '羽':{'1':'いちわ','2':'にわ','3':'さんわ','5':'ごわ','6':'ろくわ','8':'はちわ','10':'じゅうわ'},
+  '回':{'1':'いっかい','2':'にかい','3':'さんかい','5':'ごかい','6':'ろっかい','8':'はっかい','10':'じゅっかい'},
+  '歳':{'1':'いっさい','2':'にさい','3':'さんさい','5':'ごさい','6':'ろくさい','8':'はっさい','10':'じゅっさい','20':'はたち'},
+};
+const ALL_COUNTER_NAMES={
+  '個':'個（こ）','本':'本（ほん）','枚':'枚（まい）','冊':'冊（さつ）','台':'台（だい）',
+  '杯':'杯（はい）','人':'人（にん）','匹':'匹（ひき）','頭':'頭（とう）','羽':'羽（わ）','回':'回（かい）','歳':'歳（さい）','つ':'〜つ',
+};
+const SHAPE_DISTRACTORS={
+  '本':['個（こ）','枚（まい）','冊（さつ）'],
+  '個':['本（ほん）','枚（まい）','台（だい）'],
+  '枚':['本（ほん）','個（こ）','冊（さつ）'],
+  '冊':['本（ほん）','枚（まい）','個（こ）'],
+  '台':['個（こ）','本（ほん）','枚（まい）'],
+  '杯':['個（こ）','本（ほん）','台（だい）'],
+  '人':['個（こ）','匹（ひき）','台（だい）'],
+  '匹':['頭（とう）','羽（わ）','台（だい）'],
+  '頭':['匹（ひき）','羽（わ）','台（だい）'],
+  '羽':['匹（ひき）','頭（とう）','個（こ）'],
+  '回':['個（こ）','本（ほん）','台（だい）'],
+  '歳':['人（にん）','回（かい）','個（こ）'],
+};
+function shuffleArr(a){return [...a].sort(()=>Math.random()-.5);}
+
+/* 由 ITEM_CHAPTERS 產生記憶卡資料 */
+const ITEM_CARD_COLORS=['var(--accent)','var(--blue)','var(--red)','var(--amber)','var(--accent2)'];
+function itemToCard(item,idx){
+  return {
+    f:item.w,
+    fr:`${item.r}（${item.zh}）`,
+    b:`助數詞：${ALL_COUNTER_NAMES[item.c]}\n形狀／類別：${item.shape}\n例：${item.w}が${COUNTER_READINGS[item.c]?(item.c==='人'?'1':'2'):'1〜2'}${item.c}`,
+    ac:ITEM_CARD_COLORS[idx%ITEM_CARD_COLORS.length]
+  };
+}
+/* 卡牌牌組：助數詞總覽 + 各章節物品 */
+const CARD_DECKS=[
+  {name:'助數詞總覽', cards:CARDS},
+  ...ITEM_CHAPTERS.map(ch=>({name:ch.short, cards:ch.items.map((it,i)=>itemToCard(it,i))}))
+];
+let deckIdx=0, ci=0;
+function buildDeckSel(){
+  const el=document.getElementById('deckSel');
+  el.innerHTML=CARD_DECKS.map((d,i)=>`<button class="csel-btn${i===0?' on':''}" onclick="selDeck(${i})">${d.name}</button>`).join('');
+}
+function selDeck(i){
+  deckIdx=i; ci=0;
+  document.querySelectorAll('#deckSel .csel-btn').forEach((b,j)=>b.classList.toggle('on',j===i));
+  renderCard();
+}
+function renderCard(){
+  const deck=CARD_DECKS[deckIdx].cards;
+  const c=deck[ci];
+  document.getElementById('flipbox').innerHTML=`
+    <div class="flip-wrap" id="fc" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="face face-front">
+          <div class="flip-main" style="color:${c.ac}">${c.f}</div>
+          <div class="flip-sub">${c.fr}</div>
+          <div class="flip-hint">點擊翻面 →</div>
+        </div>
+        <div class="face face-back">
+          <div class="flip-body">${c.b}</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('ccnt').textContent=`${ci+1} / ${deck.length}`;
+}
+function nc(){const deck=CARD_DECKS[deckIdx].cards;ci=(ci+1)%deck.length;renderCard();}
+function pc(){const deck=CARD_DECKS[deckIdx].cards;ci=(ci-1+deck.length)%deck.length;renderCard();}
+
+/* ── 速查表：物品分類清單 ── */
+let refChapterIdx=0;
+function buildRefChapterSel(){
+  const el=document.getElementById('refChapterSel');
+  el.innerHTML=ITEM_CHAPTERS.map((ch,i)=>`<button class="csel-btn${i===0?' on':''}" onclick="selRefChapter(${i})">${ch.short}</button>`).join('');
+  renderRefItems(0);
+}
+function selRefChapter(i){
+  refChapterIdx=i;
+  document.querySelectorAll('#refChapterSel .csel-btn').forEach((b,j)=>b.classList.toggle('on',j===i));
+  renderRefItems(i);
+}
+function renderRefItems(i){
+  const ch=ITEM_CHAPTERS[i];
+  document.getElementById('refItemList').innerHTML=ch.items.map(item=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span style="font-size:17px;font-weight:700">${item.w}</span>
+        <span class="badge bg">${ALL_COUNTER_NAMES[item.c]}</span>
+      </div>
+      <div class="card-sub">${item.r}（${item.zh}）</div>
+      <div class="card-ex">${item.shape}</div>
+    </div>`).join('');
+}
+
+/* ── 測驗：基礎助數詞題庫 ── */
+const BASE_QS=[
+  {q:'鉛筆（えんぴつ）用哪個助數詞？',a:'本（ほん）',o:['本（ほん）','枚（まい）','個（こ）','冊（さつ）'],h:'細長形'},
+  {q:'紙（かみ）用哪個助數詞？',a:'枚（まい）',o:['本（ほん）','枚（まい）','個（こ）','台（だい）'],h:'薄薄扁扁的'},
+  {q:'書（ほん）を1___。空格填什麼？',a:'冊（さつ）',o:['本（ほん）','枚（まい）','冊（さつ）','個（こ）'],h:'裝訂成冊'},
+  {q:'車（くるま）を三___。空格填什麼？',a:'台（だい）',o:['枚（まい）','台（だい）','匹（ひき）','本（ほん）'],h:'交通工具'},
+  {q:'「1人」日文怎麼念？',a:'ひとり',o:['いちにん','ひとり','いちり','ひとにん'],h:'1人・2人是特殊讀法'},
+  {q:'貓（ねこ）を二___。空格填什麼？',a:'匹（ひき）',o:['頭（とう）','羽（わ）','匹（ひき）','台（だい）'],h:'小〜中型動物'},
+  {q:'不確定時最安全的萬用助數詞是？',a:'〜つ',o:['〜つ','〜個（こ）','〜本（ほん）','〜枚（まい）'],h:'只能用到9'},
+  {q:'T恤（Tシャツ）用哪個助數詞？',a:'枚（まい）',o:['本（ほん）','個（こ）','枚（まい）','冊（さつ）'],h:'薄薄扁扁的'},
+  {q:'「六本」正確讀法是？',a:'ろっぽん',o:['ろくほん','ろっぽん','ろくぼん','ろっほん'],h:'6→ぽん送氣'},
+  {q:'「三本」正確讀法是？',a:'さんぼん',o:['さんほん','さんぽん','さんぼん','みっほん'],h:'3→ぼん濁音'},
+  {q:'雜誌（ざっし）用哪個助數詞？',a:'冊（さつ）',o:['本（ほん）','冊（さつ）','枚（まい）','個（こ）'],h:'裝訂成冊'},
+  {q:'咖啡（コーヒー）用哪個助數詞？',a:'杯（はい）',o:['個（こ）','本（ほん）','杯（はい）','台（だい）'],h:'容器裡的飲料'},
+  {q:'「一杯」怎麼念？',a:'いっぱい',o:['いちはい','いっはい','いっぱい','いちぱい'],h:'1→ぱい送氣'},
+  {q:'馬（うま）用哪個助數詞？',a:'頭（とう）',o:['匹（ひき）','羽（わ）','頭（とう）','台（だい）'],h:'大型動物'},
+  {q:'「卵が五つがあります」的錯誤在哪？',a:'量詞後不需要再加「が」',o:['量詞後不需要再加「が」','五つ的讀法錯誤','卵後不能加が','這句話沒問題'],h:'助詞位置'},
+  {q:'「2人」日文怎麼念？',a:'ふたり',o:['ににん','ふたり','ふたにん','にり'],h:'2人是特殊讀法'},
+  {q:'「一冊」怎麼念？',a:'いっさつ',o:['いちさつ','いっさつ','いちたつ','いったつ'],h:'1→促音'},
+  {q:'魚（さかな）を五___。空格填什麼？',a:'匹（ひき）',o:['頭（とう）','羽（わ）','枚（まい）','匹（ひき）'],h:'小〜中型動物'},
+  {q:'「20歳」日文怎麼念？',a:'はたち',o:['にじゅっさい','はたち','にじっさい','にさい'],h:'20歲是最特殊的讀法！'},
+  {q:'問年齡用哪個助數詞？',a:'歳（さい）',o:['歳（さい）','回（かい）','人（にん）','個（こ）'],h:'年齡'},
+  {q:'「一歳」怎麼念？',a:'いっさい',o:['いちさい','いっさい','いちたい','いったい'],h:'1→促音'},
+  {q:'「八歳」怎麼念？',a:'はっさい',o:['はちさい','はっさい','はちたい','はったい'],h:'8→促音'},
+  {q:'「何歳ですか」是在問什麼？',a:'年齡',o:['年齡','次數','人數','時間'],h:'歳＝年齡助數詞'},
+];
+
+/* 為單一物品產生 1〜2 題（助數詞選擇 ＋ 讀法選擇） */
+function genItemQuestions(item){
+  const out=[];
+  const correctName=ALL_COUNTER_NAMES[item.c];
+  // Q1: 助數詞選擇題
+  const distract1=shuffleArr(SHAPE_DISTRACTORS[item.c]||[]).slice(0,3);
+  out.push({
+    q:`${item.w}（${item.r}）用哪個助數詞？`,
+    a:correctName,
+    o:shuffleArr([correctName,...distract1]),
+    h:`${item.shape}・${item.zh}`
+  });
+  // Q2: 讀法選擇題（隨機挑一個有特殊變化的數字，若無則用「3」）
+  const readings=COUNTER_READINGS[item.c];
+  if(readings){
+    const candidates=Object.keys(readings).filter(n=>n!=='2'&&n!=='5');
+    const num=candidates[Math.floor(Math.random()*candidates.length)]||'3';
+    const correctR=readings[num];
+    // 產生干擾選項：同助數詞其他數字的讀法 + 規律但錯誤的讀法
+    let distractPool=Object.values(readings).filter(r=>r!==correctR);
+    distractPool=shuffleArr(distractPool).slice(0,3);
+    while(distractPool.length<3){
+      distractPool.push(correctR+'ー'); // fallback, rarely triggered
+    }
+    out.push({
+      q:`「${num}${item.c}」（${item.w}）的正確讀法是？`,
+      a:correctR,
+      o:shuffleArr([correctR,...distractPool]),
+      h:`助數詞：${correctName}`
+    });
+  }
+  return out;
+}
+
+/* ── 章節選擇畫面 ── */
+let selectedChapters=new Set();
+function buildChapterList(){
+  const el=document.getElementById('chapter-list');
+  el.innerHTML=ITEM_CHAPTERS.map((ch,i)=>`
+    <div class="chapter-card" id="ch-${i}" onclick="toggleChapter(${i})">
+      <div class="chapter-check">✓</div>
+      <div class="chapter-info">
+        <div class="chapter-title">${ch.name}</div>
+        <div class="chapter-sub">${ch.items.length} 個物品 ・ 約 ${ch.items.length*2} 題</div>
+      </div>
+    </div>`).join('');
+}
+function toggleChapter(i){
+  if(selectedChapters.has(i)){selectedChapters.delete(i);}else{selectedChapters.add(i);}
+  document.getElementById(`ch-${i}`).classList.toggle('on');
+}
+function startQuiz(){
+  if(selectedChapters.size===0){
+    document.getElementById('chapterWarn').style.display='block';
+    return;
+  }
+  document.getElementById('chapterWarn').style.display='none';
+  // 建立題目池：所選章節的物品題 + 基礎助數詞題
+  let pool=[...BASE_QS];
+  selectedChapters.forEach(i=>{
+    ITEM_CHAPTERS[i].items.forEach(item=>{
+      pool.push(...genItemQuestions(item));
+    });
+  });
+  shuffled=shuffleArr(pool);
+  qi=0;qcor=0;qtot=0;qans=false;
+  ['qc','qt'].forEach(id=>document.getElementById(id).textContent=0);
+  document.getElementById('qp').textContent='—';
+  document.getElementById('qpb').style.width='0%';
+  document.getElementById('quiz-select').style.display='none';
+  document.getElementById('quiz-play').style.display='block';
+  renderQ();
+}
+function backToChapters(){
+  document.getElementById('quiz-play').style.display='none';
+  document.getElementById('quiz-select').style.display='block';
+}
+
+let qi=0,qcor=0,qtot=0,qans=false,shuffled=[];
+function renderQ(){
+  const q=shuffled[qi%shuffled.length];
+  document.getElementById('qpb').style.width=Math.round((qi/shuffled.length)*100)+'%';
+  document.getElementById('qarea').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">第 ${qi+1} / ${shuffled.length} 題</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-hint">提示：${q.h}</div>
+      <div class="opts">${q.o.map(op=>`<button class="opt" onclick="chk(this,'${op.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')">${op}</button>`).join('')}</div>
+    </div>`;
+  document.getElementById('nqb').style.display='none';
+  qans=false;
+}
+function chk(el,chosen,ans){
+  if(qans)return;qans=true;qtot++;
+  document.getElementById('qt').textContent=qtot;
+  document.querySelectorAll('.opt').forEach(b=>{
+    if(b.textContent.trim()===ans)b.classList.add('ok');
+    else if(b===el)b.classList.add('ng');
+    b.disabled=true;
+  });
+  if(chosen===ans){
+    qcor++;document.getElementById('qc').textContent=qcor;
+    document.getElementById('qp').textContent=Math.round(qcor/qtot*100)+'%';
+    setTimeout(nq, 700);
+  } else {
+    document.getElementById('qp').textContent=Math.round(qcor/qtot*100)+'%';
+    document.getElementById('nqb').style.display='block';
+  }
+}
+function nq(){qi++;if(qi>=shuffled.length){qi=0;shuffled=shuffleArr(shuffled);}renderQ();}
+
+/* ── tabs ── */
+const TABS=['ref','read','cards','quiz','diff'];
+function sw(id){
+  TABS.forEach(s=>{document.getElementById(s).classList.toggle('on',s===id)});
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',TABS[i]===id));
+}
+
+/* ── theme ── */
+function setThemeIcon(isDark){
+  document.getElementById('icon-moon').style.display = isDark ? 'none' : 'block';
+  document.getElementById('icon-sun').style.display  = isDark ? 'block' : 'none';
+}
+function toggleTheme(){
+  const isDark = document.body.classList.toggle('dark');
+  setThemeIcon(isDark);
+  try { localStorage.setItem('counter-theme', isDark ? 'dark' : 'light'); } catch(e) {}
+}
+(function initTheme(){
+  let saved = null;
+  try { saved = localStorage.getItem('counter-theme'); } catch(e) {}
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const useDark = saved ? saved === 'dark' : prefersDark;
+  if (useDark) {
+    document.body.classList.add('dark');
+    setThemeIcon(true);
+  }
+})();
+
+buildReadSel();
+buildDeckSel();
+renderCard();
+buildChapterList();
+buildRefChapterSel();
+</script>
+</body>
+</html>

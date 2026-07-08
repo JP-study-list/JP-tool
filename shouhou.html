@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="日文稱謂學習工具，涵蓋第一/第二/第三人稱與家庭敬稱謙稱，支援參考表、單字卡、情境選擇題練習。">
+<meta name="robots" content="index, follow">
+<title>shouhou-drill｜日文稱謂學習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: #f0f2f7;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ══ DARK MODE ══ */
+body.dark { background: #0f1117; color: #e8e8f0; }
+body.dark .header, body.dark .settings-bar, body.dark .form-filter { background: #1a1c26; border-color: #2e3044; }
+body.dark .header h1 { color: #e8e8f0; }
+body.dark .header-stats { color: #aaa; }
+body.dark .stat-badge { background: #2e3044; color: #ccc; }
+body.dark .stat-badge.correct { background: #0d3d28; color: #4ecca3; }
+body.dark .stat-badge.wrong { background: #3d0d0d; color: #f08080; }
+body.dark .settings-label { color: #666; }
+body.dark .pill-btn { background: #1a1c26; border-color: #3a3d52; color: #aaa; }
+body.dark .pill-btn:hover { border-color: #666; }
+body.dark .pill-btn.active-cat1 { background: #162436; border-color: #4a90d9; color: #7ab8f0; }
+body.dark .pill-btn.active-cat2 { background: #2d1a08; border-color: #e07a2f; color: #f0a870; }
+body.dark .pill-btn.active-cat3 { background: #1e1228; border-color: #8a5fd9; color: #b090e8; }
+body.dark .pill-btn.active-cat4 { background: #0d3d28; border-color: #2fa86a; color: #6fe0a8; }
+body.dark .pill-btn.active-mode { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .divider-v { background: #2e3044; }
+body.dark .form-chip { background: #1a1c26; border-color: #3a3d52; color: #888; }
+body.dark .form-chip.selected { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .select-all-btn { color: #7ab8f0; }
+body.dark .flashcard, body.dark .quiz-card, body.dark .ref-table-wrap { background: #1a1c26; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+body.dark .card-prompt { color: #555; }
+body.dark .card-word { color: #e8e8f0; }
+body.dark .card-reading { color: #666; }
+body.dark .card-zh { color: #888; }
+body.dark .card-tag { background: #162436; color: #7ab8f0; }
+body.dark .card-answer { border-top-color: #2e3044; }
+body.dark .answer-big { color: #4ecca3; }
+body.dark .answer-note { color: #666; }
+body.dark .card-tap { color: #444; }
+body.dark .btn-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .btn-wrong:hover { background: #5a1515; }
+body.dark .btn-correct { background: #0d3d28; color: #4ecca3; }
+body.dark .btn-correct:hover { background: #155c3d; }
+body.dark .scenario-text { background: #162436; color: #cfe6fb; }
+body.dark .scenario-meta { color: #888; }
+body.dark .choice-btn { background: #0f1117; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .choice-btn:hover { border-color: #4a90d9; }
+body.dark .choice-btn.correct-choice { background: #0d3d28; border-color: #4ecca3; color: #4ecca3; }
+body.dark .choice-btn.wrong-choice { background: #3d0d0d; border-color: #f08080; color: #f08080; }
+body.dark .quiz-feedback.ok { color: #4ecca3; }
+body.dark .quiz-feedback.ng { color: #f08080; }
+body.dark .quiz-explain { color: #888; background: #14161f; }
+body.dark .ref-search { background: #1a1c26; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .ref-search:focus { border-color: #4a90d9; }
+body.dark .ref-cat-header { border-color: #2a4060; }
+body.dark .ref-cat-header.cat1 { background: #162436; color: #7ab8f0; border-color: #2a4060; }
+body.dark .ref-cat-header.cat2 { background: #2d1a08; color: #f0a870; border-color: #5a3010; }
+body.dark .ref-cat-header.cat3 { background: #1e1228; color: #b090e8; border-color: #3a2050; }
+body.dark .ref-cat-header.cat4 { background: #0d3d28; color: #6fe0a8; border-color: #1a5c3e; }
+body.dark .ref-table th { background: #0f1117; color: #666; border-color: #2e3044; }
+body.dark .ref-table td { border-color: #23253a; }
+body.dark .ref-table tr:hover td { background: #1e2030; }
+body.dark .usage-tag { background: #23253a; color: #aaa; }
+body.dark .usage-tag.tag-male { background: #162436; color: #7ab8f0; }
+body.dark .usage-tag.tag-female { background: #3d1428; color: #f08fc0; }
+body.dark .usage-tag.tag-formal { background: #1e1228; color: #b090e8; }
+body.dark .kenjo-tag { background: #0d3d28; color: #6fe0a8; }
+body.dark .sonkei-tag { background: #2d1a08; color: #f0a870; }
+body.dark .progress-bar-bg { background: #2e3044; }
+body.dark .btn-restart { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-restart:hover { background: #ccc; }
+body.dark .btn-retry-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .done-state h2 { color: #e8e8f0; }
+body.dark .done-state p { color: #888; }
+body.dark .fam-relation-row { border-color: #23253a; }
+body.dark .fam-relation-row:hover { background: #1e2030; }
+
+/* ══ GRAYSCALE MODE ══ */
+body.grayscale { filter: grayscale(1); }
+body.grayscale.dark { filter: grayscale(1); }
+
+/* ══ Theme toggle ══ */
+.theme-toggle-group { display: flex; gap: 4px; align-items: center; }
+.theme-btn {
+  border: 1.5px solid #ddd; background: #fff; border-radius: 8px;
+  padding: 5px 8px; cursor: pointer; color: #666; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.theme-btn svg { width: 16px; height: 16px; display: block; }
+.theme-btn:hover { border-color: #aaa; background: #f5f5f5; }
+.theme-btn.active { background: #1a1a2e; border-color: #1a1a2e; }
+.theme-btn.active svg { stroke: #fff; }
+body.dark .theme-btn { background: #1a1c26; border-color: #3a3d52; color: #aaa; }
+body.dark .theme-btn:hover { border-color: #666; }
+body.dark .theme-btn.active { background: #e8e8f0; border-color: #e8e8f0; }
+body.dark .theme-btn.active svg { stroke: #1a1c26; }
+
+/* ── Header ── */
+.header {
+  background: #fff; border-bottom: 1px solid #e4e6ef; padding: 12px 20px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.header h1 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; flex: 1; min-width: 160px; }
+.header-stats { display: flex; gap: 10px; align-items: center; font-size: 0.82rem; color: #666; }
+.stat-badge { background: #f0f2f7; border-radius: 999px; padding: 3px 10px; font-weight: 600; }
+.stat-badge.correct { background: #e6f9f0; color: #0a7a4a; }
+.stat-badge.wrong { background: #fde8e8; color: #c0392b; }
+
+/* ── Settings ── */
+.settings-bar {
+  background: #fff; border-bottom: 1px solid #e4e6ef; padding: 10px 20px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.settings-label { font-size: 0.8rem; font-weight: 700; color: #888; white-space: nowrap; }
+.pill-btn {
+  border: 2px solid #ddd; background: #fff; border-radius: 999px; padding: 4px 14px;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+  color: #555; white-space: nowrap;
+}
+.pill-btn:hover { border-color: #aaa; }
+.pill-btn.active-cat1 { background: #e8f4fd; border-color: #4a90d9; color: #2563a8; }
+.pill-btn.active-cat2 { background: #fef3e8; border-color: #e07a2f; color: #b85c10; }
+.pill-btn.active-cat3 { background: #f0e8fd; border-color: #8a5fd9; color: #5a2ba8; }
+.pill-btn.active-cat4 { background: #e6f9f0; border-color: #2fa86a; color: #0a7a4a; }
+.pill-btn.active-mode { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+.divider-v { width: 1px; height: 24px; background: #e4e6ef; margin: 0 4px; }
+
+/* ── Form filter (category chips) ── */
+.form-filter {
+  background: #fff; border-bottom: 1px solid #e4e6ef; padding: 8px 20px;
+  display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+}
+.form-chip {
+  border: 1.5px solid #ddd; background: #fff; border-radius: 6px; padding: 3px 10px;
+  font-size: 0.78rem; cursor: pointer; color: #666; transition: all 0.13s; user-select: none;
+}
+.form-chip.selected { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+.select-all-btn { font-size: 0.75rem; color: #4a90d9; cursor: pointer; text-decoration: underline; margin-left: 4px; white-space: nowrap; }
+
+/* ── Main ── */
+.main { padding: 24px 20px; max-width: 720px; margin: 0 auto; }
+
+/* ── Flashcard ── */
+.flashcard-wrap { perspective: 1000px; }
+.flashcard {
+  width: 100%; min-height: 200px; background: #fff; border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 36px 28px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; cursor: pointer; transition: box-shadow 0.2s; position: relative;
+}
+.flashcard:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.13); }
+.card-prompt { font-size: 0.82rem; color: #aaa; margin-bottom: 8px; letter-spacing: 0.05em; }
+.card-word { font-size: 2.4rem; font-weight: 700; color: #1a1a2e; letter-spacing: 0.04em; margin-bottom: 6px; }
+.card-reading { font-size: 1rem; color: #888; margin-bottom: 6px; }
+.card-zh { font-size: 1rem; color: #555; }
+.card-tag {
+  margin-top: 18px; font-size: 0.92rem; color: #4a90d9; font-weight: 600;
+  background: #e8f4fd; border-radius: 8px; padding: 6px 16px; display: inline-block;
+}
+.card-answer { display: none; margin-top: 20px; width: 100%; border-top: 1px dashed #eee; padding-top: 18px; text-align: center; }
+.card-answer.show { display: block; }
+.answer-big { font-size: 1.5rem; font-weight: 700; color: #0a7a4a; margin-bottom: 6px; line-height: 1.6; }
+.answer-note { font-size: 0.85rem; color: #888; }
+.card-tap { font-size: 0.78rem; color: #ccc; margin-top: 14px; }
+.btn-row { display: flex; gap: 12px; margin-top: 18px; justify-content: center; }
+.btn-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-wrong:hover { background: #f5c6c6; }
+.btn-correct { background: #e6f9f0; color: #0a7a4a; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-correct:hover { background: #b8edcf; }
+
+/* ── Scenario quiz ── */
+.quiz-card { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 28px 24px; }
+.scenario-meta { font-size: 0.8rem; color: #aaa; margin-bottom: 10px; letter-spacing: 0.03em; }
+.scenario-text { background: #f5f8fc; border-radius: 12px; padding: 16px 18px; font-size: 1.05rem; line-height: 1.8; margin-bottom: 18px; color: #222; }
+.scenario-blank { font-weight: 700; color: #4a90d9; border-bottom: 2px dashed #4a90d9; padding: 0 2px; }
+.choice-grid { display: flex; flex-direction: column; gap: 10px; }
+.choice-btn {
+  border: 2px solid #ddd; background: #fff; border-radius: 12px; padding: 12px 16px;
+  font-size: 1rem; text-align: left; cursor: pointer; transition: all 0.15s; color: #1a1a2e;
+  font-family: inherit;
+}
+.choice-btn:hover { border-color: #aaa; }
+.choice-btn:disabled { cursor: default; }
+.choice-btn.correct-choice { background: #e6f9f0; border-color: #0a7a4a; color: #0a7a4a; font-weight: 700; }
+.choice-btn.wrong-choice { background: #fde8e8; border-color: #c0392b; color: #c0392b; font-weight: 700; }
+.quiz-feedback { margin-top: 16px; font-size: 0.95rem; font-weight: 700; min-height: 24px; }
+.quiz-feedback.ok { color: #0a7a4a; }
+.quiz-feedback.ng { color: #c0392b; }
+.quiz-explain { font-size: 0.88rem; color: #666; background: #f7f8fb; border-radius: 10px; padding: 12px 16px; margin-top: 10px; line-height: 1.7; }
+
+/* ── Reference table ── */
+.ref-search {
+  width: 100%; border: 2px solid #ddd; border-radius: 10px; padding: 10px 16px;
+  font-size: 1rem; outline: none; margin-bottom: 16px; font-family: inherit; transition: border 0.15s;
+}
+.ref-search:focus { border-color: #4a90d9; }
+.ref-table-wrap { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 14px; }
+.ref-cat-header { padding: 12px 18px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid; }
+.ref-cat-header.cat1 { background: #e8f4fd; color: #2563a8; border-color: #b8d9f5; }
+.ref-cat-header.cat2 { background: #fef3e8; color: #b85c10; border-color: #f5c89a; }
+.ref-cat-header.cat3 { background: #f0e8fd; color: #5a2ba8; border-color: #d8c5f5; }
+.ref-cat-header.cat4 { background: #e6f9f0; color: #0a7a4a; border-color: #b8ecd0; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.ref-table th { padding: 8px 12px; background: #f5f6fa; text-align: left; color: #666; font-weight: 700; border-bottom: 1px solid #eee; }
+.ref-table td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table tr:hover td { background: #fafbff; }
+.usage-tag { display: inline-block; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; font-weight: 700; background: #f0f2f7; color: #666; margin-bottom: 3px; }
+.usage-tag.tag-male { background: #e8f4fd; color: #2563a8; }
+.usage-tag.tag-female { background: #fde8f0; color: #c23b7a; }
+.usage-tag.tag-formal { background: #f0e8fd; color: #6a2ba8; }
+.kenjo-tag { background: #e6f9f0; color: #0a7a4a; }
+.sonkei-tag { background: #fef3e8; color: #b85c10; }
+.word-jp { font-size: 1.05rem; font-weight: 700; }
+.word-r { font-size: 0.78rem; color: #999; }
+
+/* family relation table (2-col kenjo/sonkei) */
+.fam-relation-row { border-bottom: 1px solid #f0f0f0; padding: 10px 0; display: grid; grid-template-columns: 70px 1fr 1fr; gap: 10px; align-items: center; }
+.fam-relation-row:hover { background: #fafbff; }
+.fam-relation-label { font-size: 0.85rem; color: #888; font-weight: 700; }
+.fam-relation-cell { font-size: 0.95rem; }
+
+/* ── Family Tree ── */
+.tree-toolbar {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.tree-toggle-group {
+  display: inline-flex; border: 2px solid #ddd; border-radius: 999px; overflow: hidden;
+  background: #fff;
+}
+.tree-toggle-btn {
+  border: none; background: transparent; padding: 7px 18px; font-size: 0.88rem;
+  font-weight: 700; cursor: pointer; color: #888; font-family: inherit; transition: all 0.15s;
+}
+.tree-toggle-btn.active.kenjo-active { background: #e6f9f0; color: #0a7a4a; }
+.tree-toggle-btn.active.sonkei-active { background: #fef3e8; color: #b85c10; }
+body.dark .tree-toggle-group { background: #1a1c26; border-color: #3a3d52; }
+body.dark .tree-toggle-btn { color: #888; }
+body.dark .tree-toggle-btn.active.kenjo-active { background: #0d3d28; color: #6fe0a8; }
+body.dark .tree-toggle-btn.active.sonkei-active { background: #2d1a08; color: #f0a870; }
+
+.tree-caption { text-align: center; font-size: 0.82rem; color: #999; margin-bottom: 18px; }
+
+.tree-wrap {
+  background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 20px 8px; overflow-x: auto;
+}
+body.dark .tree-wrap { background: #1a1c26; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+
+.tree-node-card {
+  fill: #fff; stroke: #ddd; stroke-width: 1.5;
+}
+.tree-node-card.kenjo { fill: #e6f9f0; stroke: #2fa86a; }
+.tree-node-card.sonkei { fill: #fef3e8; stroke: #e07a2f; }
+.tree-node-card.self { fill: #1a1a2e; stroke: #1a1a2e; }
+body.dark .tree-node-card { fill: #14161f; stroke: #3a3d52; }
+body.dark .tree-node-card.kenjo { fill: #0d3d28; stroke: #2fa86a; }
+body.dark .tree-node-card.sonkei { fill: #2d1a08; stroke: #e07a2f; }
+body.dark .tree-node-card.self { fill: #e8e8f0; stroke: #e8e8f0; }
+
+.tree-edge { stroke: #ccc; stroke-width: 1.5; fill: none; }
+body.dark .tree-edge { stroke: #3a3d52; }
+.tree-edge.spouse-edge { stroke-dasharray: 3 3; }
+
+.tree-relation-label { font-size: 11px; fill: #999; font-family: 'Noto Sans TC', sans-serif; }
+body.dark .tree-relation-label { fill: #666; }
+.tree-word { font-size: 14px; font-weight: 700; fill: #1a1a2e; font-family: 'Noto Sans TC', sans-serif; }
+.tree-word.kenjo { fill: #0a7a4a; }
+.tree-word.sonkei { fill: #b85c10; }
+.tree-word.self-word { fill: #fff; }
+body.dark .tree-word { fill: #e8e8f0; }
+body.dark .tree-word.kenjo { fill: #6fe0a8; }
+body.dark .tree-word.sonkei { fill: #f0a870; }
+body.dark .tree-word.self-word { fill: #1a1c26; }
+.tree-reading { font-size: 9.5px; fill: #aaa; font-family: 'Noto Sans TC', sans-serif; }
+body.dark .tree-reading { fill: #666; }
+.tree-reading.self-reading { fill: #ccc; }
+
+/* ── Progress ── */
+.progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.progress-bar-bg { flex: 1; height: 8px; background: #e4e6ef; border-radius: 999px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #4a90d9, #6ab0f5); border-radius: 999px; transition: width 0.3s; }
+.progress-label { font-size: 0.8rem; color: #888; white-space: nowrap; }
+
+/* ── Empty / Done ── */
+.empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+.empty-state .big { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 1rem; }
+.done-state { text-align: center; padding: 40px 20px; }
+.done-state .big { font-size: 3.5rem; margin-bottom: 10px; }
+.done-state h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.done-state p { color: #666; margin-bottom: 20px; }
+.btn-restart { background: #1a1a2e; color: #fff; border: none; border-radius: 10px; padding: 12px 32px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.btn-restart:hover { background: #2d2d4e; }
+.btn-retry-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-right: 10px; }
+
+@media (max-width: 500px) {
+  .card-word { font-size: 1.9rem; }
+  .main { padding: 16px 12px; }
+  .settings-bar, .form-filter { padding: 8px 12px; }
+  .header { padding: 10px 12px; }
+  .fam-relation-row { grid-template-columns: 56px 1fr 1fr; font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>日文稱謂學習</h1>
+  <div class="header-stats">
+    <span class="stat-badge correct" id="stat-correct">✓ 0</span>
+    <span class="stat-badge wrong" id="stat-wrong">✗ 0</span>
+    <span class="stat-badge" id="stat-total">共 0 題</span>
+  </div>
+  <div class="theme-toggle-group">
+    <button class="theme-btn active" id="theme-light" onclick="setTheme('light')" title="亮色模式">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+    </button>
+    <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')" title="深色模式">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5a8.5 8.5 0 1 1-9.5-9.5 7 7 0 0 0 9.5 9.5z"/></svg>
+    </button>
+    <button class="theme-btn" id="theme-gray" onclick="setTheme('gray')" title="黑白模式">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="#666" stroke="none"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="settings-bar">
+  <span class="settings-label" id="range-label">範圍</span>
+  <span id="range-group">
+  <button class="pill-btn active-cat1" id="cat-first" onclick="setCat('first')">第一人稱</button>
+  <button class="pill-btn" id="cat-second" onclick="setCat('second')">第二人稱</button>
+  <button class="pill-btn" id="cat-third" onclick="setCat('third')">第三人稱</button>
+  <button class="pill-btn" id="cat-family" onclick="setCat('family')">家庭稱謂</button>
+  <button class="pill-btn" id="cat-all" onclick="setCat('all')">全部混合</button>
+  </span>
+  <div class="divider-v" id="range-divider"></div>
+  <span class="settings-label">模式</span>
+  <button class="pill-btn active-mode" id="mode-flash" onclick="setMode('flash')">單字卡</button>
+  <button class="pill-btn" id="mode-quiz" onclick="setMode('quiz')">情境選擇題</button>
+  <button class="pill-btn" id="mode-ref" onclick="setMode('ref')">參考表</button>
+  <button class="pill-btn" id="mode-tree" onclick="setMode('tree')">族譜圖</button>
+</div>
+
+<div class="main" id="main-area"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  資料：第一人稱
+// ══════════════════════════════════════════
+const FIRST_PERSON = [
+  {w:'私', r:'わたし', usage:'最通用，正式與日常皆可，男女皆用', formal:5, tags:['通用','正式','男女皆可']},
+  {w:'私', r:'わたくし', usage:'高度正式，商務、典禮、面對長輩或客戶時使用', formal:5, note:'同漢字、不同讀法，比わたし更正式', tags:['最正式','商務','男女皆可']},
+  {w:'僕', r:'ぼく', usage:'男性用語，給人謙和、文雅、稍年輕的印象，朋友間或對長輩皆可', formal:3, tags:['男性','日常','文雅']},
+  {w:'俺', r:'おれ', usage:'男性用語，較粗獷隨便，僅限平輩或晚輩、親密朋友之間', formal:1, tags:['男性','非正式','粗獷']},
+  {w:'自分', r:'じぶん', usage:'原意為「自己」，部分方言（如關西）或運動員、軍人用語中可作第一人稱', formal:3, tags:['特殊','運動員/軍人','關西方言']},
+  {w:'うち', r:'うち', usage:'女性、孩童常用，關西腔常見，語感較親切隨意', formal:2, tags:['女性','關西方言','親切']},
+  {w:'あたし', r:'あたし', usage:'女性用語，比わたし更柔和親切，日常會話常見', formal:2, tags:['女性','日常','柔和']},
+  {w:'あたくし', r:'あたくし', usage:'女性用語，あたし的鄭重說法，年長女性或正式場合使用', formal:4, tags:['女性','正式']},
+  {w:'小生', r:'しょうせい', usage:'男性自謙語，多用於書信、文章等書面語，口語極少使用', formal:4, note:'書面語', tags:['男性','書面語','謙稱']},
+  {w:'我輩・吾輩', r:'わがはい', usage:'古典／文學用語，帶威嚴或詼諧色彩，現代口語幾乎不用', formal:3, note:'文學/古風', tags:['古風','文學']},
+  {w:'わし', r:'わし', usage:'年長男性常用，給人「老爺爺」的形象，西日本也用於日常', formal:2, tags:['年長男性','日常']},
+  {w:'おいら', r:'おいら', usage:'男性、孩童用語，較鄉土、樸實的語感', formal:1, tags:['男性','鄉土','非正式']},
+];
+
+// ══════════════════════════════════════════
+//  資料：第二人稱
+// ══════════════════════════════════════════
+const SECOND_PERSON = [
+  {w:'あなた', r:'あなた', usage:'字典標準說法，但日常對話中直接稱呼對方「あなた」其實略顯生疏或有距離感；對長輩、上司通常改用職稱或姓氏+さん', formal:4, note:'夫妻間妻子稱丈夫也常用', tags:['通用','正式','需注意語感']},
+  {w:'君', r:'きみ', usage:'男性對平輩或晚輩使用較多，上司對下屬、老師對學生也常見，帶親近或上對下語感', formal:2, tags:['平輩/晚輩','親近','上對下']},
+  {w:'お前', r:'おまえ', usage:'親密朋友、家人或長輩對晚輩使用；對不熟的人或長輩使用會顯得失禮甚至挑釁', formal:1, tags:['親密/家人','需小心使用']},
+  {w:'お宅', r:'おたく', usage:'對不太熟識的對方一種略帶距離感的稱呼，現代也衍生出「宅文化」的おたく一詞', formal:3, tags:['略生疏','特殊']},
+  {w:'てめえ', r:'てめえ', usage:'非常粗魯、帶挑釁或憤怒語氣，僅見於吵架、戲劇台詞，避免日常使用', formal:0, tags:['粗魯','避免使用']},
+  {w:'貴方', r:'あなた', usage:'あなた的漢字書寫，書信中常見，給人較鄭重的書面印象', formal:4, note:'書面漢字寫法', tags:['書面語']},
+  {w:'貴殿', r:'きでん', usage:'極正式書面用語，多用於公文、書信，稱呼對方男性', formal:5, note:'書面/公文', tags:['最正式','書面語']},
+  {w:'お前さん', r:'おまえさん', usage:'年長夫婦間妻子稱丈夫，或老一輩用語，帶親密懷舊語感', formal:1, tags:['夫妻間','懷舊語感']},
+];
+
+// ══════════════════════════════════════════
+//  資料：第三人稱
+// ══════════════════════════════════════════
+const THIRD_PERSON = [
+  {w:'彼', r:'かれ', usage:'指稱「他」，亦可作「男友」之意（視語境）', formal:3, tags:['通用','可指男友']},
+  {w:'彼女', r:'かのじょ', usage:'指稱「她」，亦可作「女友」之意（視語境）', formal:3, tags:['通用','可指女友']},
+  {w:'あの人', r:'あのひと', usage:'中性、口語常見，指「那個人」，不分性別', formal:3, tags:['中性','口語']},
+  {w:'あの方', r:'あのかた', usage:'あの人的鄭重說法，用於敬重對方或在正式場合提及第三者', formal:5, tags:['最正式','敬重語氣']},
+  {w:'やつ', r:'やつ', usage:'口語、隨便的說法，指「那傢伙」，多用於熟人之間談論第三者', formal:1, tags:['口語','隨便']},
+  {w:'こいつ・そいつ・あいつ', r:'こいつ／そいつ／あいつ', usage:'依距離遠近分別指稱「這傢伙／那傢伙（近）／那傢伙（遠）」，語氣隨便甚至略帶輕視', formal:1, tags:['口語','依距離區分','略輕視']},
+  {w:'彼ら', r:'かれら', usage:'「他們」，複數第三人稱，不分性別亦可使用', formal:3, tags:['複數','中性']},
+];
+
+// ══════════════════════════════════════════
+//  資料：家庭稱謂（敬稱 / 謙稱）
+//  每筆：relation 中文關係, kenjo=謙讓語（稱自己家人）, sonkei=尊敬語（稱對方家人）
+// ══════════════════════════════════════════
+const FAMILY = [
+  {relation:'父親', kenjo:{w:'父', r:'ちち'}, sonkei:{w:'お父さん', r:'おとうさん'}, sonkeiAlt:{w:'お父様', r:'おとうさま'}},
+  {relation:'母親', kenjo:{w:'母', r:'はは'}, sonkei:{w:'お母さん', r:'おかあさん'}, sonkeiAlt:{w:'お母様', r:'おかあさま'}},
+  {relation:'哥哥', kenjo:{w:'兄', r:'あに'}, sonkei:{w:'お兄さん', r:'おにいさん'}, sonkeiAlt:{w:'お兄様', r:'おにいさま'}},
+  {relation:'姊姊', kenjo:{w:'姉', r:'あね'}, sonkei:{w:'お姉さん', r:'おねえさん'}, sonkeiAlt:{w:'お姉様', r:'おねえさま'}},
+  {relation:'弟弟', kenjo:{w:'弟', r:'おとうと'}, sonkei:{w:'弟さん', r:'おとうとさん'}},
+  {relation:'妹妹', kenjo:{w:'妹', r:'いもうと'}, sonkei:{w:'妹さん', r:'いもうとさん'}},
+  {relation:'祖父', kenjo:{w:'祖父', r:'そふ'}, sonkei:{w:'おじいさん', r:'おじいさん'}, sonkeiAlt:{w:'おじい様', r:'おじいさま'}},
+  {relation:'祖母', kenjo:{w:'祖母', r:'そぼ'}, sonkei:{w:'おばあさん', r:'おばあさん'}, sonkeiAlt:{w:'おばあ様', r:'おばあさま'}},
+  {relation:'丈夫', kenjo:{w:'夫', r:'おっと'}, sonkei:{w:'ご主人', r:'ごしゅじん'}, sonkeiAlt:{w:'旦那様', r:'だんなさま'}},
+  {relation:'妻子', kenjo:{w:'妻', r:'つま'}, sonkei:{w:'奥さん', r:'おくさん'}, sonkeiAlt:{w:'奥様', r:'おくさま'}},
+  {relation:'兒子', kenjo:{w:'息子', r:'むすこ'}, sonkei:{w:'息子さん', r:'むすこさん'}, sonkeiAlt:{w:'ご子息', r:'ごしそく'}},
+  {relation:'女兒', kenjo:{w:'娘', r:'むすめ'}, sonkei:{w:'娘さん', r:'むすめさん'}, sonkeiAlt:{w:'お嬢さん', r:'おじょうさん'}},
+  {relation:'父母（雙親）', kenjo:{w:'両親', r:'りょうしん'}, sonkei:{w:'ご両親', r:'ごりょうしん'}},
+  {relation:'兄弟姊妹', kenjo:{w:'兄弟', r:'きょうだい'}, sonkei:{w:'ご兄弟', r:'ごきょうだい'}},
+  {relation:'家人（全家）', kenjo:{w:'家族', r:'かぞく'}, sonkei:{w:'ご家族', r:'ごかぞく'}},
+  {relation:'伯父／叔父', kenjo:{w:'おじ', r:'おじ'}, sonkei:{w:'おじさん', r:'おじさん'}},
+  {relation:'伯母／叔母', kenjo:{w:'おば', r:'おば'}, sonkei:{w:'おばさん', r:'おばさん'}},
+  {relation:'孫子／孫女', kenjo:{w:'孫', r:'まご'}, sonkei:{w:'お孫さん', r:'おまごさん'}},
+];
+
+// ══════════════════════════════════════════
+//  族譜圖節點座標配置
+//  x, y 為相對座標（單位：圖表座標系統，於 engine.js 中換算）
+//  relation 對應 FAMILY 陣列中的 relation 欄位
+// ══════════════════════════════════════════
+const FAMILY_TREE_NODES = [
+  // 第一代：祖父母
+  {relation:'祖父', x:2, y:0, gen:1},
+  {relation:'祖母', x:3, y:0, gen:1},
+  // 第二代：父母
+  {relation:'父親', x:2, y:1, gen:2},
+  {relation:'母親', x:3, y:1, gen:2},
+  // 第三代：自己這輩（兄姊－自己－弟妹）+ 配偶
+  {relation:'哥哥', x:0, y:2, gen:3},
+  {relation:'姊姊', x:1, y:2, gen:3},
+  {relation:'self', x:2.5, y:2, gen:3, isSelf:true},
+  {relation:'妻子', x:3.5, y:2, gen:3, isSpouse:true},
+  {relation:'弟弟', x:4.5, y:2, gen:3},
+  {relation:'妹妹', x:5.5, y:2, gen:3},
+  // 第四代：子女
+  {relation:'兒子', x:2, y:3, gen:4},
+  {relation:'女兒', x:3, y:3, gen:4},
+];
+
+// 連接線（節點 relation 之間的關係線）
+const FAMILY_TREE_EDGES = [
+  ['祖父','父親'], ['祖母','父親'],
+  ['父親','哥哥'], ['父親','姊姊'], ['父親','self'], ['父親','弟弟'], ['父親','妹妹'],
+  ['self','兒子'], ['self','女兒'],
+  ['self','妻子'],
+];
+
+// ══════════════════════════════════════════
+//  情境選擇題庫
+//  type: 'first' | 'second' | 'third' | 'family'
+//  text: 情境敘述（含 ___ 表示要填入的空格位置，僅供顯示參考）
+//  correct: 正確答案
+//  choices: 全部選項（含正確答案）
+//  explain: 解析
+// ══════════════════════════════════════════
+const SCENARIOS = [
+  // ── 第一人稱情境 ──
+  {type:'first', text:'在公司會議上，對客戶自我介紹時，你會說「＿＿＿は田中と申します」', correct:'私（わたくし）', choices:['私（わたくし）','僕（ぼく）','俺（おれ）','うち'], explain:'商務正式場合對客戶，應使用最鄭重的「わたくし」，展現敬意與專業度。'},
+  {type:'first', text:'男高中生對班上同學聊天時，自然會用「＿＿＿、昨日サッカー見た？」', correct:'俺（おれ）', choices:['俺（おれ）','わたくし','小生','我輩'], explain:'同學間隨意的對話，男性常用較隨性的「俺」，「わたくし」在此情境下顯得過於生硬。'},
+  {type:'first', text:'女性在跟好朋友聊天時自然地說「＿＿＿、それ知らなかった！」', correct:'うち', choices:['うち','貴殿','小生','我輩'], explain:'「うち」是女性、孩童常用的親切口語第一人稱，尤其常見於關西腔或日常閒聊。'},
+  {type:'first', text:'年長的爺爺角色，在故事或對話中常自稱「＿＿＿はそう思わんよ」', correct:'わし', choices:['わし','あたくし','お前さん','貴方'], explain:'「わし」帶有年長男性的語感，是日本作品中常見的「老爺爺」用語標誌。'},
+  {type:'first', text:'寫一封正式商業書信時，落款前提到自己會用「＿＿＿からのご連絡でした」', correct:'小生', choices:['小生','おいら','てめえ','やつ'], explain:'「小生」是男性自謙語，多見於書信、文章等書面語，展現謙遜與正式感。'},
+  {type:'first', text:'運動員在受訪時說「＿＿＿、全力を尽くしました」，這種用法常見於哪裡？', correct:'自分（じぶん）', choices:['自分（じぶん）','てめえ','お前さん','貴殿'], explain:'「自分」原意為「自己」，但在運動員、軍人用語或部分方言中可直接作第一人稱使用。'},
+
+  // ── 第二人稱情境 ──
+  {type:'second', text:'老師在課堂上點名同學發言時，常用「＿＿＿はどう思いますか？」', correct:'君（きみ）', choices:['君（きみ）','お前','てめえ','貴殿'], explain:'老師對學生、上司對下屬常用「君」，帶有親近又略帶上對下的語感，適合此情境。'},
+  {type:'second', text:'要表達強烈憤怒、近乎挑釁地質問對方時，可能脫口而出「＿＿＿、何やってんだ！」', correct:'てめえ', choices:['てめえ','貴方','あなた','貴殿'], explain:'「てめえ」語氣非常粗魯，帶有挑釁或憤怒情緒，僅見於激烈爭吵或戲劇台詞中。'},
+  {type:'second', text:'寫公文或正式書信，稱呼對方時最合適使用「＿＿＿におかれましては」', correct:'貴殿', choices:['貴殿','お前','てめえ','君'], explain:'「貴殿」是極正式的書面用語，常見於公文與正式書信，用來稱呼對方（多用於男性收件人）。'},
+  {type:'second', text:'親密的家人間，長輩對晚輩說「＿＿＿、ちゃんと宿題やったか？」', correct:'お前', choices:['お前','貴殿','お宅','貴方'], explain:'「お前」常見於親密的家人、朋友或長輩對晚輩，使用對象需限定在親近關係，否則容易顯得失禮。'},
+  {type:'second', text:'對不太熟識、有點距離感的人想稱呼對方時，可能會用「＿＿＿は何かご趣味がありますか？」', correct:'お宅', choices:['お宅','お前','てめえ','君'], explain:'「お宅」用於不太熟識的對象，帶有一種保持距離的鄭重感，這個詞後來也衍生出「宅文化」的意思。'},
+
+  // ── 第三人稱情境 ──
+  {type:'third', text:'朋友間聊起共同認識的某人，語氣隨意地說「＿＿＿、また遅刻したらしいよ」', correct:'やつ', choices:['やつ','あの方','彼女','貴殿'], explain:'「やつ」是口語、隨便的說法，用於熟人之間談論第三者時，語氣輕鬆甚至略帶調侃。'},
+  {type:'third', text:'在正式致詞或敬重場合提及某位長輩，會用「＿＿＿には大変お世話になりました」', correct:'あの方', choices:['あの方','やつ','あいつ','彼'], explain:'「あの方」是「あの人」的鄭重說法，用於敬重對方或在正式場合提及第三者時最為合適。'},
+  {type:'third', text:'介紹自己的男朋友給朋友認識時可能會說「これが＿＿＿だよ」', correct:'彼（かれ）', choices:['彼（かれ）','あいつ','貴殿','お宅'], explain:'「彼」除了指稱「他」之外，視語境也常用來表示「男友」之意。'},
+  {type:'third', text:'指著稍微有點距離、且語氣略帶輕視的某人說「＿＿＿のことは放っておこう」', correct:'あいつ', choices:['あいつ','あの方','彼女','彼ら'], explain:'「こいつ・そいつ・あいつ」依距離遠近區分對象，語氣隨便甚至帶有輕視意味，「あいつ」指距離較遠的「那傢伙」。'},
+
+  // ── 家庭稱謂情境 ──
+  {type:'family', text:'跟同事閒聊時提到自己的爸爸，你會說「＿＿＿は今年定年退職しました」', correct:'父（ちち）', choices:['父（ちち）','お父さん','お父様','おじさん'], explain:'對外人（同事）提及自己的家人時要用謙稱「父」，而非敬稱「お父さん」，這是謙讓語的基本原則：稱自己家人要謙虛。'},
+  {type:'family', text:'去朋友家拜訪，想詢問朋友的媽媽在不在，你會說「＿＿＿はいらっしゃいますか？」', correct:'お母様（おかあさま）', choices:['お母様（おかあさま）','母','家母','うちの母'], explain:'稱呼對方的家人要用敬稱（尊敬語），「お母様」比「お母さん」更鄭重，適合對朋友家人表達敬意的場合。'},
+  {type:'family', text:'在公司向客戶介紹自己的太太時，應該說「これは私の＿＿＿です」', correct:'妻（つま）', choices:['妻（つま）','奥さん','奥様','お嫁さん'], explain:'介紹自己的配偶給外人時要用謙稱「妻」，「奥さん」「奥様」是用來稱呼對方的太太，不可用於自己。'},
+  {type:'family', text:'寫信問候朋友的父母身體狀況，會說「＿＿＿のご健康をお祈りいたします」', correct:'ご両親（ごりょうしん）', choices:['ご両親（ごりょうしん）','両親','うちの親','父母'], explain:'稱呼對方的雙親要加上敬語接頭詞「ご」，變成「ご両親」，這是對他人家人表達敬意的常見用法。'},
+  {type:'family', text:'跟鄰居聊天提到自己家的小孩（兒子）時，會說「＿＿＿はまだ小学生です」', correct:'息子（むすこ）', choices:['息子（むすこ）','息子さん','ご子息','お子さん'], explain:'提到自己的兒子要用謙稱「息子」，「息子さん」「ご子息」則是用來稱呼對方的兒子。'},
+  {type:'family', text:'在學校家長會上，老師詢問某位學生「お宅の＿＿＿はもう三年生ですね」是在問什麼？', correct:'お孫さん（おまごさん）', choices:['お孫さん（おまごさん）','孫','うちの孫','まご'], explain:'老師稱呼對方（家長）的孫子時使用敬稱「お孫さん」，展現對話中對他人家人應有的禮貌。'},
+  {type:'family', text:'跟朋友介紹自己的爺爺時，你會說「これは私の＿＿＿です」', correct:'祖父（そふ）', choices:['祖父（そふ）','おじいさん','おじい様','おじいさんです'], explain:'介紹自己的爺爺給外人時要用謙稱「祖父」，「おじいさん」「おじい様」是稱呼對方或他人的祖父時使用的敬稱。'},
+  {type:'family', text:'問朋友家裡兄弟姊妹的狀況，你會問「＿＿＿は何人いらっしゃいますか？」', correct:'ご兄弟（ごきょうだい）', choices:['ご兄弟（ごきょうだい）','兄弟','うちの兄弟','きょうだい'], explain:'詢問對方家裡的兄弟姊妹要使用敬稱「ご兄弟」，加上「ご」表達對他人家庭的敬意。'},
+];
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentCat = 'first';   // first | second | third | family | all
+let currentMode = 'flash';  // flash | quiz | ref
+let queue = [];
+let currentIdx = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let wrongList = [];
+let cardFlipped = false;
+let answered = false;
+
+const CAT_LABELS = { first:'第一人稱', second:'第二人稱', third:'第三人稱', family:'家庭稱謂' };
+const CAT_CLASS  = { first:'cat1', second:'cat2', third:'cat3', family:'cat4' };
+
+// ══════════════════════════════════════════
+//  QUEUE BUILDING
+// ══════════════════════════════════════════
+function getActiveCats() {
+  if (currentCat === 'all') return ['first','second','third','family'];
+  return [currentCat];
+}
+
+function buildFlashQueue() {
+  const cats = getActiveCats();
+  let items = [];
+  cats.forEach(cat => {
+    if (cat === 'family') {
+      FAMILY.forEach(f => {
+        items.push({cat, type:'kenjo', data:f});
+        items.push({cat, type:'sonkei', data:f});
+      });
+    } else {
+      const src = cat === 'first' ? FIRST_PERSON : cat === 'second' ? SECOND_PERSON : THIRD_PERSON;
+      src.forEach(d => items.push({cat, type:'word', data:d}));
+    }
+  });
+  shuffle(items);
+  return items;
+}
+
+function buildQuizQueue(retryWrong = false) {
+  if (retryWrong) return [...wrongList];
+  const cats = getActiveCats();
+  let items = SCENARIOS.filter(s => cats.includes(s.type)).map(s => ({...s}));
+  shuffle(items);
+  // also shuffle choice order per item
+  items.forEach(it => {
+    it.shuffledChoices = [...it.choices];
+    shuffle(it.shuffledChoices);
+  });
+  return items;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function updateStats() {
+  document.getElementById('stat-correct').textContent = '✓ ' + correctCount;
+  document.getElementById('stat-wrong').textContent = '✗ ' + wrongCount;
+  document.getElementById('stat-total').textContent = '共 ' + queue.length + ' 題';
+}
+
+// ══════════════════════════════════════════
+//  SETTINGS HANDLERS
+// ══════════════════════════════════════════
+function setCat(c) {
+  currentCat = c;
+  ['first','second','third','family','all'].forEach(x => {
+    const btn = document.getElementById('cat-'+x);
+    btn.className = 'pill-btn';
+    if (x === c) {
+      if (x === 'all') btn.classList.add('active-mode');
+      else btn.classList.add('active-' + CAT_CLASS[x]);
+    }
+  });
+  restart();
+}
+
+function setMode(m) {
+  currentMode = m;
+  ['flash','quiz','ref','tree'].forEach(x => {
+    const btn = document.getElementById('mode-'+x);
+    btn.className = 'pill-btn';
+    if (x === m) btn.classList.add('active-mode');
+  });
+  const statsEl = document.querySelector('.header-stats');
+  if (statsEl) statsEl.style.display = (m === 'tree' || m === 'ref') ? 'none' : 'flex';
+  const showRange = (m !== 'tree');
+  document.getElementById('range-label').style.display = showRange ? '' : 'none';
+  document.getElementById('range-group').style.display = showRange ? '' : 'none';
+  document.getElementById('range-divider').style.display = showRange ? '' : 'none';
+  const mainEl = document.getElementById('main-area');
+  if (mainEl) mainEl.style.maxWidth = (m === 'tree') ? '900px' : '720px';
+  restart();
+}
+
+function restart(retryWrong = false) {
+  if (!retryWrong) {
+    correctCount = 0;
+    wrongCount = 0;
+    wrongList = [];
+  }
+  if (currentMode === 'flash') queue = buildFlashQueue();
+  else if (currentMode === 'quiz') queue = buildQuizQueue(retryWrong);
+  else queue = [];
+  currentIdx = 0;
+  answered = false;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// ══════════════════════════════════════════
+//  RENDER DISPATCH
+// ══════════════════════════════════════════
+function render() {
+  const area = document.getElementById('main-area');
+  if (currentMode === 'ref') { renderRef(area); return; }
+  if (currentMode === 'tree') { renderTree(area); return; }
+  if (queue.length === 0) {
+    area.innerHTML = `<div class="empty-state"><div class="big">📭</div><p>目前沒有題目，請切換範圍試試！</p></div>`;
+    return;
+  }
+  if (currentIdx >= queue.length) { renderDone(area); return; }
+
+  const progress = `<div class="progress-row">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${(currentIdx/queue.length*100).toFixed(1)}%"></div></div>
+    <span class="progress-label">${currentIdx}／${queue.length}</span>
+  </div>`;
+
+  if (currentMode === 'flash') renderFlash(area, progress);
+  else if (currentMode === 'quiz') renderQuiz(area, progress);
+}
+
+// ══════════════════════════════════════════
+//  FLASHCARD MODE
+// ══════════════════════════════════════════
+function renderFlash(area, progress) {
+  const item = queue[currentIdx];
+  const catClass = CAT_CLASS[item.cat];
+  const catLabel = CAT_LABELS[item.cat];
+
+  let wordHtml, readingHtml, zhHtml, tagHtml, answerBig, answerNote;
+
+  if (item.type === 'word') {
+    const d = item.data;
+    wordHtml = d.w;
+    readingHtml = d.r;
+    zhHtml = '';
+    tagHtml = catLabel;
+    answerBig = d.usage;
+    answerNote = (d.tags || []).join(' ・ ') + (d.note ? '　' + d.note : '');
+  } else if (item.type === 'kenjo') {
+    const d = item.data;
+    wordHtml = d.relation;
+    readingHtml = '';
+    zhHtml = '對外人提到「自己的」' + d.relation + '，該怎麼說？';
+    tagHtml = catLabel + '・謙稱（稱自己家人）';
+    answerBig = `${d.kenjo.w}（${d.kenjo.r}）`;
+    answerNote = '謙讓語：提及自己家人時使用，表示謙虛';
+  } else {
+    const d = item.data;
+    wordHtml = d.relation;
+    readingHtml = '';
+    zhHtml = '稱呼「對方的」' + d.relation + '，該怎麼說？';
+    tagHtml = catLabel + '・敬稱（稱對方家人）';
+    let alt = d.sonkeiAlt ? `（更鄭重：${d.sonkeiAlt.w}／${d.sonkeiAlt.r}）` : '';
+    answerBig = `${d.sonkei.w}（${d.sonkei.r}）`;
+    answerNote = '尊敬語：稱呼對方家人時使用，表示敬意' + (alt ? '　' + alt : '');
+  }
+
+  area.innerHTML = progress + `
+  <div class="flashcard-wrap">
+    <div class="flashcard" onclick="flipCard()">
+      <div class="card-prompt">${item.type === 'word' ? '請說出這個稱謂的使用場合' : '請說出正確說法'}</div>
+      <div class="card-word">${wordHtml}</div>
+      ${readingHtml ? `<div class="card-reading">${readingHtml}</div>` : ''}
+      ${zhHtml ? `<div class="card-zh">${zhHtml}</div>` : ''}
+      <div class="card-tag">${tagHtml}</div>
+      <div class="card-answer" id="card-answer">
+        <div class="answer-big">${answerBig}</div>
+        <div class="answer-note">${answerNote}</div>
+      </div>
+      <div class="card-tap" id="card-tap">點擊卡片顯示答案 👆</div>
+    </div>
+    <div class="btn-row" id="btn-row" style="display:none">
+      <button class="btn-wrong" onclick="markWrong()">✗ 不會</button>
+      <button class="btn-correct" onclick="markCorrect()">✓ 會了</button>
+    </div>
+  </div>`;
+}
+
+function flipCard() {
+  if (cardFlipped) return;
+  cardFlipped = true;
+  document.getElementById('card-answer').classList.add('show');
+  document.getElementById('card-tap').style.display = 'none';
+  document.getElementById('btn-row').style.display = 'flex';
+}
+
+function markCorrect() {
+  correctCount++;
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+function markWrong() {
+  wrongCount++;
+  wrongList.push(queue[currentIdx]);
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// ══════════════════════════════════════════
+//  SCENARIO QUIZ MODE
+// ══════════════════════════════════════════
+function renderQuiz(area, progress) {
+  const item = queue[currentIdx];
+  const catLabel = CAT_LABELS[item.type];
+
+  const choicesHtml = item.shuffledChoices.map((c, i) => `
+    <button class="choice-btn" data-choice="${escapeAttr(c)}" onclick="checkQuiz(this, '${escapeAttr(c)}')">${c}</button>
+  `).join('');
+
+  area.innerHTML = progress + `
+  <div class="quiz-card">
+    <div class="scenario-meta">${catLabel}・情境選擇題</div>
+    <div class="scenario-text">${item.text}</div>
+    <div class="choice-grid" id="choice-grid">${choicesHtml}</div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div id="quiz-explain-wrap"></div>
+  </div>`;
+}
+
+function escapeAttr(s) {
+  return s.replace(/'/g, "\\'");
+}
+
+function checkQuiz(btn, choice) {
+  if (answered) return;
+  answered = true;
+  const item = queue[currentIdx];
+  const correct = item.correct;
+  const allBtns = document.querySelectorAll('#choice-grid .choice-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (b.dataset.choice === correct) b.classList.add('correct-choice');
+  });
+
+  const fb = document.getElementById('quiz-feedback');
+  if (choice === correct) {
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+  } else {
+    btn.classList.add('wrong-choice');
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = '✗ 不正確';
+    wrongCount++;
+    wrongList.push(item);
+  }
+
+  document.getElementById('quiz-explain-wrap').innerHTML = `
+    <div class="quiz-explain">${item.explain}</div>
+    <button class="btn-restart" style="margin-top:14px" onclick="nextQuiz()">下一題 →</button>
+  `;
+  updateStats();
+}
+
+function nextQuiz() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// ══════════════════════════════════════════
+//  DONE SCREEN
+// ══════════════════════════════════════════
+function renderDone(area) {
+  const total = correctCount + wrongCount;
+  const pct = total > 0 ? Math.round(correctCount / total * 100) : 0;
+  let emoji = pct >= 90 ? '🎉' : pct >= 70 ? '👍' : pct >= 50 ? '💪' : '📖';
+  const summaryLine = currentMode === 'flash'
+    ? `練習了 ${queue.length} 張卡片，標記會了 ${correctCount} 張、不會 ${wrongCount} 張`
+    : `正確 ${correctCount} 題，錯誤 ${wrongCount} 題（正確率 ${pct}%）`;
+  area.innerHTML = `<div class="done-state">
+    <div class="big">${emoji}</div>
+    <h2>練習完成！</h2>
+    <p>${summaryLine}</p>
+    ${wrongCount > 0 ? `<button class="btn-retry-wrong" onclick="restart(true)">重練${currentMode==='flash'?'不會的':'錯題'}（${wrongCount}${currentMode==='flash'?'張':'題'}）</button>` : ''}
+    <button class="btn-restart" onclick="restart(false)">重新開始</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+//  FAMILY TREE MODE
+// ══════════════════════════════════════════
+let treeMode = 'kenjo'; // 'kenjo' = 稱自己家人, 'sonkei' = 稱對方家人
+
+function familyByRelation(relation) {
+  return FAMILY.find(f => f.relation === relation);
+}
+
+function renderTree(area) {
+  const stepX = 92, stepY = 112, padX = 50, padY = 50;
+  const cardW = 80, cardH = 58;
+
+  const maxX = Math.max(...FAMILY_TREE_NODES.map(n => n.x));
+  const maxY = Math.max(...FAMILY_TREE_NODES.map(n => n.y));
+  const svgW = padX * 2 + maxX * stepX + cardW;
+  const svgH = padY * 2 + maxY * stepY + cardH;
+
+  function pos(relation) {
+    const n = FAMILY_TREE_NODES.find(n => n.relation === relation);
+    return { cx: padX + n.x * stepX + cardW/2, cy: padY + n.y * stepY + cardH/2, node: n };
+  }
+
+  // edges
+  let edgesSvg = '';
+  FAMILY_TREE_EDGES.forEach(([a, b]) => {
+    const pa = pos(a), pb = pos(b);
+    const isSpouse = (a === 'self' && b === '妻子') || (a === '妻子' && b === 'self');
+    if (isSpouse) {
+      edgesSvg += `<line class="tree-edge spouse-edge" x1="${pa.cx + cardW/2}" y1="${pa.cy}" x2="${pb.cx - cardW/2}" y2="${pb.cy}"/>`;
+    } else {
+      const midY = (pa.cy + pb.cy) / 2;
+      edgesSvg += `<path class="tree-edge" d="M${pa.cx},${pa.cy + cardH/2} L${pa.cx},${midY} L${pb.cx},${midY} L${pb.cx},${pb.cy - cardH/2}"/>`;
+    }
+  });
+
+  // nodes
+  let nodesSvg = '';
+  FAMILY_TREE_NODES.forEach(n => {
+    const p = pos(n.relation);
+    const x = p.cx - cardW/2, y = p.cy - cardH/2;
+
+    if (n.isSelf) {
+      nodesSvg += `
+        <g>
+          <rect class="tree-node-card self" x="${x}" y="${y}" width="${cardW}" height="${cardH}" rx="12"/>
+          <text class="tree-relation-label" x="${p.cx}" y="${y - 6}" text-anchor="middle" fill="#999">自分（你）</text>
+          <text class="tree-word self-word" x="${p.cx}" y="${p.cy + 5}" text-anchor="middle">${treeMode === 'kenjo' ? '私' : 'あなた'}</text>
+        </g>`;
+      return;
+    }
+
+    const fam = familyByRelation(n.relation);
+    if (!fam) return; // 妻子 node uses FAMILY data too, handled below uniformly
+    const wordData = treeMode === 'kenjo' ? fam.kenjo : fam.sonkei;
+    const cardClass = treeMode === 'kenjo' ? 'kenjo' : 'sonkei';
+    const wordClass = treeMode === 'kenjo' ? 'kenjo' : 'sonkei';
+
+    nodesSvg += `
+      <g>
+        <rect class="tree-node-card ${cardClass}" x="${x}" y="${y}" width="${cardW}" height="${cardH}" rx="12"/>
+        <text class="tree-relation-label" x="${p.cx}" y="${y - 6}" text-anchor="middle">${n.relation}</text>
+        <text class="tree-word ${wordClass}" x="${p.cx}" y="${p.cy - 2}" text-anchor="middle">${wordData.w}</text>
+        <text class="tree-reading" x="${p.cx}" y="${p.cy + 16}" text-anchor="middle">${wordData.r}</text>
+      </g>`;
+  });
+
+  const svg = `<svg viewBox="0 0 ${svgW} ${svgH}" width="${svgW}" height="${svgH}" xmlns="http://www.w3.org/2000/svg">
+    <g>${edgesSvg}</g>
+    <g>${nodesSvg}</g>
+  </svg>`;
+
+  area.innerHTML = `
+    <div class="tree-toolbar">
+      <div class="tree-toggle-group">
+        <button class="tree-toggle-btn ${treeMode==='kenjo'?'active kenjo-active':''}" onclick="setTreeMode('kenjo')">稱自己家人（謙稱）</button>
+        <button class="tree-toggle-btn ${treeMode==='sonkei'?'active sonkei-active':''}" onclick="setTreeMode('sonkei')">稱對方家人（敬稱）</button>
+      </div>
+    </div>
+    <div class="tree-caption">${treeMode==='kenjo' ? '對外人提及「自己的」家人時使用 — 謙讓語' : '稱呼「對方的」家人時使用 — 尊敬語'}　｜　可左右滑動查看完整族譜</div>
+    <div class="tree-wrap" id="tree-wrap">${svg}</div>
+  `;
+
+  // 自動捲動到置中（以自分節點為基準）
+  const wrapEl = document.getElementById('tree-wrap');
+  if (wrapEl) {
+    const selfCenter = pos('self').cx;
+    const targetScroll = selfCenter - wrapEl.clientWidth / 2;
+    wrapEl.scrollLeft = Math.max(0, targetScroll);
+  }
+}
+
+function setTreeMode(m) {
+  treeMode = m;
+  renderTree(document.getElementById('main-area'));
+}
+
+
+function tagColorClass(t) {
+  if (t.includes('男性')) return 'tag-male';
+  if (t.includes('女性')) return 'tag-female';
+  if (t.includes('書面語')) return 'tag-formal';
+  return '';
+}
+
+function renderRef(area) {
+  const cats = getActiveCats();
+  let html = '';
+
+  cats.forEach(cat => {
+    const catLabel = CAT_LABELS[cat];
+    const catClass = CAT_CLASS[cat];
+
+    if (cat === 'family') {
+      const rows = FAMILY.map(f => `
+        <div class="fam-relation-row">
+          <div class="fam-relation-label">${f.relation}</div>
+          <div class="fam-relation-cell">
+            <span class="usage-tag kenjo-tag">謙稱・稱自己</span><br>
+            <span class="word-jp">${f.kenjo.w}</span> <span class="word-r">${f.kenjo.r}</span>
+          </div>
+          <div class="fam-relation-cell">
+            <span class="usage-tag sonkei-tag">敬稱・稱對方</span><br>
+            <span class="word-jp">${f.sonkei.w}</span> <span class="word-r">${f.sonkei.r}</span>
+            ${f.sonkeiAlt ? `<br><span style="font-size:0.78rem;color:#999">更鄭重：${f.sonkeiAlt.w}（${f.sonkeiAlt.r}）</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+      html += `
+        <div class="ref-table-wrap">
+          <div class="ref-cat-header ${catClass}">${catLabel}（謙讓語／尊敬語對照）</div>
+          <div style="padding:6px 18px">${rows}</div>
+        </div>`;
+    } else {
+      const src = cat === 'first' ? FIRST_PERSON : cat === 'second' ? SECOND_PERSON : THIRD_PERSON;
+      const rows = src.map(d => `
+        <tr>
+          <td><span class="word-jp">${d.w}</span><br><span class="word-r">${d.r}</span></td>
+          <td>${(d.tags||[]).map(t=>`<span class="usage-tag ${tagColorClass(t)}">${t}</span>`).join(' ')}<br>${d.usage}</td>
+        </tr>
+      `).join('');
+      html += `
+        <div class="ref-table-wrap">
+          <div class="ref-cat-header ${catClass}">${catLabel}</div>
+          <table class="ref-table"><thead><tr><th>稱謂</th><th>使用場合與語感</th></tr></thead><tbody>${rows}</tbody></table>
+        </div>`;
+    }
+  });
+
+  area.innerHTML = `
+    <input class="ref-search" id="ref-search" placeholder="搜尋稱謂（日文、讀音或中文關係）…" oninput="filterRef(this.value)">
+    <div id="ref-content">${html}</div>`;
+}
+
+function filterRef(val) {
+  const v = val.trim().toLowerCase();
+  document.querySelectorAll('#ref-content .ref-table-wrap').forEach(wrap => {
+    if (!v) { wrap.style.display = ''; wrap.querySelectorAll('tr, .fam-relation-row').forEach(r=>r.style.display=''); return; }
+    let anyVisible = false;
+    // table rows
+    wrap.querySelectorAll('tbody tr').forEach(row => {
+      const match = row.textContent.toLowerCase().includes(v);
+      row.style.display = match ? '' : 'none';
+      if (match) anyVisible = true;
+    });
+    // family rows
+    wrap.querySelectorAll('.fam-relation-row').forEach(row => {
+      const match = row.textContent.toLowerCase().includes(v);
+      row.style.display = match ? '' : 'none';
+      if (match) anyVisible = true;
+    });
+    wrap.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+// ══════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════
+function setTheme(t) {
+  document.body.classList.remove('dark', 'grayscale');
+  if (t === 'dark') document.body.classList.add('dark');
+  else if (t === 'gray') document.body.classList.add('grayscale');
+  ['light','dark','gray'].forEach(x => {
+    document.getElementById('theme-'+x).classList.toggle('active', x === t);
+  });
+  try { localStorage.setItem('shouhou-theme', t); } catch(e) {}
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+(function(){
+  try {
+    const saved = localStorage.getItem('shouhou-theme');
+    if (saved) setTheme(saved);
+  } catch(e) {}
+})();
+restart();
+
+</script>
+</body>
+</html>

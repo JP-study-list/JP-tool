@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="日文意志動詞與非意志動詞練習工具，涵蓋分類判斷、意志表現變化（使役・受身・希望・依頼・禁止・命令・可能・意向）練習。">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="ishi-muishi-drill｜意志動詞・非意志動詞練習">
+<meta property="og:description" content="意志動詞・非意志動詞の判断と活用練習ツール">
+<meta property="og:type" content="website">
+<title>ishi-muishi-drill｜意志動詞・非意志動詞練習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: #f0f2f7;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ══ DARK MODE ══ */
+body.dark {
+  background: #0f1117;
+  color: #e8e8f0;
+}
+body.dark .header,
+body.dark .settings-bar,
+body.dark .form-filter {
+  background: #1a1c26;
+  border-color: #2e3044;
+}
+body.dark .header h1 { color: #e8e8f0; }
+body.dark .header-stats { color: #aaa; }
+body.dark .stat-badge { background: #2e3044; color: #ccc; }
+body.dark .stat-badge.correct { background: #0d3d28; color: #4ecca3; }
+body.dark .stat-badge.wrong { background: #3d0d0d; color: #f08080; }
+body.dark .settings-label { color: #666; }
+body.dark .pill-btn { background: #1a1c26; border-color: #3a3d52; color: #aaa; }
+body.dark .pill-btn:hover { border-color: #666; }
+body.dark .pill-btn.active-ishi { background: #162436; border-color: #4a90d9; color: #7ab8f0; }
+body.dark .pill-btn.active-muishi { background: #3d1620; border-color: #d94a6f; color: #f07a98; }
+body.dark .pill-btn.active-dual { background: #1e1228; border-color: #8a5fd9; color: #b090e8; }
+body.dark .pill-btn.active-all { background: #1a3326; border-color: #4ad97e; color: #7af0a8; }
+body.dark .pill-btn.active-mode { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .divider-v { background: #2e3044; }
+body.dark .form-chip { background: #1a1c26; border-color: #3a3d52; color: #888; }
+body.dark .form-chip.selected { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .select-all-btn { color: #7ab8f0; }
+body.dark .flashcard,
+body.dark .quiz-card,
+body.dark .cnjp-card,
+body.dark .judge-card { background: #1a1c26; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+body.dark .card-prompt { color: #555; }
+body.dark .card-word { color: #e8e8f0; }
+body.dark .card-reading { color: #666; }
+body.dark .card-zh { color: #888; }
+body.dark .card-target { background: #162436; color: #7ab8f0; }
+body.dark .card-target.muishi { background: #3d1620; color: #f07a98; }
+body.dark .card-target.dual { background: #1e1228; color: #b090e8; }
+body.dark .card-answer { border-top-color: #2e3044; }
+body.dark .answer-big { color: #4ecca3; }
+body.dark .answer-note { color: #666; }
+body.dark .answer-na { color: #888; font-style: italic; }
+body.dark .card-tap { color: #444; }
+body.dark .btn-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .btn-wrong:hover { background: #5a1515; }
+body.dark .btn-correct { background: #0d3d28; color: #4ecca3; }
+body.dark .btn-correct:hover { background: #155c3d; }
+body.dark .quiz-target-label { color: #888; }
+body.dark .quiz-target-form { background: #162436; color: #7ab8f0; }
+body.dark .quiz-target-form.muishi { background: #3d1620; color: #f07a98; }
+body.dark .quiz-target-form.dual { background: #1e1228; color: #b090e8; }
+body.dark .quiz-input { background: #0f1117; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .quiz-input:focus { border-color: #4a90d9; }
+body.dark .quiz-input.correct-input { background: #0d3d28; border-color: #4ecca3; }
+body.dark .quiz-input.wrong-input { background: #3d0d0d; border-color: #f08080; }
+body.dark .quiz-feedback.ok { color: #4ecca3; }
+body.dark .quiz-feedback.ng { color: #f08080; }
+body.dark .quiz-answer-reveal { color: #888; }
+body.dark .quiz-explain { background: #161826; color: #aab; border-color: #2e3044; }
+body.dark .judge-word { color: #e8e8f0; }
+body.dark .judge-hint { color: #555; }
+body.dark .judge-zh { color: #888; }
+body.dark .judge-btn { border-color: #3a3d52; color: #ccc; background: #1a1c26; }
+body.dark .judge-btn:hover { border-color: #666; }
+body.dark .judge-btn.sel-ishi.right { background: #0d3d28; border-color: #4ecca3; color: #4ecca3; }
+body.dark .judge-btn.sel-muishi.right { background: #0d3d28; border-color: #4ecca3; color: #4ecca3; }
+body.dark .judge-btn.sel-dual.right { background: #0d3d28; border-color: #4ecca3; color: #4ecca3; }
+body.dark .judge-btn.wrong-pick { background: #3d0d0d; border-color: #f08080; color: #f08080; }
+body.dark .ref-search { background: #1a1c26; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .ref-search:focus { border-color: #4a90d9; }
+body.dark .ref-table-wrap { background: #1a1c26; }
+body.dark .ref-verb-header.ishi { background: #162436; color: #7ab8f0; border-color: #2a4060; }
+body.dark .ref-verb-header.muishi { background: #3d1620; color: #f07a98; border-color: #5a2a3a; }
+body.dark .ref-verb-header.dual { background: #1e1228; color: #b090e8; border-color: #3a2a5a; }
+body.dark .ref-table th { background: #0f1117; color: #666; border-color: #2e3044; }
+body.dark .ref-table td { border-color: #23253a; }
+body.dark .ref-table tr:hover td { background: #1e2030; }
+body.dark .ref-na-cell { color: #555; }
+body.dark .progress-bar-bg { background: #2e3044; }
+body.dark .btn-submit { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-submit:hover { background: #ccc; }
+body.dark .btn-next { background: #162436; color: #7ab8f0; }
+body.dark .btn-next:hover { background: #1e3a56; }
+body.dark .btn-restart { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-restart:hover { background: #ccc; }
+body.dark .btn-retry-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .done-state h2 { color: #e8e8f0; }
+body.dark .done-state p { color: #888; }
+body.dark .info-box { background: #161826; border-color: #2e3044; color: #aab; }
+body.dark .info-box strong { color: #e8e8f0; }
+
+/* ══ GRAYSCALE MODE ══ */
+body.grayscale { filter: grayscale(1); }
+body.grayscale.dark { filter: grayscale(1); }
+
+/* ══ Theme toggle button ══ */
+.theme-toggle-group { display: flex; gap: 4px; align-items: center; }
+.theme-cycle-btn {
+  border: 1.5px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.15s;
+}
+.theme-cycle-btn:hover { border-color: #aaa; background: #f5f5f5; }
+body.dark .theme-cycle-btn { background: #1a1c26; border-color: #3a3d52; color: #ccc; }
+body.dark .theme-cycle-btn:hover { border-color: #666; }
+
+/* ── Header ── */
+.header {
+  background: #fff;
+  border-bottom: 1px solid #e4e6ef;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.header h1 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; flex: 1; min-width: 160px; }
+.header-stats { display: flex; gap: 10px; align-items: center; font-size: 0.82rem; color: #666; }
+.stat-badge { background: #f0f2f7; border-radius: 999px; padding: 3px 10px; font-weight: 600; }
+.stat-badge.correct { background: #e6f9f0; color: #0a7a4a; }
+.stat-badge.wrong { background: #fde8e8; color: #c0392b; }
+
+/* ── Settings Panel ── */
+.settings-bar {
+  background: #fff;
+  border-bottom: 1px solid #e4e6ef;
+  padding: 10px 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.settings-label { font-size: 0.8rem; font-weight: 700; color: #888; white-space: nowrap; }
+
+.pill-btn {
+  border: 2px solid #ddd;
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #555;
+  white-space: nowrap;
+}
+.pill-btn:hover { border-color: #aaa; }
+.pill-btn.active-ishi { background: #e8f4fd; border-color: #4a90d9; color: #2563a8; }
+.pill-btn.active-muishi { background: #fde8ee; border-color: #d94a6f; color: #b8245a; }
+.pill-btn.active-dual { background: #f0e8fd; border-color: #8a5fd9; color: #5a2ba8; }
+.pill-btn.active-all { background: #e8fdf0; border-color: #4ad97e; color: #1f9a52; }
+.pill-btn.active-mode { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+
+.divider-v { width: 1px; height: 24px; background: #e4e6ef; margin: 0 4px; }
+
+/* ── Form Filter ── */
+.form-filter {
+  background: #fff;
+  border-bottom: 1px solid #e4e6ef;
+  padding: 8px 20px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.form-chip {
+  border: 1.5px solid #ddd;
+  background: #fff;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.13s;
+  user-select: none;
+}
+.form-chip.selected { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+.select-all-btn {
+  font-size: 0.75rem;
+  color: #4a90d9;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+/* ── Main Area ── */
+.main { padding: 24px 20px; max-width: 720px; margin: 0 auto; }
+
+/* ── Info box (explanation) ── */
+.info-box {
+  background: #f7f8fc;
+  border: 1px solid #e4e6ef;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 18px;
+}
+.info-box strong { color: #1a1a2e; }
+
+/* ── Flashcard Mode ── */
+.flashcard-wrap { perspective: 1000px; }
+.flashcard {
+  width: 100%;
+  min-height: 200px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+.flashcard:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.13); }
+.card-prompt { font-size: 0.82rem; color: #aaa; margin-bottom: 8px; letter-spacing: 0.05em; }
+.card-word { font-size: 2.4rem; font-weight: 700; color: #1a1a2e; letter-spacing: 0.04em; margin-bottom: 6px; }
+.card-reading { font-size: 1rem; color: #888; margin-bottom: 6px; }
+.card-zh { font-size: 1rem; color: #555; }
+.card-target {
+  margin-top: 18px;
+  font-size: 1rem;
+  color: #4a90d9;
+  font-weight: 600;
+  background: #e8f4fd;
+  border-radius: 8px;
+  padding: 6px 16px;
+}
+.card-target.muishi { color: #b8245a; background: #fde8ee; }
+.card-target.dual { color: #5a2ba8; background: #f0e8fd; }
+.card-answer {
+  display: none;
+  margin-top: 20px;
+  width: 100%;
+  border-top: 1px dashed #eee;
+  padding-top: 18px;
+  text-align: center;
+}
+.card-answer.show { display: block; }
+.answer-big { font-size: 2rem; font-weight: 700; color: #0a7a4a; margin-bottom: 6px; }
+.answer-note { font-size: 0.85rem; color: #888; }
+.answer-na { font-size: 1.3rem; font-weight: 700; color: #999; font-style: italic; margin-bottom: 6px; }
+.card-tap { font-size: 0.78rem; color: #ccc; margin-top: 14px; }
+.btn-row { display: flex; gap: 12px; margin-top: 18px; justify-content: center; }
+.btn-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-wrong:hover { background: #f5c6c6; }
+.btn-correct { background: #e6f9f0; color: #0a7a4a; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-correct:hover { background: #b8edcf; }
+
+/* ── Quiz Mode (conjugation fill-in) ── */
+.quiz-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 28px 24px;
+}
+.quiz-target-label { font-size: 0.82rem; color: #888; margin-bottom: 14px; line-height: 1.8; }
+.quiz-target-form { display: inline-block; font-weight: 700; color: #4a90d9; background: #e8f4fd; border-radius: 6px; padding: 2px 10px; }
+.quiz-target-form.muishi { color: #b8245a; background: #fde8ee; }
+.quiz-target-form.dual { color: #5a2ba8; background: #f0e8fd; }
+.quiz-input {
+  width: 100%;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 1.1rem;
+  outline: none;
+  transition: border 0.15s;
+  font-family: inherit;
+  color: #1a1a2e;
+}
+.quiz-input:focus { border-color: #4a90d9; }
+.quiz-input.correct-input { border-color: #0a7a4a; background: #e6f9f0; }
+.quiz-input.wrong-input { border-color: #c0392b; background: #fde8e8; }
+.quiz-feedback { margin-top: 12px; font-size: 0.95rem; min-height: 24px; font-weight: 600; }
+.quiz-feedback.ok { color: #0a7a4a; }
+.quiz-feedback.ng { color: #c0392b; }
+.quiz-answer-reveal { font-size: 0.9rem; color: #555; margin-top: 6px; }
+.quiz-explain {
+  margin-top: 14px;
+  background: #f7f8fc;
+  border: 1px solid #e4e6ef;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: #666;
+}
+
+/* ── Judge Mode (ishi/muishi/dual classification) ── */
+.judge-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  text-align: center;
+}
+.judge-hint { font-size: 0.85rem; color: #aaa; margin-bottom: 4px; }
+.judge-word { font-size: 2.2rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+.judge-reading { font-size: 1rem; color: #888; margin-bottom: 4px; }
+.judge-zh { font-size: 0.95rem; color: #555; margin-bottom: 22px; }
+.judge-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.judge-btn {
+  border: 2px solid #ddd;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 22px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #555;
+  min-width: 110px;
+}
+.judge-btn:hover { border-color: #aaa; }
+.judge-btn.sel-ishi.right { background: #e6f9f0; border-color: #0a7a4a; color: #0a7a4a; }
+.judge-btn.sel-muishi.right { background: #e6f9f0; border-color: #0a7a4a; color: #0a7a4a; }
+.judge-btn.sel-dual.right { background: #e6f9f0; border-color: #0a7a4a; color: #0a7a4a; }
+.judge-btn.wrong-pick { background: #fde8e8; border-color: #c0392b; color: #c0392b; }
+.judge-btn:disabled { cursor: default; }
+
+/* ── Reference Mode ── */
+.ref-search {
+  width: 100%;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 16px;
+  font-family: inherit;
+  transition: border 0.15s;
+}
+.ref-search:focus { border-color: #4a90d9; }
+.ref-table-wrap { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
+.ref-verb-header {
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ref-verb-header.ishi { background: #e8f4fd; color: #2563a8; border-bottom: 1px solid #b8d9f5; }
+.ref-verb-header.muishi { background: #fde8ee; color: #b8245a; border-bottom: 1px solid #f5b8cc; }
+.ref-verb-header.dual { background: #f0e8fd; color: #5a2ba8; border-bottom: 1px solid #d8c5f7; }
+.ref-verb-header .cat-tag { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: rgba(255,255,255,0.6); }
+.ref-chevron { display: inline-block; font-size: 1.1rem; transition: transform 0.2s; transform: rotate(0deg); line-height: 1; }
+.ref-chevron.open { transform: rotate(90deg); }
+.ref-verb-zh { font-size: 0.78rem; font-weight: 400; opacity: 0.8; flex-basis: 100%; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.ref-table th { padding: 8px 12px; background: #f5f6fa; text-align: left; color: #666; font-weight: 700; border-bottom: 1px solid #eee; }
+.ref-table td { padding: 7px 12px; border-bottom: 1px solid #f0f0f0; }
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table tr:hover td { background: #fafbff; }
+.ref-na-cell { color: #bbb; font-style: italic; }
+
+/* ── Progress bar ── */
+.progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.progress-bar-bg { flex: 1; height: 8px; background: #e4e6ef; border-radius: 999px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #4a90d9, #6ab0f5); border-radius: 999px; transition: width 0.3s; }
+.progress-label { font-size: 0.8rem; color: #888; white-space: nowrap; }
+
+/* ── Empty / Done ── */
+.empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+.empty-state .big { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 1rem; }
+.done-state { text-align: center; padding: 40px 20px; }
+.done-state .big { font-size: 3.5rem; margin-bottom: 10px; }
+.done-state h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.done-state p { color: #666; margin-bottom: 20px; }
+.btn-restart { background: #1a1a2e; color: #fff; border: none; border-radius: 10px; padding: 12px 32px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.btn-restart:hover { background: #2d2d4e; }
+.btn-retry-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-right: 10px; }
+
+/* submit btn */
+.btn-submit {
+  background: #1a1a2e; color: #fff; border: none; border-radius: 10px;
+  padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+  margin-top: 14px; transition: background 0.15s;
+}
+.btn-submit:hover { background: #2d2d4e; }
+.btn-next {
+  background: #e8f4fd; color: #2563a8; border: none; border-radius: 10px;
+  padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+  margin-top: 14px; margin-left: 10px; transition: background 0.15s; display: none;
+}
+.btn-next:hover { background: #c5e0f8; }
+
+@media (max-width: 500px) {
+  .card-word, .judge-word { font-size: 1.9rem; }
+  .main { padding: 16px 12px; }
+  .settings-bar, .form-filter { padding: 8px 12px; }
+  .header { padding: 10px 12px; }
+  .judge-btn { min-width: 90px; padding: 10px 14px; font-size: 0.88rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>意志動詞・非意志動詞練習</h1>
+  <div class="header-stats">
+    <span class="stat-badge correct" id="stat-correct">✓ 0</span>
+    <span class="stat-badge wrong" id="stat-wrong">✗ 0</span>
+    <span class="stat-badge" id="stat-total">共 0 題</span>
+  </div>
+  <div class="theme-toggle-group">
+    <button class="theme-cycle-btn" id="theme-cycle-btn" onclick="cycleTheme()" title="切換主題" aria-label="切換主題">
+      <svg id="theme-icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4.2"></circle>
+        <line x1="12" y1="2.5" x2="12" y2="5"></line>
+        <line x1="12" y1="19" x2="12" y2="21.5"></line>
+        <line x1="4.2" y1="4.2" x2="6" y2="6"></line>
+        <line x1="18" y1="18" x2="19.8" y2="19.8"></line>
+        <line x1="2.5" y1="12" x2="5" y2="12"></line>
+        <line x1="19" y1="12" x2="21.5" y2="12"></line>
+        <line x1="4.2" y1="19.8" x2="6" y2="18"></line>
+        <line x1="18" y1="6" x2="19.8" y2="4.2"></line>
+      </svg>
+      <svg id="theme-icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"></path>
+      </svg>
+      <svg id="theme-icon-gray" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <circle cx="12" cy="12" r="8.5"></circle>
+        <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Settings: Category + Mode -->
+<div class="settings-bar">
+  <span class="settings-label">範圍</span>
+  <button class="pill-btn active-ishi" id="cat-ishi" onclick="setCategory('ishi')">意志動詞</button>
+  <button class="pill-btn" id="cat-muishi" onclick="setCategory('muishi')">非意志動詞</button>
+  <button class="pill-btn" id="cat-dual" onclick="setCategory('dual')">同形</button>
+  <button class="pill-btn" id="cat-all" onclick="setCategory('all')">全部混合</button>
+  <div class="divider-v"></div>
+  <span class="settings-label">模式</span>
+  <button class="pill-btn active-mode" id="mode-judge" onclick="setMode('judge')">分類判斷</button>
+  <button class="pill-btn" id="mode-flash" onclick="setMode('flash')">單字卡</button>
+  <button class="pill-btn" id="mode-quiz" onclick="setMode('quiz')">變化填空</button>
+  <button class="pill-btn" id="mode-ref" onclick="setMode('ref')">參考表</button>
+</div>
+
+<!-- Form filter (only relevant in quiz mode) -->
+<div class="form-filter" id="form-filter" style="display:none">
+  <span class="settings-label">意志表現</span>
+  <span class="form-chip selected" data-form="causative" onclick="toggleForm(this)">使役</span>
+  <span class="form-chip selected" data-form="passive" onclick="toggleForm(this)">受身</span>
+  <span class="form-chip selected" data-form="tai" onclick="toggleForm(this)">希望（たい）</span>
+  <span class="form-chip selected" data-form="request" onclick="toggleForm(this)">依頼（て）</span>
+  <span class="form-chip selected" data-form="prohibition" onclick="toggleForm(this)">禁止（な）</span>
+  <span class="form-chip selected" data-form="command" onclick="toggleForm(this)">命令形</span>
+  <span class="form-chip selected" data-form="potential" onclick="toggleForm(this)">可能形</span>
+  <span class="form-chip selected" data-form="volitional" onclick="toggleForm(this)">意向形（よう）</span>
+  <span class="select-all-btn" onclick="selectAllForms()">全選</span>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <div class="info-box" id="info-box" style="display:none">
+    <strong>意志動詞</strong>：可憑自我意志控制的行為（如：食べる、書く）。可用於使役・受身・希望・依頼・禁止・命令・可能・意向等「意志表現」。<br>
+    <strong>非意志動詞</strong>：無法憑意志直接控制的行為（如：ある、わかる、見える）。基本上不使用上述意志表現。<br>
+    <strong>意志非意志同形</strong>：同一個動詞依語境可作意志或非意志使用（如：忘れる、開く、拡大する）。
+  </div>
+  <div id="main-area"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════
+// type: 'ichidan'(る-verb), 'godan'(う-verb), 'suru', 'kuru'
+// cat: 'ishi'(意志動詞), 'muishi'(非意志動詞), 'dual'(意志非意志同形)
+
+const VERBS = [
+  // ===== 意志動詞 =====
+  {w:'食べる', r:'たべる', zh:'吃', type:'ichidan', cat:'ishi', note:'食べたケーキはおいしかった。（吃了的蛋糕很好吃。）'},
+  {w:'飲む', r:'のむ', zh:'喝', type:'godan', end:'む', cat:'ishi', note:'水を飲もう。（喝水吧。）'},
+  {w:'書く', r:'かく', zh:'寫', type:'godan', end:'く', cat:'ishi', note:'名前を書いてください。（請寫上名字。）'},
+  {w:'読む', r:'よむ', zh:'讀、唸', type:'godan', end:'む', cat:'ishi', note:'本を読みたい。（想讀書。）'},
+  {w:'話す', r:'はなす', zh:'說、講', type:'godan', end:'す', cat:'ishi', note:'お母さんに話そう。（跟媽媽說吧。）'},
+  {w:'聞く', r:'きく', zh:'聽、問', type:'godan', end:'く', cat:'ishi', note:'先生に聞いてみる。（去問問老師看。）'},
+  {w:'買う', r:'かう', zh:'買', type:'godan', end:'う', cat:'ishi', note:'新しい靴を買いたい。（想買新鞋子。）'},
+  {w:'作る', r:'つくる', zh:'製作、做', type:'godan', end:'る', cat:'ishi', note:'晩ご飯を作ろう。（來做晚飯吧。）'},
+  {w:'行く', r:'いく', zh:'去', type:'godan', end:'く', cat:'ishi', irregularTe:true, note:'明日、公園に行こう。（明天去公園吧。）'},
+  {w:'来る', r:'くる', zh:'來', type:'kuru', cat:'ishi', note:'明日また来てください。（明天請再來。）'},
+  {w:'歩く', r:'あるく', zh:'走、步行', type:'godan', end:'く', cat:'ishi', note:'公園を歩こう。（在公園走走吧。）'},
+  {w:'走る', r:'はしる', zh:'跑', type:'godan', end:'る', cat:'ishi', note:'毎朝走ることにした。（決定每天早上跑步。）'},
+  {w:'立つ', r:'たつ', zh:'站立', type:'godan', end:'つ', cat:'ishi', note:'ここに立ってください。（請站在這裡。）'},
+  {w:'座る', r:'すわる', zh:'坐', type:'godan', end:'る', cat:'ishi', note:'椅子に座ろう。（坐到椅子上吧。）'},
+  {w:'する', r:'する', zh:'做', type:'suru', cat:'ishi', note:'今日は何をしよう？（今天要做什麼呢？）'},
+  {w:'見る', r:'みる', zh:'看', type:'ichidan', cat:'ishi', note:'映画を見たい。（想看電影。）'},
+  {w:'勉強する', r:'べんきょうする', zh:'學習、用功', type:'suru', cat:'ishi', note:'毎日勉強しよう。（每天都來用功吧。）'},
+  {w:'洗う', r:'あらう', zh:'洗', type:'godan', end:'う', cat:'ishi', note:'手を洗ってください。（請洗手。）'},
+  {w:'押す', r:'おす', zh:'按、推', type:'godan', end:'す', cat:'ishi', note:'ボタンを押そう。（按下按鈕吧。）'},
+
+  // ===== 非意志動詞 =====
+  {w:'ある', r:'ある', zh:'（無生物）有、存在', type:'godan', end:'る', cat:'muishi', noVolitionalForms:true, note:'冷蔵庫に何があるか確認した。（確認了冰箱裡有什麼。）'},
+  {w:'いる', r:'いる', zh:'（生物）有、在', type:'ichidan', cat:'muishi', noVolitionalForms:true, note:'教室に学生がいる。（教室裡有學生。）'},
+  {w:'できる', r:'できる', zh:'能、會', type:'ichidan', cat:'muishi', noVolitionalForms:true, note:'日本語ができる。（會日語。）'},
+  {w:'わかる', r:'わかる', zh:'理解、明白', type:'godan', end:'る', cat:'muishi', noVolitionalForms:true, note:'この問題、わかりますか？（這個問題你懂嗎？）'},
+  {w:'降る', r:'ふる', zh:'（雨、雪）下', type:'godan', end:'る', cat:'muishi', noVolitionalForms:true, note:'明日も雨が降るそうだ。（聽說明天也會下雨。）'},
+  {w:'見える', r:'みえる', zh:'看得見', type:'ichidan', cat:'muishi', noVolitionalForms:true, note:'星がよく見える。（星星看得很清楚。）'},
+  {w:'聞こえる', r:'きこえる', zh:'聽得見', type:'ichidan', cat:'muishi', noVolitionalForms:true, note:'音楽が聞こえる。（聽得到音樂。）'},
+  {w:'要る', r:'いる', zh:'需要', type:'godan', end:'る', cat:'muishi', noVolitionalForms:true, note:'これは要りますか？（這個需要嗎？）'},
+  {w:'似る', r:'にる', zh:'相似', type:'ichidan', cat:'muishi', noVolitionalForms:true, note:'彼は父によく似ている。（他和父親很像。）'},
+  {w:'足りる', r:'たりる', zh:'足夠', type:'ichidan', cat:'muishi', noVolitionalForms:true, note:'お金が足りない。（錢不夠。）'},
+  {w:'要する', r:'ようする', zh:'需要、花費（時間等）', type:'suru', cat:'muishi', noVolitionalForms:true, note:'時間を要する。（需要花時間。）'},
+
+  // ===== 意志非意志同形 =====
+  {w:'落とす', r:'おとす', zh:'弄掉、使掉落', type:'godan', end:'す', cat:'dual',
+    note:'意志：高い所からボールを落として観察する。（從高處把球丟下觀察。）\n非意志：スマホを落として画面が割れた。（手機掉了螢幕破裂。）'},
+  {w:'忘れる', r:'わすれる', zh:'忘記', type:'ichidan', cat:'dual',
+    note:'意志：辛いことはさっさと忘れよう。（趕緊忘掉痛苦的事吧。）\n非意志：あんなに勉強したのに、もう忘れてしまった。（明明那麼努力學習，卻已經忘了。）'},
+  {w:'拡大する', r:'かくだいする', zh:'擴大', type:'suru', cat:'dual',
+    note:'意志：会社は工場の規模を拡大した。（公司擴大了工廠規模。）\n非意志：感染が拡大するのを防ぐ。（防止感染擴大。）'},
+  {w:'開く', r:'あく', zh:'打開、開', type:'godan', end:'く', cat:'dual',
+    note:'意志：店をオープンしようと考えている。（打算要開店。）\n非意志：ドアが自然に開いた。（門自己打開了。）'},
+  {w:'閉まる', r:'しまる', zh:'關上', type:'godan', end:'る', cat:'dual',
+    note:'意志：店を閉めようと思う。（打算把店關掉。）\n非意志：風でドアが閉まった。（門因風自己關上了。）'},
+  {w:'倒れる', r:'たおれる', zh:'倒下、倒塌', type:'ichidan', cat:'dual',
+    note:'意志：わざと地面に倒れてみせた。（故意倒在地上給人看。）\n非意志：地震で建物が倒れた。（建築物因地震倒塌。）'},
+  {w:'変わる', r:'かわる', zh:'改變', type:'godan', end:'る', cat:'dual',
+    note:'意志：考え方を変わろうと努力した。（努力嘗試改變想法。）\n非意志：時代とともに考え方が変わった。（隨著時代想法自然改變了。）'},
+  {w:'増える', r:'ふえる', zh:'增加', type:'ichidan', cat:'dual',
+    note:'意志：意識して運動量を増やそう。（有意識地增加運動量吧。）\n非意志：人口が自然に増えた。（人口自然增加了。）'},
+];
+
+// ══════════════════════════════════════════
+//  CONJUGATION ENGINE
+// ══════════════════════════════════════════
+const GODAN_MAP = {
+  'う': {a:'わ', i:'い', te:'って', ba:'え', e:'え', o:'お'},
+  'く': {a:'か', i:'き', te:'いて', ba:'け', e:'け', o:'こ'},
+  'ぐ': {a:'が', i:'ぎ', te:'いで', ba:'げ', e:'げ', o:'ご'},
+  'す': {a:'さ', i:'し', te:'して', ba:'せ', e:'せ', o:'そ'},
+  'つ': {a:'た', i:'ち', te:'って', ba:'て', e:'て', o:'と'},
+  'ぬ': {a:'な', i:'に', te:'んで', ba:'ね', e:'ね', o:'の'},
+  'ぶ': {a:'ば', i:'び', te:'んで', ba:'べ', e:'べ', o:'ぼ'},
+  'む': {a:'ま', i:'み', te:'んで', ba:'め', e:'め', o:'も'},
+  'る': {a:'ら', i:'り', te:'って', ba:'れ', e:'れ', o:'ろ'},
+};
+
+function getStem(v) { return v.w.slice(0, -1); }
+
+// Returns full conjugation object for the 8 ishi-form fields
+function conjugate(v) {
+  const result = {};
+  if (v.type === 'ichidan') {
+    const base = getStem(v);
+    result.causative = base + 'させる';
+    result.passive   = base + 'られる';
+    result.tai       = base + 'たい';
+    result.request   = base + 'てください';
+    result.prohibition = v.w + 'な';
+    result.command   = base + 'ろ';
+    result.potential = base + 'られる';
+    result.volitional= base + 'よう';
+  } else if (v.type === 'godan') {
+    const base = getStem(v);
+    const m = GODAN_MAP[v.end];
+    const teForm = v.irregularTe ? base + 'って' : base + m.te;
+    result.causative = base + m.a + 'せる';
+    result.passive   = base + m.a + 'れる';
+    result.tai       = base + m.i + 'たい';
+    result.request   = teForm + 'ください';
+    result.prohibition = v.w + 'な';
+    result.command   = base + m.e;
+    result.potential = base + m.e + 'る';
+    result.volitional= base + m.o + 'う';
+  } else if (v.type === 'suru') {
+    const base = v.w.slice(0, -2);
+    result.causative = base + 'させる';
+    result.passive   = base + 'される';
+    result.tai       = base + 'したい';
+    result.request   = base + 'してください';
+    result.prohibition = v.w + 'な';
+    result.command   = base + 'しろ';
+    result.potential = base + 'できる';
+    result.volitional= base + 'しよう';
+  } else if (v.type === 'kuru') {
+    result.causative = '来させる';
+    result.passive   = '来られる';
+    result.tai       = '来たい';
+    result.request   = '来てください';
+    result.prohibition = '来るな';
+    result.command   = '来い';
+    result.potential = '来られる';
+    result.volitional= '来よう';
+  }
+  return result;
+}
+
+const FORM_LABELS = {
+  causative:  '使役形（〜せる／させる）',
+  passive:    '受身形（〜れる／られる）',
+  tai:        '希望形（〜たい）',
+  request:    '依頼形（〜てください）',
+  prohibition:'禁止形（〜な）',
+  command:    '命令形',
+  potential:  '可能形',
+  volitional: '意向形（〜よう／おう）',
+};
+
+const FORM_ORDER = ['causative','passive','tai','request','prohibition','command','potential','volitional'];
+
+const CAT_LABELS = {
+  ishi: '意志動詞',
+  muishi: '非意志動詞',
+  dual: '意志非意志同形',
+};
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentCategory = 'ishi';
+let currentMode = 'judge';
+let selectedChips = new Set(FORM_ORDER.slice());
+let queue = [];
+let currentIdx = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let wrongList = [];
+let cardFlipped = false;
+let answered = false;
+
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+function getVerbsForCategory() {
+  if (currentCategory === 'all') return VERBS;
+  return VERBS.filter(v => v.cat === currentCategory);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildQueue(retryWrong = false) {
+  if (retryWrong) return [...wrongList];
+
+  const verbs = getVerbsForCategory();
+
+  if (currentMode === 'judge' || currentMode === 'flash') {
+    return shuffle(verbs.map(v => ({ verb: v })));
+  }
+
+  if (currentMode === 'quiz') {
+    // only verbs that have at least one applicable form (skip muishi verbs entirely for now,
+    // since muishi verbs generally can't use these forms — handled with explanation cards instead)
+    let items = [];
+    const forms = [...selectedChips];
+    if (forms.length === 0) return [];
+    verbs.forEach(v => {
+      forms.forEach(f => {
+        items.push({ verb: v, form: f });
+      });
+    });
+    return shuffle(items);
+  }
+
+  return [];
+}
+
+function updateStats() {
+  document.getElementById('stat-correct').textContent = '✓ ' + correctCount;
+  document.getElementById('stat-wrong').textContent = '✗ ' + wrongCount;
+  document.getElementById('stat-total').textContent = '共 ' + queue.length + ' 題';
+}
+
+// ══════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════
+function setCategory(c) {
+  currentCategory = c;
+  ['ishi','muishi','dual','all'].forEach(x => {
+    const btn = document.getElementById('cat-'+x);
+    btn.className = 'pill-btn';
+    if (x === c) btn.classList.add('active-'+x);
+  });
+  restart();
+}
+
+function setMode(m) {
+  currentMode = m;
+  ['judge','flash','quiz','ref'].forEach(x => {
+    const btn = document.getElementById('mode-'+x);
+    btn.className = 'pill-btn';
+    if (x === m) btn.classList.add('active-mode');
+  });
+  const ff = document.getElementById('form-filter');
+  ff.style.display = (m === 'quiz') ? 'flex' : 'none';
+  const ib = document.getElementById('info-box');
+  ib.style.display = (m === 'ref') ? 'block' : 'none';
+  restart();
+}
+
+function toggleForm(el) {
+  const f = el.dataset.form;
+  if (selectedChips.has(f)) {
+    if (selectedChips.size <= 1) return;
+    selectedChips.delete(f);
+    el.classList.remove('selected');
+  } else {
+    selectedChips.add(f);
+    el.classList.add('selected');
+  }
+  restart();
+}
+
+function selectAllForms() {
+  document.querySelectorAll('.form-chip').forEach(el => {
+    selectedChips.add(el.dataset.form);
+    el.classList.add('selected');
+  });
+  restart();
+}
+
+function restart(retryWrong = false) {
+  if (!retryWrong) {
+    correctCount = 0;
+    wrongCount = 0;
+    wrongList = [];
+  }
+  queue = buildQueue(retryWrong);
+  currentIdx = 0;
+  answered = false;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// ══════════════════════════════════════════
+//  RENDER DISPATCH
+// ══════════════════════════════════════════
+function render() {
+  const area = document.getElementById('main-area');
+  if (currentMode === 'ref') { renderRef(area); return; }
+
+  if (queue.length === 0) {
+    area.innerHTML = `<div class="empty-state"><div class="big">🤔</div><p>請至少選擇一種意志表現！</p></div>`;
+    return;
+  }
+  if (currentIdx >= queue.length) { renderDone(area); return; }
+
+  const progress = `<div class="progress-row">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${(currentIdx/queue.length*100).toFixed(1)}%"></div></div>
+    <span class="progress-label">${currentIdx}／${queue.length}</span>
+  </div>`;
+
+  if (currentMode === 'judge') renderJudge(area, progress);
+  else if (currentMode === 'flash') renderFlash(area, progress);
+  else if (currentMode === 'quiz') renderQuiz(area, progress);
+}
+
+// ══════════════════════════════════════════
+//  JUDGE MODE — 分類判斷練習
+// ══════════════════════════════════════════
+function renderJudge(area, progress) {
+  const item = queue[currentIdx];
+  const v = item.verb;
+
+  area.innerHTML = progress + `
+  <div class="judge-card">
+    <div class="judge-hint">這個動詞屬於哪一種？</div>
+    <div class="judge-word">${v.w}</div>
+    <div class="judge-reading">${v.r}</div>
+    <div class="judge-zh">${v.zh}</div>
+    <div class="judge-btns">
+      <button class="judge-btn" id="judge-ishi" onclick="checkJudge('ishi')">意志動詞</button>
+      <button class="judge-btn" id="judge-muishi" onclick="checkJudge('muishi')">非意志動詞</button>
+      <button class="judge-btn" id="judge-dual" onclick="checkJudge('dual')">同形（兩者皆可）</button>
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-explain" id="quiz-explain" style="display:none"></div>
+    <div style="text-align:center">
+      <button class="btn-next" id="btn-next" onclick="nextJudge()">下一題 →</button>
+    </div>
+  </div>`;
+}
+
+function checkJudge(pick) {
+  if (answered) return;
+  answered = true;
+  const item = queue[currentIdx];
+  const v = item.verb;
+  const fb = document.getElementById('quiz-feedback');
+  const explain = document.getElementById('quiz-explain');
+  const btnNext = document.getElementById('btn-next');
+
+  const pickBtn = document.getElementById('judge-' + pick);
+  const correctBtn = document.getElementById('judge-' + v.cat);
+
+  if (pick === v.cat) {
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！這是「' + CAT_LABELS[v.cat] + '」';
+    pickBtn.classList.add('sel-' + v.cat, 'right');
+    correctCount++;
+  } else {
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = '✗ 不正確。正確答案是「' + CAT_LABELS[v.cat] + '」';
+    pickBtn.classList.add('wrong-pick');
+    correctBtn.classList.add('sel-' + v.cat, 'right');
+    wrongCount++;
+    wrongList.push(item);
+  }
+
+  document.querySelectorAll('.judge-btn').forEach(b => b.disabled = true);
+
+  explain.style.display = 'block';
+  explain.innerHTML = (v.note || '').replace(/\n/g, '<br>');
+
+  btnNext.style.display = 'inline-block';
+  updateStats();
+}
+
+function nextJudge() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// ══════════════════════════════════════════
+//  FLASHCARD MODE — 單字卡（意志表現一覽）
+// ══════════════════════════════════════════
+function renderFlash(area, progress) {
+  const item = queue[currentIdx];
+  const v = item.verb;
+  const c = conjugate(v);
+
+  let rows;
+  if (v.noVolitionalForms) {
+    rows = FORM_ORDER.map(f =>
+      `<tr><td style="font-weight:700;color:#888">${FORM_LABELS[f]}</td><td class="ref-na-cell">— 非意志動詞，通常不使用</td></tr>`
+    ).join('');
+  } else {
+    rows = FORM_ORDER.map(f =>
+      `<tr><td style="font-weight:700;color:#888">${FORM_LABELS[f]}</td><td style="font-size:1.05rem">${c[f]}</td></tr>`
+    ).join('');
+  }
+
+  area.innerHTML = progress + `
+  <div class="flashcard-wrap">
+    <div class="flashcard" onclick="flipCard()" style="cursor:pointer">
+      <div class="card-prompt">點擊查看所有意志表現變化</div>
+      <div class="card-word">${v.w}</div>
+      <div class="card-reading">${v.r}</div>
+      <div class="card-zh">${v.zh}</div>
+      <div class="card-target ${v.cat}">${CAT_LABELS[v.cat]}</div>
+      <div class="card-answer" id="card-answer">
+        <table class="ref-table" style="text-align:left">
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div class="card-tap" id="card-tap">點擊卡片顯示變化表 👆</div>
+    </div>
+    <div class="btn-row" id="btn-row" style="display:none">
+      <button class="btn-wrong" onclick="markWrong()">✗ 不熟</button>
+      <button class="btn-correct" onclick="markCorrect()">✓ 熟悉了</button>
+    </div>
+  </div>`;
+}
+
+function flipCard() {
+  if (cardFlipped) return;
+  cardFlipped = true;
+  document.getElementById('card-answer').classList.add('show');
+  document.getElementById('card-tap').style.display = 'none';
+  document.getElementById('btn-row').style.display = 'flex';
+}
+
+function markCorrect() {
+  correctCount++;
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+function markWrong() {
+  wrongCount++;
+  wrongList.push(queue[currentIdx]);
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// ══════════════════════════════════════════
+//  QUIZ MODE — 變化填空
+// ══════════════════════════════════════════
+function renderQuiz(area, progress) {
+  const item = queue[currentIdx];
+  const v = item.verb;
+  const form = item.form;
+  const formLabel = FORM_LABELS[form];
+
+  if (v.noVolitionalForms) {
+    // Skip generating an answer field; show as an explanation card
+    area.innerHTML = progress + `
+    <div class="quiz-card">
+      <div class="quiz-target-label">
+        「<strong>${v.w}</strong>」（${v.r}）${v.zh} 的
+        <span class="quiz-target-form muishi">${formLabel}</span>
+      </div>
+      <div class="quiz-feedback ng" style="margin-top:0">⚠️ 這是非意志動詞，通常不會使用「${formLabel}」這種意志表現。</div>
+      <div class="quiz-explain">${(v.note||'').replace(/\n/g,'<br>')}<br><br>非意志動詞無法用意志控制，因此基本上不會用於「使役・受身・希望・依頼・禁止・命令・可能・意向」等意志表現中。</div>
+      <div style="text-align:center">
+        <button class="btn-submit" onclick="nextQuiz(true)">我了解了，下一題 →</button>
+      </div>
+    </div>`;
+    return;
+  }
+
+  const c = conjugate(v);
+
+  area.innerHTML = progress + `
+  <div class="quiz-card">
+    <div class="quiz-target-label">
+      「<strong>${v.w}</strong>」（${v.r}）${v.zh} 的
+      <span class="quiz-target-form ${v.cat}">${formLabel}</span>
+      是什麼？
+    </div>
+    <input class="quiz-input" id="quiz-input" type="text" placeholder="輸入答案…" onkeydown="if(event.key==='Enter')checkQuiz()">
+    <div><button class="btn-submit" onclick="checkQuiz()">確認</button>
+    <button class="btn-next" id="btn-next" onclick="nextQuiz()">下一題 →</button></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-answer-reveal" id="quiz-reveal"></div>
+    ${v.cat === 'dual' ? `<div class="quiz-explain">「${v.w}」是意志非意志同形動詞：${(v.note||'').replace(/\n/g,'<br>')}</div>` : ''}
+  </div>`;
+
+  setTimeout(() => { const inp = document.getElementById('quiz-input'); if(inp) inp.focus(); }, 50);
+}
+
+function checkQuiz() {
+  if (answered) return;
+  const item = queue[currentIdx];
+  const v = item.verb;
+  const c = conjugate(v);
+  const answer = c[item.form];
+  const input = document.getElementById('quiz-input');
+  const val = input.value.trim();
+  const fb = document.getElementById('quiz-feedback');
+  const rev = document.getElementById('quiz-reveal');
+  const btnNext = document.getElementById('btn-next');
+
+  if (val === answer) {
+    input.classList.add('correct-input');
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+  } else {
+    input.classList.add('wrong-input');
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = '✗ 不正確';
+    rev.textContent = `正確答案：${answer}`;
+    wrongCount++;
+    wrongList.push(item);
+  }
+  answered = true;
+  btnNext.style.display = 'inline-block';
+  updateStats();
+}
+
+function nextQuiz(skipped) {
+  if (skipped) {
+    // muishi explanation card counted as "correct" pass-through, doesn't affect stats
+  }
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// ══════════════════════════════════════════
+//  DONE SCREEN
+// ══════════════════════════════════════════
+function renderDone(area) {
+  const total = correctCount + wrongCount;
+  const pct = total > 0 ? Math.round(correctCount / total * 100) : 0;
+  let emoji = pct >= 90 ? '🎉' : pct >= 70 ? '👍' : pct >= 50 ? '💪' : '📖';
+  area.innerHTML = `<div class="done-state">
+    <div class="big">${emoji}</div>
+    <h2>練習完成！</h2>
+    <p>正確 ${correctCount} 題，錯誤 ${wrongCount} 題（正確率 ${pct}%）</p>
+    ${wrongCount > 0 ? `<button class="btn-retry-wrong" onclick="restart(true)">重練錯題（${wrongCount}題）</button>` : ''}
+    <button class="btn-restart" onclick="restart(false)">重新開始</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+//  REFERENCE TABLE
+// ══════════════════════════════════════════
+function renderRef(area) {
+  const verbs = getVerbsForCategory();
+
+  let html = verbs.map((v, idx) => {
+    const rows = FORM_ORDER.map(f => {
+      if (v.noVolitionalForms) {
+        return `<tr><td style="font-weight:700;color:#888;width:40%">${FORM_LABELS[f]}</td><td class="ref-na-cell">—（非意志動詞，通常不使用）</td></tr>`;
+      }
+      const c = conjugate(v);
+      return `<tr><td style="font-weight:700;color:#888;width:40%">${FORM_LABELS[f]}</td><td style="font-size:1rem">${c[f]}</td></tr>`;
+    }).join('');
+
+    const noteHtml = v.note ? `<div style="padding:10px 18px;font-size:0.8rem;color:#888;line-height:1.7;border-bottom:1px solid #f0f0f0">${v.note.replace(/\n/g,'<br>')}</div>` : '';
+
+    return `<div class="ref-table-wrap" style="margin-bottom:10px">
+      <div class="ref-verb-header ${v.cat}" onclick="toggleRefItem(${idx})" style="cursor:pointer">
+        <span class="ref-chevron" id="ref-chevron-${idx}">›</span>
+        <span>${v.w}（${v.r}）— ${v.zh}</span>
+        <span class="cat-tag">${CAT_LABELS[v.cat]}</span>
+      </div>
+      <div class="ref-detail" id="ref-detail-${idx}" style="display:none">
+        ${noteHtml}
+        <table class="ref-table"><tbody>${rows}</tbody></table>
+      </div>
+    </div>`;
+  }).join('');
+
+  area.innerHTML = `
+    <input class="ref-search" id="ref-search" placeholder="搜尋動詞（日文或中文）…" oninput="filterRef(this.value)">
+    <div id="ref-content">${html}</div>`;
+}
+
+function toggleRefItem(idx) {
+  const detail = document.getElementById('ref-detail-' + idx);
+  const chevron = document.getElementById('ref-chevron-' + idx);
+  const open = detail.style.display !== 'none';
+  detail.style.display = open ? 'none' : 'block';
+  chevron.classList.toggle('open', !open);
+}
+
+function filterRef(val) {
+  const v = val.trim().toLowerCase();
+  document.querySelectorAll('#ref-content .ref-table-wrap').forEach(el => {
+    const header = el.querySelector('.ref-verb-header').textContent.toLowerCase();
+    el.style.display = !v || header.includes(v) ? '' : 'none';
+  });
+}
+
+// ══════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════
+const THEME_ORDER = ['light', 'dark', 'gray'];
+
+function setTheme(t) {
+  document.body.classList.remove('dark', 'grayscale');
+  if (t === 'dark') document.body.classList.add('dark');
+  else if (t === 'gray') document.body.classList.add('grayscale');
+
+  document.getElementById('theme-icon-sun').style.display = t === 'light' ? 'block' : 'none';
+  document.getElementById('theme-icon-moon').style.display = t === 'dark' ? 'block' : 'none';
+  document.getElementById('theme-icon-gray').style.display = t === 'gray' ? 'block' : 'none';
+
+  const btn = document.getElementById('theme-cycle-btn');
+  const titles = { light: '亮色模式（點擊切換深色）', dark: '深色模式（點擊切換黑白）', gray: '黑白模式（點擊切換亮色）' };
+  btn.title = titles[t];
+
+  try { localStorage.setItem('ishi-muishi-theme', t); } catch(e) {}
+}
+
+function cycleTheme() {
+  const current = THEME_ORDER.find(t => {
+    if (t === 'light') return !document.body.classList.contains('dark') && !document.body.classList.contains('grayscale');
+    if (t === 'dark') return document.body.classList.contains('dark');
+    if (t === 'gray') return document.body.classList.contains('grayscale');
+  }) || 'light';
+  const next = THEME_ORDER[(THEME_ORDER.indexOf(current) + 1) % THEME_ORDER.length];
+  setTheme(next);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+(function(){
+  try {
+    const saved = localStorage.getItem('ishi-muishi-theme');
+    setTheme(saved && THEME_ORDER.includes(saved) ? saved : 'light');
+  } catch(e) { setTheme('light'); }
+})();
+restart();
+
+</script>
+</body>
+</html>

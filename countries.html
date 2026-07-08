@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>日文國名學習工具</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: #E0DAD0;
+  --border2: #C8C0B0;
+  --text: #1A1814;
+  --text2: #6B6558;
+  --text3: #9E9589;
+  --accent: #3D4A2E;
+  --accent2: #6B7D52;
+  --accent-bg: #EDF1E6;
+  --red: #8B2E1A;
+  --red-bg: #FAF0EC;
+  --gold: #7A4A10;
+  --gold-bg: #FBF3E6;
+  --correct: #3D4A2E;
+  --correct-bg: #EDF1E6;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark {
+  --bg: #0A0A08;
+  --surface: #16150F;
+  --surface2: #1E1D16;
+  --border: #2E2C22;
+  --border2: #423F30;
+  --text: #F0EEE6;
+  --text2: #A8A294;
+  --text3: #756F60;
+  --accent: #8FAD6E;
+  --accent2: #6B7D52;
+  --accent-bg: #1A2418;
+  --red: #E89580;
+  --red-bg: #2A1714;
+  --gold: #E0BA7A;
+  --gold-bg: #251D0E;
+  --correct: #8FAD6E;
+  --correct-bg: #1A2418;
+  --shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+  transition: background .2s, color .2s;
+  padding-bottom: 40px;
+}
+
+/* ── header ── */
+.header {
+  background: var(--accent);
+  color: #fff;
+  padding: 18px 16px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  transition: background .2s;
+}
+body.dark .header {
+  background: #1C2317;
+  color: #EDEAE2;
+}
+body.dark .theme-toggle { color: rgba(255,255,255,.7); }
+.header h1 { font-size: 17px; font-weight: 700; letter-spacing: .04em; }
+.header p  { font-size: 12px; opacity: .75; margin-top: 2px; }
+.theme-toggle {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,.85);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: color .15s, background .15s;
+  padding: 0;
+}
+.theme-toggle:active { background: rgba(255,255,255,.1); }
+.theme-toggle svg { display: block; }
+
+/* ── mode tabs (replacing the old pill rows) ── */
+.mode-section {
+  max-width: 560px;
+  margin: 16px auto 0;
+  padding: 0 14px;
+}
+.mode-row-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--text3);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+.mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 4px;
+}
+.mode-btn {
+  flex: 1 1 calc(50% - 4px);
+  padding: 11px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 14.5px; font-weight: 700;
+  color: var(--text2);
+  cursor: pointer;
+  text-align: center;
+  font-family: inherit;
+  line-height: 1.35;
+  transition: all .15s;
+  box-shadow: var(--shadow);
+}
+@media (min-width: 480px) {
+  .mode-btn { flex: 1 1 0; }
+}
+.mode-btn .mode-arrow {
+  display: block;
+  font-size: 10.5px;
+  opacity: .65;
+  font-weight: 400;
+  margin-top: 2px;
+}
+.mode-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.mode-btn.active .mode-arrow { opacity: .8; }
+
+.retry-row { display: flex; justify-content: flex-end; margin-top: 10px; }
+.retry-btn {
+  background: transparent;
+  color: var(--text3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s;
+}
+.retry-btn.show { display: inline-flex; }
+.retry-btn:active { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+/* ── chapter (continent) select screen ── */
+.chapter-wrap { max-width: 560px; margin: 18px auto 0; padding: 0 14px; }
+.chapter-intro { font-size: 12.5px; color: var(--text2); margin-bottom: 12px; }
+.chapter-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 13px 14px;
+  margin-bottom: 9px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  transition: all .12s;
+  box-shadow: var(--shadow);
+}
+.chapter-card.on { border-color: var(--accent); background: var(--accent-bg); }
+.chapter-check {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  border: 1.5px solid var(--border2);
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: transparent;
+  transition: all .12s;
+}
+.chapter-card.on .chapter-check { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chapter-info { flex: 1; }
+.chapter-title { font-size: 14.5px; font-weight: 700; color: var(--text); }
+.chapter-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.chapter-actions { display: flex; gap: 8px; margin-top: 14px; }
+.select-all-btn {
+  flex: 1;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 13px; font-weight: 500;
+  color: var(--text2); cursor: pointer;
+  font-family: inherit;
+  transition: background .12s;
+}
+.start-quiz-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14.5px; font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background .12s;
+}
+.start-quiz-btn:active { background: var(--accent2); }
+.chapter-warn {
+  font-size: 12px; color: var(--red);
+  text-align: center; margin-top: 8px; display: none;
+}
+
+/* ── Progress / score ── */
+.progress-bar-wrap { max-width: 560px; margin: 18px auto 0; padding: 0 14px; }
+.progress-info {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--text2);
+  margin-bottom: 6px;
+}
+.progress-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .35s; }
+
+.score-row {
+  max-width: 560px; margin: 12px auto 0; padding: 0 14px;
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 7px;
+}
+.sc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 6px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.sc-n { font-size: 22px; font-weight: 700; color: var(--text); }
+.sc-l { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+/* ── Card ── */
+.card-stage { max-width: 560px; margin: 16px auto 0; padding: 0 14px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 36px 26px 52px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  position: relative;
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.card-tag {
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+.card-main {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(34px, 9vw, 56px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: .04em;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.card-main.ryaku-mode { font-size: clamp(56px, 14vw, 88px); }
+.card-sub {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 16px;
+  color: var(--text2);
+  letter-spacing: .08em;
+}
+
+/* Hint pill */
+.hint-pill {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  font-family: inherit;
+  transition: background .15s;
+}
+.hint-pill:active { background: var(--gold-bg); }
+.hint-text { display: none; color: var(--gold); font-weight: 600; }
+.hint-text.show { display: inline; }
+.hint-label.hide { display: none; }
+
+/* correct flash */
+.correct-flash {
+  display: none;
+  position: absolute; inset: 0;
+  border-radius: var(--radius);
+  background: var(--correct-bg);
+  align-items: center; justify-content: center;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 38px;
+  color: var(--correct);
+  font-weight: 700;
+  pointer-events: none;
+}
+.correct-flash.show { display: flex; }
+
+/* wrong info corner */
+.wrong-info {
+  display: none;
+  position: absolute;
+  bottom: 12px; left: 14px; right: 14px;
+  background: var(--red-bg);
+  border: 1px solid var(--red);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  text-align: left;
+}
+.wrong-info.show { display: block; }
+.wi-label {
+  font-size: 10px; letter-spacing: .14em;
+  color: var(--red); font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.wi-answer {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--text);
+}
+.wi-extra { font-size: 11.5px; color: var(--text2); margin-top: 2px; }
+
+/* ── choices ── */
+.choices {
+  max-width: 560px; margin: 12px auto 0; padding: 0 14px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.choice-btn {
+  padding: 14px 10px; min-height: 52px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 14px; font-weight: 500;
+  font-family: 'Noto Serif JP', serif;
+  color: var(--text); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; line-height: 1.3;
+  transition: all .12s;
+  box-shadow: var(--shadow);
+}
+.choice-btn:active { transform: scale(.97); }
+.choice-btn.correct { background: var(--accent-bg); border-color: var(--accent2); color: var(--accent); font-weight: 700; }
+.choice-btn.wrong   { background: var(--red-bg);    border-color: var(--red);     color: var(--red); }
+.choice-btn:disabled { cursor: default; }
+
+.next-btn, .restart-btn {
+  max-width: 560px; margin: 10px auto 0; padding: 0 14px;
+}
+.next-btn button, .restart-btn {
+  width: 100%; padding: 13px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px; font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: none;
+}
+.next-btn.show button { display: block; }
+.next-btn button:active { background: var(--accent2); }
+
+/* ── result ── */
+.result-screen { display: none; max-width: 560px; margin: 18px auto 0; padding: 0 14px; }
+.result-screen.show { display: block; }
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 26px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.result-emoji { font-size: 56px; margin-bottom: 14px; }
+.result-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.result-sub { color: var(--text2); font-size: 13px; margin-bottom: 26px; }
+.result-stats { display: flex; justify-content: center; gap: 28px; margin-bottom: 26px; }
+.stat { text-align: center; }
+.stat-num { font-size: 32px; font-weight: 700; line-height: 1; }
+.stat-num.green { color: var(--correct); }
+.stat-num.red   { color: var(--red); }
+.stat-label { font-size: 11px; color: var(--text2); letter-spacing: .08em; margin-top: 4px; }
+.result-btn-row { display: flex; gap: 10px; }
+.btn-restart, .btn-back-chapters {
+  flex: 1; padding: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px; font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+.btn-restart { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-back-chapters { background: var(--surface); color: var(--text2); }
+
+.hidden { display: none !important; }
+
+/* ── dark mode button text overrides (accent bg gets dark text instead of white) ── */
+body.dark .mode-btn.active,
+body.dark .chapter-check,
+body.dark .start-quiz-btn,
+body.dark .next-btn button,
+body.dark .btn-restart {
+  color: #15140F;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🇯🇵 日文國名學習工具</h1>
+    <p>片假名 · 漢字略稱 · 平假名 · 中文 四種題型</p>
+  </div>
+  <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" aria-label="切換晝夜模式">
+    <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+    </svg>
+    <svg id="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+      <circle cx="12" cy="12" r="4"/>
+      <line x1="12" y1="2" x2="12" y2="5"/>
+      <line x1="12" y1="19" x2="12" y2="22"/>
+      <line x1="2" y1="12" x2="5" y2="12"/>
+      <line x1="19" y1="12" x2="22" y2="12"/>
+      <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+      <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+      <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+      <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+</div>
+
+<!-- Mode selector -->
+<div class="mode-section">
+  <div class="mode-row-label">選擇題型</div>
+  <div class="mode-row">
+    <button class="mode-btn active" id="btn-jp2zh" onclick="setMode('jp2zh')">
+      日文 → 中文
+      <span class="mode-arrow">看片假名選中文</span>
+    </button>
+    <button class="mode-btn" id="btn-zh2jp" onclick="setMode('zh2jp')">
+      中文 → 日文
+      <span class="mode-arrow">看中文選片假名</span>
+    </button>
+    <button class="mode-btn" id="btn-ryaku2hira" onclick="setMode('ryaku2hira')">
+      略稱 → 平假名
+      <span class="mode-arrow">看漢字選讀音</span>
+    </button>
+    <button class="mode-btn" id="btn-ryaku2zh" onclick="setMode('ryaku2zh')">
+      略稱 → 中文
+      <span class="mode-arrow">看漢字選國名</span>
+    </button>
+  </div>
+
+  <div class="retry-row">
+    <button class="retry-btn" id="retry-btn" onclick="retryWrong()">🔁 重新記憶錯題</button>
+  </div>
+</div>
+
+<!-- Chapter (continent) select -->
+<div class="chapter-wrap" id="chapter-wrap">
+  <div class="mode-row-label">選擇洲別範圍</div>
+  <p class="chapter-intro">可複選一個或多個洲別，選好後按「開始測驗」</p>
+  <div id="chapter-list"></div>
+  <div class="chapter-actions">
+    <button class="select-all-btn" onclick="selectAllChapters()">全選</button>
+    <button class="select-all-btn" onclick="clearAllChapters()">清空</button>
+  </div>
+  <button class="start-quiz-btn" onclick="startQuiz()">開始測驗 →</button>
+  <p class="chapter-warn" id="chapterWarn">請至少選擇一個洲別</p>
+</div>
+
+<!-- Progress + score (quiz play) -->
+<div id="quiz-play" class="hidden">
+  <div class="progress-bar-wrap">
+    <div class="progress-info">
+      <span id="progress-text">0 / 0</span>
+      <span id="accuracy-text">正確率 —</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="score-row">
+    <div class="sc"><div class="sc-n" id="correct-count">0</div><div class="sc-l">答對</div></div>
+    <div class="sc"><div class="sc-n" id="wrong-count">0</div><div class="sc-l">答錯</div></div>
+    <div class="sc"><div class="sc-n" id="stat-total">0</div><div class="sc-l">總題數</div></div>
+  </div>
+
+  <div class="card-stage">
+    <div class="card" id="card">
+      <div class="card-tag" id="card-tag">日文國名</div>
+      <div class="card-main" id="card-main">—</div>
+      <div class="card-sub" id="card-sub"></div>
+      <button class="hint-pill" id="hint-pill" onclick="showHint()">
+        <span class="hint-label" id="hint-label">💡 提示</span>
+        <span class="hint-text" id="hint-text"></span>
+      </button>
+      <div class="correct-flash" id="correct-flash">✓</div>
+      <div class="wrong-info" id="wrong-info">
+        <div class="wi-label">✗ 錯誤，正確答案</div>
+        <div class="wi-answer" id="wi-answer"></div>
+        <div class="wi-extra" id="wi-extra"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="choices" id="choices"></div>
+  <div class="next-btn" id="next-btn"><button onclick="nextCard()">下一題 →</button></div>
+</div>
+
+<!-- Result -->
+<div class="result-screen" id="result-screen">
+  <div class="result-card">
+    <div class="result-emoji" id="result-emoji">🎌</div>
+    <div class="result-title" id="result-title">完成！</div>
+    <div class="result-sub" id="result-sub"></div>
+    <div class="result-stats">
+      <div class="stat"><div class="stat-num green" id="r-correct">0</div><div class="stat-label">正確</div></div>
+      <div class="stat"><div class="stat-num red" id="r-wrong">0</div><div class="stat-label">錯誤</div></div>
+      <div class="stat"><div class="stat-num" id="r-pct" style="color:var(--gold)">0%</div><div class="stat-label">正確率</div></div>
+    </div>
+    <div class="result-btn-row">
+      <button class="btn-back-chapters" onclick="backToChapters()">↺ 重選範圍</button>
+      <button class="btn-restart" onclick="restart()">再挑戰一次</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  // ── 亞洲 ──
+  { jp: "タイ",            kanji: "泰国",          ryaku: "泰",  hira: "たい",   zh: "泰國",        continent: "亞洲" },
+  { jp: "インド",          kanji: "印度",          ryaku: "印",  hira: "いん",   zh: "印度",        continent: "亞洲" },
+  { jp: "中国",            kanji: "中国",          ryaku: "中",  hira: "ちゅう", zh: "中國",        continent: "亞洲" },
+  { jp: "韓国",            kanji: "韓国",          ryaku: "韓",  hira: "かん",   zh: "韓國",        continent: "亞洲" },
+  { jp: "北朝鮮",          kanji: "北朝鮮",        ryaku: "朝",  hira: "ちょう", zh: "北韓",        continent: "亞洲" },
+  { jp: "台湾",            kanji: "台湾",          ryaku: "台",  hira: "たい",   zh: "台灣",        continent: "亞洲" },
+  { jp: "香港",            kanji: "香港",          ryaku: "港",  hira: "こう",   zh: "香港",        continent: "亞洲" },
+  { jp: "トルコ",          kanji: "土耳其",        ryaku: "土",  hira: "ど",     zh: "土耳其",      continent: "亞洲" },
+  { jp: "イラン",          kanji: "伊蘭",          ryaku: "",    hira: "",       zh: "伊朗",        continent: "亞洲" },
+  { jp: "イラク",          kanji: "伊拉久",        ryaku: "",    hira: "",       zh: "伊拉克",      continent: "亞洲" },
+  { jp: "モンゴル",        kanji: "莫臥児",        ryaku: "蒙",  hira: "もう",   zh: "蒙古",        continent: "亞洲" },
+  { jp: "ネパール",        kanji: "尼波羅",        ryaku: "",    hira: "",       zh: "尼泊爾",      continent: "亞洲" },
+  { jp: "ベトナム",        kanji: "越南",          ryaku: "越",  hira: "えつ",   zh: "越南",        continent: "亞洲" },
+  { jp: "マレーシア",      kanji: "馬来西亜",      ryaku: "馬",  hira: "ば",     zh: "馬來西亞",    continent: "亞洲" },
+  { jp: "カンボジア",      kanji: "柬埔寨",        ryaku: "柬",  hira: "かん",   zh: "柬埔寨",      continent: "亞洲" },
+  { jp: "イスラエル",      kanji: "伊色列",        ryaku: "",    hira: "",       zh: "以色列",      continent: "亞洲" },
+  { jp: "スリランカ",      kanji: "錫蘭",          ryaku: "錫",  hira: "すり",   zh: "斯里蘭卡",    continent: "亞洲" },
+  { jp: "フィリピン",      kanji: "比律賓",        ryaku: "比",  hira: "ひ",     zh: "菲律賓",      continent: "亞洲" },
+  { jp: "シンガポール",    kanji: "新加坡・星嘉波", ryaku: "星",  hira: "せい",   zh: "新加坡",      continent: "亞洲" },
+  { jp: "アフガニスタン",  kanji: "亜富汗斯坦",    ryaku: "",    hira: "",       zh: "阿富汗",      continent: "亞洲" },
+  { jp: "ミャンマー",      kanji: "緬甸",          ryaku: "緬",  hira: "めん",   zh: "緬甸",        continent: "亞洲" },
+  { jp: "インドネシア",    kanji: "印度尼西亜",    ryaku: "印尼",hira: "いんに", zh: "印尼",        continent: "亞洲" },
+  { jp: "サウジアラビア",  kanji: "沙地亜拉比亜",  ryaku: "沙",  hira: "さ",     zh: "沙烏地阿拉伯",continent: "亞洲" },
+  { jp: "クウェート",      kanji: "科威特",        ryaku: "科",  hira: "か",     zh: "科威特",      continent: "亞洲" },
+  { jp: "カタール",        kanji: "卡達",          ryaku: "",    hira: "",       zh: "卡達",        continent: "亞洲" },
+  // ── 歐洲 ──
+  { jp: "ドイツ",          kanji: "独逸",          ryaku: "独",  hira: "どく",   zh: "德國",        continent: "歐洲" },
+  { jp: "スイス",          kanji: "瑞西",          ryaku: "瑞",  hira: "すい",   zh: "瑞士",        continent: "歐洲" },
+  { jp: "チェコ",          kanji: "捷克",          ryaku: "捷",  hira: "ちぇ",   zh: "捷克",        continent: "歐洲" },
+  { jp: "モナコ",          kanji: "摩納哥",        ryaku: "",    hira: "",       zh: "摩納哥",      continent: "歐洲" },
+  { jp: "ロシア",          kanji: "露西亜",        ryaku: "露",  hira: "ろ",     zh: "俄羅斯",      continent: "歐洲" },
+  { jp: "フランス",        kanji: "仏蘭西",        ryaku: "仏",  hira: "ふつ",   zh: "法國",        continent: "歐洲" },
+  { jp: "イタリア",        kanji: "伊太利亜",      ryaku: "伊",  hira: "い",     zh: "意大利",      continent: "歐洲" },
+  { jp: "ベルギー",        kanji: "白耳義",        ryaku: "白",  hira: "はく",   zh: "比利時",      continent: "歐洲" },
+  { jp: "スペイン",        kanji: "西班牙",        ryaku: "西",  hira: "せい",   zh: "西班牙",      continent: "歐洲" },
+  { jp: "ギリシャ",        kanji: "希臘",          ryaku: "希",  hira: "き",     zh: "希臘",        continent: "歐洲" },
+  { jp: "イギリス",        kanji: "英吉利",        ryaku: "英",  hira: "えい",   zh: "英國",        continent: "歐洲" },
+  { jp: "アンドラ",        kanji: "安徳爾拉",      ryaku: "",    hira: "",       zh: "安道爾",      continent: "歐洲" },
+  { jp: "オランダ",        kanji: "和蘭・阿蘭陀",  ryaku: "蘭",  hira: "らん",   zh: "荷蘭",        continent: "歐洲" },
+  { jp: "ブルガリア",      kanji: "勃牙利",        ryaku: "勃",  hira: "ぼつ",   zh: "保加利亞",    continent: "歐洲" },
+  { jp: "ウクライナ",      kanji: "烏克蘭・宇克蘭",ryaku: "烏",  hira: "う",     zh: "烏克蘭",      continent: "歐洲" },
+  { jp: "ノルウェー",      kanji: "諾威・那威",    ryaku: "諾",  hira: "のる",   zh: "挪威",        continent: "歐洲" },
+  { jp: "ハンガリー",      kanji: "洪牙利・匈牙利",ryaku: "洪",  hira: "こう",   zh: "匈牙利",      continent: "歐洲" },
+  { jp: "ポーランド",      kanji: "波蘭",          ryaku: "波",  hira: "は",     zh: "波蘭",        continent: "歐洲" },
+  { jp: "ルーマニア",      kanji: "羅馬尼亜",      ryaku: "羅",  hira: "ら",     zh: "羅馬尼亞",    continent: "歐洲" },
+  { jp: "スロバキア",      kanji: "斯洛伐克",      ryaku: "",    hira: "",       zh: "斯洛伐克",    continent: "歐洲" },
+  { jp: "デンマーク",      kanji: "丁抹",          ryaku: "丁",  hira: "てい",   zh: "丹麥",        continent: "歐洲" },
+  { jp: "ポルトガル",      kanji: "葡萄牙",        ryaku: "葡",  hira: "ほ",     zh: "葡萄牙",      continent: "歐洲" },
+  { jp: "オーストリア",    kanji: "墺太利",        ryaku: "墺",  hira: "おう",   zh: "奧地利",      continent: "歐洲" },
+  { jp: "アイルランド",    kanji: "愛蘭",          ryaku: "愛",  hira: "あい",   zh: "愛爾蘭",      continent: "歐洲" },
+  { jp: "スウェーデン",    kanji: "瑞典",          ryaku: "瑞",  hira: "すい",   zh: "瑞典",        continent: "歐洲" },
+  { jp: "フィンランド",    kanji: "芬蘭",          ryaku: "芬",  hira: "ふぃ",   zh: "芬蘭",        continent: "歐洲" },
+  // ── 美洲 ──
+  { jp: "チリ",            kanji: "智利",          ryaku: "智",  hira: "ち",     zh: "智利",        continent: "美洲" },
+  { jp: "カナダ",          kanji: "加奈陀",        ryaku: "加",  hira: "か",     zh: "加拿大",      continent: "美洲" },
+  { jp: "パナマ",          kanji: "巴奈馬",        ryaku: "巴",  hira: "は",     zh: "巴拿馬",      continent: "美洲" },
+  { jp: "ペルー",          kanji: "秘露",          ryaku: "秘",  hira: "ひ",     zh: "秘魯",        continent: "美洲" },
+  { jp: "アメリカ",        kanji: "亜米利加",      ryaku: "米",  hira: "べい",   zh: "美國",        continent: "美洲" },
+  { jp: "メキシコ",        kanji: "墨西哥",        ryaku: "墨",  hira: "ぼく",   zh: "墨西哥",      continent: "美洲" },
+  { jp: "キューバ",        kanji: "玖馬",          ryaku: "玖",  hira: "きゅう", zh: "古巴",        continent: "美洲" },
+  { jp: "ブラジル",        kanji: "伯剌西爾",      ryaku: "伯",  hira: "はく",   zh: "巴西",        continent: "美洲" },
+  { jp: "ボリビア",        kanji: "玻里非",        ryaku: "玻",  hira: "ぼ",     zh: "玻利維亞",    continent: "美洲" },
+  { jp: "ジャマイカ",      kanji: "牙買加",        ryaku: "牙",  hira: "じゃ",   zh: "牙買加",      continent: "美洲" },
+  { jp: "コスタリカ",      kanji: "哥斯徳里加",    ryaku: "",    hira: "",       zh: "哥斯大黎加",  continent: "美洲" },
+  { jp: "ウルグアイ",      kanji: "宇柳具",        ryaku: "",    hira: "",       zh: "烏拉圭",      continent: "美洲" },
+  { jp: "パラグアイ",      kanji: "巴拉圭",        ryaku: "",    hira: "",       zh: "巴拉圭",      continent: "美洲" },
+  { jp: "コロンビア",      kanji: "哥倫比亜",      ryaku: "哥",  hira: "こ",     zh: "哥倫比亞",    continent: "美洲" },
+  { jp: "エクアドル",      kanji: "厄瓜多",        ryaku: "",    hira: "",       zh: "厄瓜多爾",    continent: "美洲" },
+  { jp: "ベネズエラ",      kanji: "委内瑞拉",      ryaku: "委",  hira: "い",     zh: "委內瑞拉",    continent: "美洲" },
+  { jp: "アルゼンチン",    kanji: "亜爾然丁",      ryaku: "亜",  hira: "あ",     zh: "阿根廷",      continent: "美洲" },
+  // ── 非洲 ──
+  { jp: "コンゴ",          kanji: "公果",          ryaku: "公",  hira: "こう",   zh: "剛果",        continent: "非洲" },
+  { jp: "エジプト",        kanji: "埃及",          ryaku: "埃",  hira: "あい",   zh: "埃及",        continent: "非洲" },
+  { jp: "モロッコ",        kanji: "摩洛哥",        ryaku: "",    hira: "",       zh: "摩洛哥",      continent: "非洲" },
+  { jp: "エチオピア",      kanji: "哀提伯",        ryaku: "",    hira: "",       zh: "埃塞俄比亞",  continent: "非洲" },
+  { jp: "カメルーン",      kanji: "夏麦論",        ryaku: "",    hira: "",       zh: "喀麥隆",      continent: "非洲" },
+  { jp: "アルジェリア",    kanji: "阿爾及",        ryaku: "",    hira: "",       zh: "阿爾及利亞",  continent: "非洲" },
+  { jp: "南アフリカ",      kanji: "南阿",          ryaku: "南阿",hira: "なんあ", zh: "南非",        continent: "非洲" },
+  // ── 大洋洲 ──
+  { jp: "サモア",          kanji: "撒摩阿",        ryaku: "",    hira: "",       zh: "薩摩亞",      continent: "大洋洲" },
+  { jp: "パラオ",          kanji: "帛琉",          ryaku: "帛",  hira: "はく",   zh: "帛琉",        continent: "大洋洲" },
+  { jp: "フィジー",        kanji: "斐濟",          ryaku: "",    hira: "",       zh: "斐濟",        continent: "大洋洲" },
+  { jp: "オーストラリア",  kanji: "豪州・濠太剌利", ryaku: "豪",  hira: "ごう",   zh: "澳大利亞",    continent: "大洋洲" },
+  { jp: "ニュージーランド",kanji: "新西蘭",        ryaku: "新",  hira: "しん",   zh: "紐西蘭",      continent: "大洋洲" },
+];
+
+const CONTINENTS = ["亞洲", "歐洲", "美洲", "非洲", "大洋洲"];
+
+// Mode config
+const MODES = {
+  jp2zh:      { question: 'jp',   answer: 'zh',   tag: '日文片假名 → 中文國名',   mainClass: '',           sub: d => d.hira, hint: d => `漢字：${d.kanji}　略稱：${d.ryaku||'—'}`, hintLabel: '💡 漢字提示', needsRyaku: false },
+  zh2jp:      { question: 'zh',   answer: 'jp',   tag: '中文國名 → 日文片假名',   mainClass: '',           sub: () => '',    hint: d => `漢字：${d.kanji}　略稱：${d.ryaku||'—'}`, hintLabel: '💡 漢字提示', needsRyaku: false },
+  ryaku2hira: { question: 'ryaku',answer: 'hira', tag: '略稱漢字 → 平假名讀音',   mainClass: 'ryaku-mode', sub: () => '',    hint: d => `${d.jp}（${d.zh}）`,                        hintLabel: '💡 國名提示', needsRyaku: true },
+  ryaku2zh:   { question: 'ryaku',answer: 'zh',   tag: '略稱漢字 → 中文國名',     mainClass: 'ryaku-mode', sub: () => '',    hint: d => `${d.jp}（${d.hira}）`,                      hintLabel: '💡 日文提示', needsRyaku: true },
+};
+
+let mode = 'jp2zh';
+let selectedContinents = new Set(CONTINENTS); // default: all selected
+let queue = [];
+let current = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let answered = false;
+let wrongItems = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ── Continent chapter list ── */
+function buildChapterList() {
+  const el = document.getElementById('chapter-list');
+  el.innerHTML = CONTINENTS.map(c => {
+    const count = DATA.filter(d => d.continent === c).length;
+    const on = selectedContinents.has(c);
+    return `<div class="chapter-card${on ? ' on' : ''}" id="ch-${c}" onclick="toggleChapter('${c}')">
+      <div class="chapter-check">✓</div>
+      <div class="chapter-info">
+        <div class="chapter-title">${c}</div>
+        <div class="chapter-sub">${count} 個國家</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleChapter(c) {
+  if (selectedContinents.has(c)) selectedContinents.delete(c);
+  else selectedContinents.add(c);
+  document.getElementById('ch-' + c).classList.toggle('on');
+}
+function selectAllChapters() {
+  selectedContinents = new Set(CONTINENTS);
+  buildChapterList();
+}
+function clearAllChapters() {
+  selectedContinents = new Set();
+  buildChapterList();
+}
+
+function getPool() {
+  const cfg = MODES[mode];
+  let pool = DATA.filter(d => selectedContinents.has(d.continent));
+  if (cfg.needsRyaku) pool = pool.filter(d => d.ryaku !== "");
+  return pool;
+}
+
+function setMode(m) {
+  mode = m;
+  Object.keys(MODES).forEach(k => {
+    document.getElementById('btn-' + k).classList.toggle('active', k === m);
+  });
+}
+
+/* ── Quiz flow ── */
+function startQuiz() {
+  if (selectedContinents.size === 0) {
+    document.getElementById('chapterWarn').style.display = 'block';
+    return;
+  }
+  const pool = getPool();
+  if (pool.length === 0) {
+    document.getElementById('chapterWarn').textContent = '此題型在所選範圍內沒有可用題目，請更換洲別或題型';
+    document.getElementById('chapterWarn').style.display = 'block';
+    return;
+  }
+  document.getElementById('chapterWarn').style.display = 'none';
+
+  queue = shuffle(pool);
+  current = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  answered = false;
+  wrongItems = [];
+
+  document.getElementById('chapter-wrap').classList.add('hidden');
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('quiz-play').classList.remove('hidden');
+  document.getElementById('retry-btn').classList.remove('show');
+  updateScores();
+  loadCard();
+}
+
+function backToChapters() {
+  document.getElementById('quiz-play').classList.add('hidden');
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('chapter-wrap').classList.remove('hidden');
+}
+
+function restart() {
+  startQuiz();
+}
+
+function retryWrong() {
+  if (wrongItems.length === 0) return;
+  queue = shuffle([...wrongItems]);
+  current = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  answered = false;
+  wrongItems = [];
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('quiz-play').classList.remove('hidden');
+  document.getElementById('chapter-wrap').classList.add('hidden');
+  document.getElementById('retry-btn').classList.remove('show');
+  updateScores();
+  loadCard();
+}
+
+function updateScores() {
+  const total = queue.length;
+  const done = correctCount + wrongCount;
+  document.getElementById('progress-text').textContent = `${done} / ${total}`;
+  document.getElementById('correct-count').textContent = correctCount;
+  document.getElementById('wrong-count').textContent = wrongCount;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('progress-fill').style.width = `${total > 0 ? (done / total) * 100 : 0}%`;
+  document.getElementById('accuracy-text').textContent = done > 0
+    ? `正確率 ${Math.round((correctCount / done) * 100)}%`
+    : '正確率 —';
+  document.getElementById('retry-btn').classList.toggle('show', wrongItems.length > 0);
+}
+
+function getWrongOptions(correct, field, pool) {
+  const used = new Set([correct[field]]);
+  const candidates = shuffle(pool.filter(d => !used.has(d[field])));
+  const result = [];
+  for (const d of candidates) {
+    if (!used.has(d[field])) {
+      used.add(d[field]);
+      result.push(d[field]);
+      if (result.length === 3) break;
+    }
+  }
+  return result;
+}
+
+function loadCard() {
+  if (current >= queue.length) { showResult(); return; }
+  answered = false;
+
+  const cfg = MODES[mode];
+  const item = queue[current];
+
+  document.getElementById('correct-flash').classList.remove('show');
+  document.getElementById('wrong-info').classList.remove('show');
+
+  document.getElementById('hint-label').textContent = cfg.hintLabel;
+  document.getElementById('hint-label').classList.remove('hide');
+  document.getElementById('hint-text').classList.remove('show');
+  document.getElementById('hint-text').textContent = cfg.hint(item);
+  document.getElementById('hint-pill').style.display = '';
+
+  document.getElementById('card-tag').textContent = cfg.tag;
+  const mainEl = document.getElementById('card-main');
+  mainEl.textContent = item[cfg.question];
+  mainEl.className = 'card-main' + (cfg.mainClass ? ' ' + cfg.mainClass : '');
+  document.getElementById('card-sub').textContent = cfg.sub(item);
+
+  const pool = getPool();
+  const wrongs = getWrongOptions(item, cfg.answer, pool);
+  const allChoices = shuffle([item[cfg.answer], ...wrongs]);
+  renderChoices(allChoices, item[cfg.answer], item, cfg);
+
+  document.getElementById('next-btn').classList.remove('show');
+}
+
+function renderChoices(choices, correct, item, cfg) {
+  const container = document.getElementById('choices');
+  container.innerHTML = '';
+  choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = choice;
+    btn.onclick = () => handleAnswer(btn, choice, correct, item, cfg);
+    container.appendChild(btn);
+  });
+}
+
+function handleAnswer(btn, chosen, correct, item, cfg) {
+  if (answered) return;
+  answered = true;
+
+  const isCorrect = chosen === correct;
+  document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+  if (isCorrect) {
+    correctCount++;
+    btn.classList.add('correct');
+    document.getElementById('correct-flash').classList.add('show');
+    updateScores();
+    setTimeout(() => {
+      current++;
+      loadCard();
+    }, 600);
+  } else {
+    wrongCount++;
+    btn.classList.add('wrong');
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      if (b.textContent === correct) b.classList.add('correct');
+    });
+    if (!wrongItems.find(d => d[cfg.question] === item[cfg.question])) {
+      wrongItems.push(item);
+    }
+    showWrongInfo(item, cfg);
+    document.getElementById('next-btn').classList.add('show');
+    updateScores();
+  }
+}
+
+function showWrongInfo(item, cfg) {
+  let extra = '';
+  if (mode === 'jp2zh') extra = `${item.kanji}（略稱：${item.ryaku || '—'}）`;
+  else if (mode === 'zh2jp') extra = `${item.jp}`;
+  else if (mode === 'ryaku2hira') extra = `${item.jp} → ${item.zh}`;
+  else if (mode === 'ryaku2zh') extra = `${item.jp}（${item.hira}）`;
+
+  document.getElementById('wi-answer').textContent = item[cfg.answer];
+  document.getElementById('wi-extra').textContent = extra;
+  document.getElementById('wrong-info').classList.add('show');
+}
+
+function showHint() {
+  document.getElementById('hint-label').classList.add('hide');
+  document.getElementById('hint-text').classList.add('show');
+}
+
+function nextCard() {
+  current++;
+  loadCard();
+}
+
+function showResult() {
+  document.getElementById('quiz-play').classList.add('hidden');
+
+  const total = queue.length;
+  const pct = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+  document.getElementById('r-correct').textContent = correctCount;
+  document.getElementById('r-wrong').textContent = wrongCount;
+  document.getElementById('r-pct').textContent = pct + '%';
+
+  let emoji = '😢', title = '繼續加油！';
+  if (pct >= 90) { emoji = '🏆'; title = '太厲害了！'; }
+  else if (pct >= 70) { emoji = '🎌'; title = '很不錯！'; }
+  else if (pct >= 50) { emoji = '📚'; title = '還需努力！'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = `${total} 題全部作答完畢`;
+  document.getElementById('result-screen').classList.add('show');
+}
+
+/* ── theme ── */
+function setThemeIcon(isDark) {
+  document.getElementById('icon-moon').style.display = isDark ? 'none' : 'block';
+  document.getElementById('icon-sun').style.display  = isDark ? 'block' : 'none';
+}
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  setThemeIcon(isDark);
+  try { localStorage.setItem('country-quiz-theme', isDark ? 'dark' : 'light'); } catch(e) {}
+}
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('country-quiz-theme'); } catch(e) {}
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const useDark = saved ? saved === 'dark' : prefersDark;
+  if (useDark) {
+    document.body.classList.add('dark');
+    setThemeIcon(true);
+  }
+})();
+
+/* ── init ── */
+buildChapterList();
+</script>
+</body>
+</html>

@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="日文形容詞變化練習工具，涵蓋い形容詞與な形容詞，支援單字卡、填空、中翻日三種練習模式。">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="keiyoushi-drill｜日文形容詞變化練習">
+<meta property="og:description" content="い形容詞・な形容詞の活用練習ツール">
+<meta property="og:type" content="website">
+<title>keiyoushi-drill｜日文形容詞變化練習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: #f0f2f7;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ══ DARK MODE ══ */
+body.dark {
+  background: #0f1117;
+  color: #e8e8f0;
+}
+body.dark .header,
+body.dark .settings-bar,
+body.dark .form-filter {
+  background: #1a1c26;
+  border-color: #2e3044;
+}
+body.dark .header h1 { color: #e8e8f0; }
+body.dark .header-stats { color: #aaa; }
+body.dark .stat-badge { background: #2e3044; color: #ccc; }
+body.dark .stat-badge.correct { background: #0d3d28; color: #4ecca3; }
+body.dark .stat-badge.wrong { background: #3d0d0d; color: #f08080; }
+body.dark .settings-label { color: #666; }
+body.dark .pill-btn { background: #1a1c26; border-color: #3a3d52; color: #aaa; }
+body.dark .pill-btn:hover { border-color: #666; }
+body.dark .pill-btn.active-i { background: #162436; border-color: #4a90d9; color: #7ab8f0; }
+body.dark .pill-btn.active-na { background: #2d1a08; border-color: #e07a2f; color: #f0a870; }
+body.dark .pill-btn.active-both { background: #1e1228; border-color: #8a5fd9; color: #b090e8; }
+body.dark .pill-btn.active-mode { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .divider-v { background: #2e3044; }
+body.dark .form-chip { background: #1a1c26; border-color: #3a3d52; color: #888; }
+body.dark .form-chip.selected { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .select-all-btn { color: #7ab8f0; }
+body.dark .flashcard,
+body.dark .quiz-card,
+body.dark .cnjp-card { background: #1a1c26; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+body.dark .card-prompt { color: #555; }
+body.dark .card-word { color: #e8e8f0; }
+body.dark .card-reading { color: #666; }
+body.dark .card-zh { color: #888; }
+body.dark .card-target { background: #162436; color: #7ab8f0; }
+body.dark .card-target.na { background: #2d1a08; color: #f0a870; }
+body.dark .card-answer { border-top-color: #2e3044; }
+body.dark .answer-big { color: #4ecca3; }
+body.dark .answer-note { color: #666; }
+body.dark .card-tap { color: #444; }
+body.dark .card-example { background: #161822; }
+body.dark .example-jp { color: #ccc; }
+body.dark .example-zh { color: #777; }
+body.dark .example-fill { color: #4ecca3; border-bottom-color: #4ecca3; }
+body.dark .speak-btn { background: #162436; color: #7ab8f0; }
+body.dark .speak-btn:hover { background: #1e3a56; }
+body.dark .btn-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .btn-wrong:hover { background: #5a1515; }
+body.dark .btn-correct { background: #0d3d28; color: #4ecca3; }
+body.dark .btn-correct:hover { background: #155c3d; }
+body.dark .quiz-target-label { color: #888; }
+body.dark .quiz-target-form { background: #162436; color: #7ab8f0; }
+body.dark .quiz-target-form.na { background: #2d1a08; color: #f0a870; }
+body.dark .quiz-input { background: #0f1117; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .quiz-input:focus { border-color: #4a90d9; }
+body.dark .quiz-input.correct-input { background: #0d3d28; border-color: #4ecca3; }
+body.dark .quiz-input.wrong-input { background: #3d0d0d; border-color: #f08080; }
+body.dark .quiz-feedback.ok { color: #4ecca3; }
+body.dark .quiz-feedback.ng { color: #f08080; }
+body.dark .quiz-answer-reveal { color: #888; }
+body.dark .cnjp-word { color: #e8e8f0; }
+body.dark .cnjp-hint { color: #555; }
+body.dark .cnjp-form-label { color: #888; }
+body.dark .cnjp-form-badge { background: #162436; color: #7ab8f0; }
+body.dark .cnjp-form-badge.na { background: #2d1a08; color: #f0a870; }
+body.dark .ref-search { background: #1a1c26; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .ref-search:focus { border-color: #4a90d9; }
+body.dark .ref-table-wrap { background: #1a1c26; }
+body.dark .ref-adj-header.i { background: #162436; color: #7ab8f0; border-color: #2a4060; }
+body.dark .ref-adj-header.na { background: #2d1a08; color: #f0a870; border-color: #5a3010; }
+body.dark .ref-control-btn { background: #1a1c26; border-color: #3a3d52; color: #aaa; }
+body.dark .ref-control-btn:hover { border-color: #666; background: #23253a; }
+body.dark .ref-table th { background: #0f1117; color: #666; border-color: #2e3044; }
+body.dark .ref-table td { border-color: #23253a; }
+body.dark .ref-table tr:hover td { background: #1e2030; }
+body.dark .ft-neg { background: #3d0d0d; color: #f08080; }
+body.dark .ft-past { background: #0d3d20; color: #4ecca3; }
+body.dark .ft-pastneg { background: #2d2000; color: #d4a840; }
+body.dark .ft-other { background: #1e1228; color: #b090e8; }
+body.dark .ft-base { background: #162436; color: #7ab8f0; }
+body.dark .ft-base-na { background: #2d1a08; color: #f0a870; }
+body.dark .progress-bar-bg { background: #2e3044; }
+body.dark .btn-submit { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-submit:hover { background: #ccc; }
+body.dark .btn-next { background: #162436; color: #7ab8f0; }
+body.dark .btn-next:hover { background: #1e3a56; }
+body.dark .btn-restart { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-restart:hover { background: #ccc; }
+body.dark .btn-retry-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .done-state h2 { color: #e8e8f0; }
+body.dark .done-state .big { color: #4ecca3; }
+body.dark .done-state p { color: #888; }
+
+/* ══ GRAYSCALE MODE ══ */
+body.grayscale {
+  filter: grayscale(1);
+}
+body.grayscale.dark {
+  filter: grayscale(1);
+}
+
+/* ══ Theme toggle button ══ */
+.theme-toggle-group {
+  display: flex;
+  align-items: center;
+}
+.theme-btn {
+  border: 1.5px solid #ddd;
+  background: #fff;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.15s;
+}
+.theme-btn:hover { border-color: #aaa; background: #f5f5f5; }
+.theme-btn svg { width: 17px; height: 17px; }
+body.dark .theme-btn { background: #1a1c26; border-color: #3a3d52; color: #ccc; }
+body.dark .theme-btn:hover { border-color: #666; background: #23253a; }
+
+/* ── Header ── */
+.header {
+  background: #fff;
+  border-bottom: 1px solid #e4e6ef;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.header h1 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; flex: 1; min-width: 160px; }
+.header-stats { display: flex; gap: 10px; align-items: center; font-size: 0.82rem; color: #666; }
+.stat-badge { background: #f0f2f7; border-radius: 999px; padding: 3px 10px; font-weight: 600; }
+.stat-badge.correct { background: #e6f9f0; color: #0a7a4a; }
+.stat-badge.wrong { background: #fde8e8; color: #c0392b; }
+
+/* ── Settings Panel ── */
+.settings-bar {
+  background: #fff;
+  border-bottom: 1px solid #e4e6ef;
+  padding: 10px 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.settings-label { font-size: 0.8rem; font-weight: 700; color: #888; white-space: nowrap; }
+
+.pill-btn {
+  border: 2px solid #ddd;
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #555;
+  white-space: nowrap;
+}
+.pill-btn:hover { border-color: #aaa; }
+.pill-btn.active-i { background: #e8f4fd; border-color: #4a90d9; color: #2563a8; }
+.pill-btn.active-na { background: #fef3e8; border-color: #e07a2f; color: #b85c10; }
+.pill-btn.active-both { background: #f0e8fd; border-color: #8a5fd9; color: #5a2ba8; }
+.pill-btn.active-mode { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+
+.divider-v { width: 1px; height: 24px; background: #e4e6ef; margin: 0 4px; }
+
+/* ── Form Filter ── */
+.form-filter {
+  background: #fff;
+  border-bottom: 1px solid #e4e6ef;
+  padding: 8px 20px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.form-chip {
+  border: 1.5px solid #ddd;
+  background: #fff;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.13s;
+  user-select: none;
+}
+.form-chip.selected { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+.select-all-btn {
+  font-size: 0.75rem;
+  color: #4a90d9;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+/* ── Main Area ── */
+.main { padding: 24px 20px; max-width: 720px; margin: 0 auto; }
+
+/* ── Flashcard Mode ── */
+.flashcard-wrap { perspective: 1000px; }
+.flashcard {
+  width: 100%;
+  min-height: 200px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+.flashcard:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.13); }
+.card-prompt { font-size: 0.82rem; color: #aaa; margin-bottom: 8px; letter-spacing: 0.05em; }
+.card-word { font-size: 2.4rem; font-weight: 700; color: #1a1a2e; letter-spacing: 0.04em; margin-bottom: 6px; }
+.card-reading { font-size: 1rem; color: #888; margin-bottom: 6px; }
+.card-zh { font-size: 1rem; color: #555; }
+.card-target {
+  margin-top: 18px;
+  font-size: 1rem;
+  color: #4a90d9;
+  font-weight: 600;
+  background: #e8f4fd;
+  border-radius: 8px;
+  padding: 6px 16px;
+}
+.card-target.na { color: #b85c10; background: #fef3e8; }
+.card-answer {
+  display: none;
+  margin-top: 20px;
+  width: 100%;
+  border-top: 1px dashed #eee;
+  padding-top: 18px;
+  text-align: center;
+}
+.card-answer.show { display: block; }
+.answer-big { font-size: 2rem; font-weight: 700; color: #0a7a4a; margin-bottom: 6px; }
+.answer-note { font-size: 0.85rem; color: #888; }
+.card-tap { font-size: 0.78rem; color: #ccc; margin-top: 14px; }
+.card-example {
+  margin-top: 16px;
+  width: 100%;
+  background: #f7f8fc;
+  border-radius: 10px;
+  padding: 12px 16px;
+  text-align: left;
+}
+.example-jp { font-size: 0.95rem; color: #444; line-height: 1.6; }
+.example-zh { font-size: 0.82rem; color: #999; margin-top: 4px; }
+.example-fill { color: #0a7a4a; font-weight: 700; border-bottom: 2px solid #0a7a4a; padding: 0 2px; }
+.example-row { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; }
+.example-row .example-jp { flex: 1; }
+.speak-btn {
+  flex-shrink: 0;
+  border: none;
+  background: #e8f4fd;
+  color: #2563a8;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.speak-btn:hover { background: #c5e0f8; }
+.speak-btn:active { transform: scale(0.92); }
+
+/* ── Furigana hover/tap tooltip ── */
+.furigana-term {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dotted #999;
+  -webkit-tap-highlight-color: transparent;
+}
+.furigana-term::after {
+  content: attr(data-reading);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%) translateY(4px);
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 20;
+  letter-spacing: 0.02em;
+}
+.furigana-term::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1a1a2e;
+  margin-bottom: -4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 20;
+}
+.furigana-term:hover::after,
+.furigana-term:hover::before,
+.furigana-term.show-tip::after,
+.furigana-term.show-tip::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+body.dark .furigana-term { border-bottom-color: #555; }
+body.dark .furigana-term::after { background: #e8e8f0; color: #1a1c26; }
+body.dark .furigana-term::before { border-top-color: #e8e8f0; }
+
+.btn-row { display: flex; gap: 12px; margin-top: 18px; justify-content: center; }
+.btn-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-wrong:hover { background: #f5c6c6; }
+.btn-correct { background: #e6f9f0; color: #0a7a4a; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-correct:hover { background: #b8edcf; }
+
+/* ── Quiz Mode ── */
+.quiz-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 28px 24px;
+}
+.quiz-sentence { font-size: 1.15rem; line-height: 1.9; margin-bottom: 20px; color: #333; }
+.quiz-blank { display: inline-block; min-width: 120px; border-bottom: 2px solid #4a90d9; margin: 0 4px; text-align: center; vertical-align: bottom; }
+.quiz-target-label { font-size: 0.82rem; color: #888; margin-bottom: 14px; }
+.quiz-target-form { display: inline-block; font-weight: 700; color: #4a90d9; background: #e8f4fd; border-radius: 6px; padding: 2px 10px; }
+.quiz-target-form.na { color: #b85c10; background: #fef3e8; }
+.quiz-input {
+  width: 100%;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 1.1rem;
+  outline: none;
+  transition: border 0.15s;
+  font-family: inherit;
+  color: #1a1a2e;
+}
+.quiz-input:focus { border-color: #4a90d9; }
+.quiz-input.correct-input { border-color: #0a7a4a; background: #e6f9f0; }
+.quiz-input.wrong-input { border-color: #c0392b; background: #fde8e8; }
+.quiz-feedback { margin-top: 12px; font-size: 0.95rem; min-height: 24px; font-weight: 600; }
+.quiz-feedback.ok { color: #0a7a4a; }
+.quiz-feedback.ng { color: #c0392b; }
+.quiz-answer-reveal { font-size: 0.9rem; color: #555; margin-top: 6px; }
+
+/* ── CN→JP Mode ── */
+.cnjp-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 28px 24px;
+  text-align: center;
+}
+.cnjp-word { font-size: 2rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+.cnjp-hint { font-size: 0.85rem; color: #aaa; margin-bottom: 4px; }
+.cnjp-form-label { font-size: 0.9rem; color: #555; margin-bottom: 18px; }
+.cnjp-form-badge { display: inline-block; font-weight: 700; background: #e8f4fd; color: #2563a8; border-radius: 6px; padding: 2px 10px; }
+.cnjp-form-badge.na { background: #fef3e8; color: #b85c10; }
+
+/* ── Reference Mode ── */
+.ref-search {
+  width: 100%;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 16px;
+  font-family: inherit;
+  transition: border 0.15s;
+}
+.ref-search:focus { border-color: #4a90d9; }
+.ref-table-wrap { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
+.ref-adj-header {
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ref-adj-header.i { background: #e8f4fd; color: #2563a8; border-bottom: 1px solid #b8d9f5; }
+.ref-adj-header.na { background: #fef3e8; color: #b85c10; border-bottom: 1px solid #f5c89a; }
+.ref-adj-header { cursor: pointer; user-select: none; justify-content: space-between; transition: background 0.15s; }
+.ref-adj-header:hover { filter: brightness(0.97); }
+.ref-adj-header .ref-header-text { display: flex; align-items: center; gap: 8px; }
+.ref-toggle-icon { font-size: 0.8rem; transition: transform 0.2s; color: inherit; opacity: 0.6; }
+.ref-table-wrap.collapsed .ref-toggle-icon { transform: rotate(-90deg); }
+.ref-table-wrap.collapsed table { display: none; }
+.ref-controls { display: flex; gap: 8px; margin-bottom: 12px; }
+.ref-control-btn {
+  border: 1.5px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.15s;
+}
+.ref-control-btn:hover { border-color: #aaa; background: #f5f5f5; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.ref-table th { padding: 8px 12px; background: #f5f6fa; text-align: left; color: #666; font-weight: 700; border-bottom: 1px solid #eee; }
+.ref-table td { padding: 7px 12px; border-bottom: 1px solid #f0f0f0; }
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table tr:hover td { background: #fafbff; }
+.form-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ft-neg { background: #fde8e8; color: #c0392b; }
+.ft-past { background: #e8fde8; color: #1a7a2f; }
+.ft-pastneg { background: #fef9e8; color: #a07010; }
+.ft-other { background: #f0e8fd; color: #6a2ba8; }
+.ft-base { background: #e8f4fd; color: #2563a8; }
+.ft-base-na { background: #fef3e8; color: #b85c10; }
+
+/* ── Progress bar ── */
+.progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.progress-bar-bg { flex: 1; height: 8px; background: #e4e6ef; border-radius: 999px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #4a90d9, #6ab0f5); border-radius: 999px; transition: width 0.3s; }
+.progress-label { font-size: 0.8rem; color: #888; white-space: nowrap; }
+
+/* ── Empty / Done ── */
+.empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+.empty-state .big { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 1rem; }
+.done-state { text-align: center; padding: 40px 20px; }
+.done-state .big { font-size: 2.6rem; font-weight: 700; color: #0a7a4a; margin-bottom: 10px; }
+.done-state h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.done-state p { color: #666; margin-bottom: 20px; }
+.btn-restart { background: #1a1a2e; color: #fff; border: none; border-radius: 10px; padding: 12px 32px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.btn-restart:hover { background: #2d2d4e; }
+.btn-retry-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-right: 10px; }
+
+/* submit btn */
+.btn-submit {
+  background: #1a1a2e; color: #fff; border: none; border-radius: 10px;
+  padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+  margin-top: 14px; transition: background 0.15s;
+}
+.btn-submit:hover { background: #2d2d4e; }
+.btn-next {
+  background: #e8f4fd; color: #2563a8; border: none; border-radius: 10px;
+  padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+  margin-top: 14px; margin-left: 10px; transition: background 0.15s; display: none;
+}
+.btn-next:hover { background: #c5e0f8; }
+
+@media (max-width: 500px) {
+  .card-word { font-size: 1.9rem; }
+  .main { padding: 16px 12px; }
+  .settings-bar, .form-filter { padding: 8px 12px; }
+  .header { padding: 10px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>日文形容詞變化練習</h1>
+  <div class="header-stats">
+    <span class="stat-badge correct" id="stat-correct">✓ 0</span>
+    <span class="stat-badge wrong" id="stat-wrong">✗ 0</span>
+    <span class="stat-badge" id="stat-total">共 0 題</span>
+  </div>
+  <div class="theme-toggle-group">
+    <button class="theme-btn" id="theme-toggle" onclick="cycleTheme()" title="切換主題" aria-label="切換主題">
+      <span id="theme-icon"></span>
+    </button>
+  </div>
+</div>
+
+<!-- Settings: Type + Mode -->
+<div class="settings-bar">
+  <span class="settings-label">範圍</span>
+  <button class="pill-btn active-i" id="type-i" onclick="setType('i')">い形容詞</button>
+  <button class="pill-btn" id="type-na" onclick="setType('na')">な形容詞</button>
+  <button class="pill-btn" id="type-both" onclick="setType('both')">全部混合</button>
+  <div class="divider-v"></div>
+  <span class="settings-label">模式</span>
+  <button class="pill-btn active-mode" id="mode-flash" onclick="setMode('flash')">單字卡</button>
+  <button class="pill-btn" id="mode-quiz" onclick="setMode('quiz')">填空</button>
+  <button class="pill-btn" id="mode-cnjp" onclick="setMode('cnjp')">中翻日</button>
+  <button class="pill-btn" id="mode-ref" onclick="setMode('ref')">參考表</button>
+</div>
+
+<!-- Form filter (hidden in ref mode) -->
+<div class="form-filter" id="form-filter">
+  <span class="settings-label">變化形</span>
+  <span class="form-chip selected" data-form="neg" onclick="toggleForm(this)">否定</span>
+  <span class="form-chip selected" data-form="past" onclick="toggleForm(this)">過去</span>
+  <span class="form-chip selected" data-form="pastneg" onclick="toggleForm(this)">過去否定</span>
+  <span class="form-chip selected" data-form="te" onclick="toggleForm(this)">て形</span>
+  <span class="form-chip selected" data-form="adv" onclick="toggleForm(this)">副詞形</span>
+  <span class="form-chip selected" data-form="hyp" onclick="toggleForm(this)">假設形</span>
+  <span class="form-chip selected" data-form="naru" onclick="toggleForm(this)">〜くなる/になる</span>
+  <span class="form-chip selected" data-form="sou" onclick="toggleForm(this)">〜そう</span>
+  <span class="form-chip selected" data-form="sugiru" onclick="toggleForm(this)">〜すぎる</span>
+  <span class="form-chip selected" data-form="sa" onclick="toggleForm(this)">〜さ</span>
+  <span class="select-all-btn" onclick="selectAllForms()">全選</span>
+</div>
+
+<!-- Main content -->
+<div class="main" id="main-area"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════
+
+const I_ADJ = [
+  // 感情・感覚
+  {w:'楽しい',r:'たのしい',zh:'快樂的',stem:'たのし',ex:{
+    base:{jp:'この旅行はとても__です。',zh:'這次旅行非常快樂。'},
+    neg:{jp:'今日のパーティーは全然__です。',zh:'今天的派對一點也不快樂。'},
+    past:{jp:'子供の頃の夏休みは__です。',zh:'小時候的暑假很快樂。'},
+    te:{jp:'__、時間を忘れてしまった。',zh:'因為太開心，忘了時間。'},
+    adv:{jp:'毎日を__過ごしたい。',zh:'想要每天都過得開心。'},
+    hyp:{jp:'__ば、もっと続けたい。',zh:'如果開心的話，想繼續下去。'},
+  }},
+  {w:'悲しい',r:'かなしい',zh:'悲傷的',stem:'かなし',ex:{
+    base:{jp:'別れはいつも__です。',zh:'離別總是悲傷的。'},
+    neg:{jp:'もう__です、大丈夫。',zh:'已經不悲傷了，沒事的。'},
+    past:{jp:'あのニュースを聞いて、とても__です。',zh:'聽到那個消息，非常悲傷。'},
+    te:{jp:'__、涙が止まらなかった。',zh:'因為太傷心，眼淚停不下來。'},
+    adv:{jp:'彼女は__泣いている。',zh:'她悲傷地哭著。'},
+    hyp:{jp:'__、無理しなくていい。',zh:'如果覺得悲傷，不用勉強。'},
+  }},
+  {w:'嬉しい',r:'うれしい',zh:'開心的',stem:'うれし',ex:{
+    base:{jp:'プレゼントをもらって__です。',zh:'收到禮物很開心。'},
+    neg:{jp:'褒められても全然__です。',zh:'被稱讚也一點都不開心。'},
+    past:{jp:'試験に合格して、本当に__です。',zh:'考試通過了，真的很開心。'},
+    te:{jp:'__、思わず笑顔になった。',zh:'因為太開心，不自覺笑了出來。'},
+    adv:{jp:'彼は__返事をした。',zh:'他開心地回答了。'},
+    hyp:{jp:'会えたら__です。',zh:'如果能見面就太開心了。'},
+  }},
+  {w:'怖い',r:'こわい',zh:'可怕的',stem:'こわ',ex:{
+    base:{jp:'夜の森はとても__です。',zh:'夜晚的森林非常可怕。'},
+    neg:{jp:'お化け屋敷は全然__です。',zh:'鬼屋一點都不可怕。'},
+    past:{jp:'地震の時は本当に__です。',zh:'地震的時候真的很可怕。'},
+    te:{jp:'__、声も出せなかった。',zh:'因為太可怕，連聲音都發不出來。'},
+    adv:{jp:'彼は__思った。',zh:'他感到害怕。'},
+    hyp:{jp:'__、手を繋いでもいい。',zh:'如果害怕的話，可以牽手。'},
+  }},
+  {w:'恥ずかしい',r:'はずかしい',zh:'害羞的',stem:'はずかし',ex:{
+    base:{jp:'人前で話すのはとても__です。',zh:'在大家面前說話非常害羞。'},
+    neg:{jp:'家族の前では全然__です。',zh:'在家人面前一點都不害羞。'},
+    past:{jp:'失敗して、本当に__です。',zh:'失敗了，真的很丟臉。'},
+    te:{jp:'__、顔が赤くなった。',zh:'因為太害羞，臉都紅了。'},
+    hyp:{jp:'__、隣に座ってもいい。',zh:'如果害羞的話，坐旁邊也可以。'},
+  }},
+  {w:'寂しい',r:'さびしい',zh:'寂寞的',stem:'さびし',ex:{
+    base:{jp:'一人暮らしは時々__です。',zh:'一個人住有時會寂寞。'},
+    neg:{jp:'友達がいるから全然__です。',zh:'因為有朋友，一點都不寂寞。'},
+    past:{jp:'彼が引っ越して、とても__です。',zh:'他搬走後，感到很寂寞。'},
+    te:{jp:'__、電話をかけた。',zh:'因為太寂寞，打了電話。'},
+    adv:{jp:'彼女は__笑った。',zh:'她寂寞地笑了。'},
+    hyp:{jp:'__、連絡してね。',zh:'如果寂寞的話，要聯絡我喔。'},
+  }},
+  {w:'忙しい',r:'いそがしい',zh:'忙碌的',stem:'いそがし',ex:{
+    base:{jp:'今週はとても__です。',zh:'這週非常忙碌。'},
+    neg:{jp:'来週は全然__です。',zh:'下週一點都不忙。'},
+    past:{jp:'先月は仕事が__です。',zh:'上個月工作很忙碌。'},
+    te:{jp:'__、休む時間がなかった。',zh:'因為太忙，沒有休息時間。'},
+    adv:{jp:'彼は__働いている。',zh:'他忙碌地工作著。'},
+    hyp:{jp:'__、手伝ってあげる。',zh:'如果忙的話，我來幫你。'},
+  }},
+  {w:'痛い',r:'いたい',zh:'痛的',stem:'いた',ex:{
+    base:{jp:'頭がとても__です。',zh:'頭非常痛。'},
+    neg:{jp:'もう全然__です。',zh:'已經完全不痛了。'},
+    past:{jp:'昨日、足が__です。',zh:'昨天腳很痛。'},
+    te:{jp:'__、病院に行った。',zh:'因為很痛，去了醫院。'},
+    adv:{jp:'傷口が__感じる。',zh:'感覺傷口痛痛的。'},
+    hyp:{jp:'__、薬を飲んでください。',zh:'如果痛的話，請吃藥。'},
+  }},
+  // 性質
+  {w:'いい',r:'いい',zh:'好的',stem:'よ',special:true,ex:{
+    base:{jp:'この映画はとても__です。',zh:'這部電影非常好。'},
+    neg:{jp:'この方法は全然__です。',zh:'這個方法一點都不好。'},
+    past:{jp:'昨日の天気は__です。',zh:'昨天天氣很好。'},
+    te:{jp:'天気が__、散歩に行った。',zh:'因為天氣好，去散步了。'},
+  }},
+  {w:'悪い',r:'わるい',zh:'不好的',stem:'わる',ex:{
+    base:{jp:'今日は天気が__です。',zh:'今天天氣不好。'},
+    neg:{jp:'彼の性格は全然__です。',zh:'他的性格一點都不壞。'},
+    past:{jp:'体調が__です。',zh:'身體狀況不好。'},
+    te:{jp:'天気が__、出かけなかった。',zh:'因為天氣不好，沒有出門。'},
+    adv:{jp:'機械が__動いている。',zh:'機器運作得不太好。'},
+    hyp:{jp:'__、休んでください。',zh:'如果狀況不好，請休息。'},
+  }},
+  {w:'難しい',r:'むずかしい',zh:'困難的',stem:'むずかし',ex:{
+    base:{jp:'この問題はとても__です。',zh:'這個問題非常困難。'},
+    neg:{jp:'このテストは全然__です。',zh:'這次考試一點都不難。'},
+    past:{jp:'先週の試験は__です。',zh:'上週的考試很難。'},
+    te:{jp:'__、誰も解けなかった。',zh:'因為太難，誰也解不出來。'},
+    adv:{jp:'先生は__説明した。',zh:'老師講解得很難懂。'},
+    hyp:{jp:'__、聞いてください。',zh:'如果覺得難，請發問。'},
+  }},
+  {w:'易しい',r:'やさしい',zh:'容易的',stem:'やさし',ex:{
+    base:{jp:'この本の文法はとても__です。',zh:'這本書的文法非常容易。'},
+    neg:{jp:'この試験は全然__です。',zh:'這次考試一點都不容易。'},
+    past:{jp:'最初の問題は__です。',zh:'第一題很簡單。'},
+    te:{jp:'__、すぐに解けた。',zh:'因為很簡單，馬上就解出來了。'},
+    hyp:{jp:'__、初心者でもできる。',zh:'如果容易的話，初學者也能做到。'},
+  }},
+  {w:'優しい',r:'やさしい',zh:'溫柔的',stem:'やさし',ex:{
+    base:{jp:'彼女はとても__です。',zh:'她非常溫柔。'},
+    neg:{jp:'あの先生は全然__です。',zh:'那位老師一點都不溫柔。'},
+    past:{jp:'昔の先生は__です。',zh:'以前的老師很溫柔。'},
+    te:{jp:'__、皆に好かれている。',zh:'因為很溫柔，受到大家喜愛。'},
+    adv:{jp:'彼は__話しかけた。',zh:'他溫柔地搭話。'},
+    hyp:{jp:'__、子供も安心する。',zh:'如果溫柔的話，孩子也會安心。'},
+  }},
+  {w:'面白い',r:'おもしろい',zh:'有趣的',stem:'おもしろ',ex:{
+    base:{jp:'この本はとても__です。',zh:'這本書非常有趣。'},
+    neg:{jp:'この映画は全然__です。',zh:'這部電影一點都不有趣。'},
+    past:{jp:'昨日見たドラマは__です。',zh:'昨天看的劇很有趣。'},
+    te:{jp:'__、最後まで読んでしまった。',zh:'因為太有趣，一口氣讀到最後。'},
+    adv:{jp:'彼は__話す。',zh:'他講話講得很有趣。'},
+    hyp:{jp:'__、また見たい。',zh:'如果有趣的話，還想再看。'},
+  }},
+  {w:'つまらない',r:'つまらない',zh:'無聊的',stem:'つまらな',ex:{
+    base:{jp:'この授業はとても__です。',zh:'這堂課非常無聊。'},
+    past:{jp:'昨日の会議は__です。',zh:'昨天的會議很無聊。'},
+    te:{jp:'__、寝てしまった。',zh:'因為太無聊，睡著了。'},
+    hyp:{jp:'__、帰ってもいい。',zh:'如果覺得無聊，回去也可以。'},
+  }},
+  {w:'すごい',r:'すごい',zh:'厲害的',stem:'すご',ex:{
+    base:{jp:'彼の足はとても__です。',zh:'他的速度非常驚人。'},
+    past:{jp:'昨日の試合は__です。',zh:'昨天的比賽很精彩。'},
+    te:{jp:'__、みんな驚いた。',zh:'因為太厲害，大家都驚訝了。'},
+    hyp:{jp:'__、もっと評価されるだろう。',zh:'如果夠厲害，會更受到肯定吧。'},
+  }},
+  {w:'かわいい',r:'かわいい',zh:'可愛的',stem:'かわい',ex:{
+    base:{jp:'この子猫はとても__です。',zh:'這隻小貓非常可愛。'},
+    neg:{jp:'このデザインは全然__です。',zh:'這個設計一點都不可愛。'},
+    past:{jp:'昔の私の服は__です。',zh:'我以前的衣服很可愛。'},
+    te:{jp:'__、写真をたくさん撮った。',zh:'因為太可愛，拍了很多照片。'},
+    adv:{jp:'妹は__笑った。',zh:'妹妹可愛地笑了。'},
+    hyp:{jp:'__、買ってもいい。',zh:'如果可愛的話，買也可以。'},
+  }},
+  {w:'美しい',r:'うつくしい',zh:'美麗的',stem:'うつくし',ex:{
+    base:{jp:'この景色はとても__です。',zh:'這片風景非常美麗。'},
+    neg:{jp:'この絵は全然__です。',zh:'這幅畫一點都不美。'},
+    past:{jp:'あの夕日は__です。',zh:'那片夕陽很美。'},
+    te:{jp:'__、しばらく見ていた。',zh:'因為很美，看了好一會兒。'},
+    hyp:{jp:'__、写真に残したい。',zh:'如果美的話，想拍照留念。'},
+  }},
+  // 大きさ
+  {w:'大きい',r:'おおきい',zh:'大的',stem:'おおき',ex:{
+    base:{jp:'この家はとても__です。',zh:'這個家非常大。'},
+    neg:{jp:'この部屋は全然__です。',zh:'這個房間一點都不大。'},
+    past:{jp:'昔住んでいた家は__です。',zh:'以前住的家很大。'},
+    te:{jp:'__、運ぶのが大変だった。',zh:'因為很大，搬運起來很費力。'},
+    adv:{jp:'声を__してください。',zh:'請把聲音放大。'},
+    hyp:{jp:'__、入らないかもしれない。',zh:'如果太大，可能放不進去。'},
+  }},
+  {w:'小さい',r:'ちいさい',zh:'小的',stem:'ちいさ',ex:{
+    base:{jp:'このアパートはとても__です。',zh:'這間公寓非常小。'},
+    neg:{jp:'このサイズは全然__です。',zh:'這個尺寸一點都不小。'},
+    past:{jp:'子供の頃、私は__です。',zh:'小時候，我個子很小。'},
+    te:{jp:'__、よく見えなかった。',zh:'因為太小，看不太清楚。'},
+    adv:{jp:'声を__してください。',zh:'請把聲音放小。'},
+    hyp:{jp:'__、持って行ける。',zh:'如果小的話，就能帶著走。'},
+  }},
+  {w:'長い',r:'ながい',zh:'長的',stem:'なが',ex:{
+    base:{jp:'この道はとても__です。',zh:'這條路非常長。'},
+    neg:{jp:'この映画は全然__です。',zh:'這部電影一點都不長。'},
+    past:{jp:'昨日の会議は__です。',zh:'昨天的會議很長。'},
+    te:{jp:'__、疲れてしまった。',zh:'因為很長，累壞了。'},
+    adv:{jp:'髪を__伸ばしたい。',zh:'想把頭髮留長。'},
+    hyp:{jp:'__、休憩を入れよう。',zh:'如果太長，就加個休息時間吧。'},
+  }},
+  {w:'短い',r:'みじかい',zh:'短的',stem:'みじか',ex:{
+    base:{jp:'今年の夏休みはとても__です。',zh:'今年的暑假非常短。'},
+    neg:{jp:'このスカートは全然__です。',zh:'這條裙子一點都不短。'},
+    past:{jp:'彼のスピーチは__です。',zh:'他的演講很短。'},
+    te:{jp:'__、すぐ終わった。',zh:'因為很短，馬上就結束了。'},
+    adv:{jp:'髪を__切った。',zh:'把頭髮剪短了。'},
+    hyp:{jp:'__、もっと話したい。',zh:'如果太短，還想多聊聊。'},
+  }},
+  {w:'高い',r:'たかい',zh:'高的/貴的',stem:'たか',ex:{
+    base:{jp:'このビルはとても__です。',zh:'這棟大樓非常高。'},
+    neg:{jp:'このレストランは全然__です。',zh:'這家餐廳一點都不貴。'},
+    past:{jp:'去年のホテルは__です。',zh:'去年的飯店很貴。'},
+    te:{jp:'__、買うのをやめた。',zh:'因為太貴，決定不買了。'},
+    adv:{jp:'声を__して話す。',zh:'提高聲音說話。'},
+    hyp:{jp:'__、買わない。',zh:'如果太貴，就不買。'},
+  }},
+  {w:'低い',r:'ひくい',zh:'低的/矮的',stem:'ひく',ex:{
+    base:{jp:'この椅子はとても__です。',zh:'這張椅子非常矮。'},
+    neg:{jp:'この山は全然__です。',zh:'這座山一點都不矮。'},
+    past:{jp:'去年の気温は__です。',zh:'去年的氣溫很低。'},
+    te:{jp:'__、子供でも届く。',zh:'因為很低，連小孩都摸得到。'},
+    hyp:{jp:'__、座りやすい。',zh:'如果矮的話，比較容易坐。'},
+  }},
+  {w:'広い',r:'ひろい',zh:'寬廣的',stem:'ひろ',ex:{
+    base:{jp:'この公園はとても__です。',zh:'這座公園非常寬廣。'},
+    neg:{jp:'この道は全然__です。',zh:'這條路一點都不寬。'},
+    past:{jp:'昔住んでいた家は__です。',zh:'以前住的家很寬敞。'},
+    te:{jp:'__、走り回れる。',zh:'因為很寬敞，可以到處跑。'},
+    hyp:{jp:'__、家具を増やせる。',zh:'如果夠寬敞，就能多放家具。'},
+  }},
+  {w:'狭い',r:'せまい',zh:'狹窄的',stem:'せま',ex:{
+    base:{jp:'このアパートはとても__です。',zh:'這間公寓非常狹窄。'},
+    neg:{jp:'この道は全然__です。',zh:'這條路一點都不窄。'},
+    past:{jp:'昔の部屋は__です。',zh:'以前的房間很窄。'},
+    te:{jp:'__、家具が置けない。',zh:'因為太窄，放不下家具。'},
+    hyp:{jp:'__、引っ越したほうがいい。',zh:'如果太窄，搬家比較好。'},
+  }},
+  {w:'重い',r:'おもい',zh:'重的',stem:'おも',ex:{
+    base:{jp:'このスーツケースはとても__です。',zh:'這個行李箱非常重。'},
+    neg:{jp:'このリュックは全然__です。',zh:'這個背包一點都不重。'},
+    past:{jp:'昔のカメラは__です。',zh:'以前的相機很重。'},
+    te:{jp:'__、一人で運べなかった。',zh:'因為太重，一個人搬不動。'},
+    hyp:{jp:'__、手伝ってもらおう。',zh:'如果太重，請人幫忙吧。'},
+  }},
+  {w:'軽い',r:'かるい',zh:'輕的',stem:'かる',ex:{
+    base:{jp:'このノートパソコンはとても__です。',zh:'這台筆電非常輕。'},
+    neg:{jp:'この荷物は全然__です。',zh:'這個行李一點都不輕。'},
+    past:{jp:'昔の携帯は__です。',zh:'以前的手機很輕。'},
+    te:{jp:'__、持ち運びやすい。',zh:'因為很輕，方便攜帶。'},
+    hyp:{jp:'__、旅行に便利だ。',zh:'如果輕的話，旅行很方便。'},
+  }},
+  // 温度
+  {w:'暑い',r:'あつい',zh:'炎熱的',stem:'あつ',ex:{
+    base:{jp:'今日はとても__です。',zh:'今天非常熱。'},
+    neg:{jp:'今朝は全然__です。',zh:'今天早上一點都不熱。'},
+    past:{jp:'昨日は本当に__です。',zh:'昨天真的很熱。'},
+    te:{jp:'__、眠れなかった。',zh:'因為很熱，睡不著。'},
+    adv:{jp:'部屋を__した。',zh:'把房間弄熱了。'},
+    hyp:{jp:'__、窓を開けてください。',zh:'如果熱的話，請開窗。'},
+  }},
+  {w:'寒い',r:'さむい',zh:'寒冷的',stem:'さむ',ex:{
+    base:{jp:'今年の冬はとても__です。',zh:'今年冬天非常冷。'},
+    neg:{jp:'今日は全然__です。',zh:'今天一點都不冷。'},
+    past:{jp:'去年の冬は__です。',zh:'去年冬天很冷。'},
+    te:{jp:'__、コートを着た。',zh:'因為很冷，穿了外套。'},
+    adv:{jp:'外は__なってきた。',zh:'外面開始變冷了。'},
+    hyp:{jp:'__、暖房をつけよう。',zh:'如果冷的話，就開暖氣吧。'},
+  }},
+  {w:'熱い',r:'あつい',zh:'燙的',stem:'あつ',ex:{
+    base:{jp:'このスープはとても__です。',zh:'這個湯非常燙。'},
+    neg:{jp:'このお茶は全然__です。',zh:'這杯茶一點都不燙。'},
+    past:{jp:'さっきのコーヒーは__です。',zh:'剛剛的咖啡很燙。'},
+    te:{jp:'__、すぐ飲めなかった。',zh:'因為很燙，沒辦法馬上喝。'},
+    hyp:{jp:'__、冷ましてから飲んで。',zh:'如果很燙，等涼了再喝。'},
+  }},
+  {w:'冷たい',r:'つめたい',zh:'冰涼的',stem:'つめた',ex:{
+    base:{jp:'この水はとても__です。',zh:'這水非常冰涼。'},
+    neg:{jp:'このジュースは全然__です。',zh:'這杯果汁一點都不冰。'},
+    past:{jp:'昨日の風は__です。',zh:'昨天的風很冷。'},
+    te:{jp:'__、手がしびれた。',zh:'因為很冰，手都麻了。'},
+    hyp:{jp:'__、レンジで温めて。',zh:'如果冰的話，用微波爐加熱一下。'},
+  }},
+  {w:'暖かい',r:'あたたかい',zh:'溫暖的',stem:'あたたか',ex:{
+    base:{jp:'今日はとても__です。',zh:'今天非常溫暖。'},
+    neg:{jp:'今朝は全然__です。',zh:'今天早上一點都不暖。'},
+    past:{jp:'去年の春は__です。',zh:'去年春天很溫暖。'},
+    te:{jp:'__、コートが要らなかった。',zh:'因為很溫暖，不需要外套。'},
+    hyp:{jp:'__、公園に行こう。',zh:'如果溫暖的話，就去公園吧。'},
+  }},
+  {w:'涼しい',r:'すずしい',zh:'涼爽的',stem:'すずし',ex:{
+    base:{jp:'今朝はとても__です。',zh:'今天早上非常涼爽。'},
+    neg:{jp:'今日の夜は全然__です。',zh:'今晚一點都不涼爽。'},
+    past:{jp:'山の上の空気は__です。',zh:'山上的空氣很涼爽。'},
+    te:{jp:'__、気持ちよかった。',zh:'因為很涼爽，感覺很舒服。'},
+    hyp:{jp:'__、窓を開けたままにしよう。',zh:'如果涼爽的話，就讓窗戶開著吧。'},
+  }},
+  {w:'柔らかい',r:'やわらかい',zh:'柔軟的',stem:'やわらか',ex:{
+    base:{jp:'このパンはとても__です。',zh:'這個麵包非常柔軟。'},
+    neg:{jp:'このソファーは全然__です。',zh:'這個沙發一點都不軟。'},
+    past:{jp:'焼いたばかりの肉は__です。',zh:'剛烤好的肉很軟嫩。'},
+    te:{jp:'__、食べやすかった。',zh:'因為很軟，容易入口。'},
+    hyp:{jp:'__、子供も食べられる。',zh:'如果軟的話，小孩也能吃。'},
+  }},
+  {w:'堅い',r:'かたい',zh:'硬的',stem:'かた',ex:{
+    base:{jp:'このパンはとても__です。',zh:'這個麵包非常硬。'},
+    neg:{jp:'この肉は全然__です。',zh:'這塊肉一點都不硬。'},
+    past:{jp:'昨日のステーキは__です。',zh:'昨天的牛排很硬。'},
+    te:{jp:'__、噛みにくかった。',zh:'因為很硬，不好咬。'},
+    hyp:{jp:'__、もう少し煮よう。',zh:'如果太硬，就再煮一下吧。'},
+  }},
+  // 距離
+  {w:'近い',r:'ちかい',zh:'近的',stem:'ちか',ex:{
+    base:{jp:'駅から家までとても__です。',zh:'從車站到家裡非常近。'},
+    neg:{jp:'学校から私の家は全然__です。',zh:'從學校到我家一點都不近。'},
+    past:{jp:'昔の家は学校に__です。',zh:'以前的家離學校很近。'},
+    te:{jp:'__、歩いて行ける。',zh:'因為很近，走路就能到。'},
+    hyp:{jp:'__、自転車で行こう。',zh:'如果近的話，就騎自行車去吧。'},
+  }},
+  {w:'遠い',r:'とおい',zh:'遠的',stem:'とお',ex:{
+    base:{jp:'会社まではとても__です。',zh:'到公司非常遠。'},
+    neg:{jp:'コンビニまで全然__です。',zh:'到便利商店一點都不遠。'},
+    past:{jp:'昔の通勤先は__です。',zh:'以前通勤的地方很遠。'},
+    te:{jp:'__、車で行った。',zh:'因為很遠，開車去了。'},
+    hyp:{jp:'__、電車で行こう。',zh:'如果遠的話，就坐電車去吧。'},
+  }},
+  {w:'早い',r:'はやい',zh:'早的',stem:'はや',ex:{
+    base:{jp:'今日は出発がとても__です。',zh:'今天出發非常早。'},
+    neg:{jp:'今朝は全然__です。',zh:'今天早上一點都不早。'},
+    past:{jp:'昨日の起床は__です。',zh:'昨天起床很早。'},
+    te:{jp:'__、まだ誰もいなかった。',zh:'因為很早，還沒有人到。'},
+    hyp:{jp:'__、席が取れる。',zh:'如果早的話，就能佔到位子。'},
+  }},
+  {w:'遅い',r:'おそい',zh:'遲/慢的',stem:'おそ',ex:{
+    base:{jp:'彼の歩くペースはとても__です。',zh:'他走路的速度非常慢。'},
+    neg:{jp:'このパソコンの動きは全然__です。',zh:'這台電腦運作一點都不慢。'},
+    past:{jp:'昨日の電車は__です。',zh:'昨天的電車很晚。'},
+    te:{jp:'__、間に合わなかった。',zh:'因為太晚，沒能趕上。'},
+    hyp:{jp:'__、先に行ってて。',zh:'如果慢的話，先走吧。'},
+  }},
+  {w:'速い',r:'はやい',zh:'快速的',stem:'はや',ex:{
+    base:{jp:'新幹線はとても__です。',zh:'新幹線非常快速。'},
+    neg:{jp:'このバスは全然__です。',zh:'這輛公車一點都不快。'},
+    past:{jp:'昔のパソコンの方が__です。',zh:'以前的電腦反而比較快。'},
+    te:{jp:'__、すぐ着いた。',zh:'因為很快，馬上就到了。'},
+    hyp:{jp:'__、時間に間に合う。',zh:'如果快的話，就能趕上時間。'},
+  }},
+  // 色
+  {w:'白い',r:'しろい',zh:'白色的',stem:'しろ',ex:{
+    base:{jp:'このシャツはとても__です。',zh:'這件襯衫非常白。'},
+    neg:{jp:'この壁は全然__です。',zh:'這牆壁一點都不白。'},
+    past:{jp:'去年買った靴は__です。',zh:'去年買的鞋子是白色的。'},
+    te:{jp:'__、汚れが目立つ。',zh:'因為是白色，髒污很明顯。'},
+    hyp:{jp:'__、夏に涼しく見える。',zh:'如果是白色，夏天看起來會涼爽。'},
+  }},
+  {w:'黒い',r:'くろい',zh:'黑色的',stem:'くろ',ex:{
+    base:{jp:'彼の髪はとても__です。',zh:'他的頭髮非常黑。'},
+    neg:{jp:'この猫の毛は全然__です。',zh:'這隻貓的毛一點都不黑。'},
+    past:{jp:'昔の電話は__です。',zh:'以前的電話是黑色的。'},
+    te:{jp:'__、夜は見えにくい。',zh:'因為是黑色，晚上不容易看見。'},
+    hyp:{jp:'__、暑く感じる。',zh:'如果是黑色，會感覺比較熱。'},
+  }},
+  {w:'赤い',r:'あかい',zh:'紅色的',stem:'あか',ex:{
+    base:{jp:'このリンゴはとても__です。',zh:'這顆蘋果非常紅。'},
+    neg:{jp:'このトマトは全然__です。',zh:'這顆番茄一點都不紅。'},
+    past:{jp:'夕焼けの空は__です。',zh:'夕陽的天空是紅色的。'},
+    te:{jp:'__、目立っていた。',zh:'因為是紅色，很顯眼。'},
+    hyp:{jp:'__、よく目立つ。',zh:'如果是紅色，會很顯眼。'},
+  }},
+  {w:'青い',r:'あおい',zh:'藍色的',stem:'あお',ex:{
+    base:{jp:'今日の海はとても__です。',zh:'今天的海非常藍。'},
+    neg:{jp:'この水は全然__です。',zh:'這片水一點都不藍。'},
+    past:{jp:'昨日の空は__です。',zh:'昨天的天空是藍色的。'},
+    te:{jp:'__、写真がきれいに撮れた。',zh:'因為很藍，拍出來的照片很漂亮。'},
+    hyp:{jp:'__、海に見える。',zh:'如果是藍色，看起來就像海一樣。'},
+  }},
+  {w:'黄色い',r:'きいろい',zh:'黃色的',stem:'きいろ',ex:{
+    base:{jp:'このバナナはとても__です。',zh:'這根香蕉非常黃。'},
+    neg:{jp:'このレモンは全然__です。',zh:'這顆檸檬一點都不黃。'},
+    past:{jp:'去年咲いた花は__です。',zh:'去年開的花是黃色的。'},
+    te:{jp:'__、よく目立った。',zh:'因為是黃色，很顯眼。'},
+    hyp:{jp:'__、すぐ見つかる。',zh:'如果是黃色，馬上就能找到。'},
+  }},
+  // 飲食
+  {w:'おいしい',r:'おいしい',zh:'好吃的',stem:'おいし',ex:{
+    base:{jp:'このラーメンはとても__です。',zh:'這碗拉麵非常好吃。'},
+    neg:{jp:'このケーキは全然__です。',zh:'這個蛋糕一點都不好吃。'},
+    past:{jp:'昨日食べた寿司は__です。',zh:'昨天吃的壽司很好吃。'},
+    te:{jp:'__、また食べたくなった。',zh:'因為很好吃，又想再吃了。'},
+    hyp:{jp:'__、また来よう。',zh:'如果好吃的話，下次再來吧。'},
+  }},
+  {w:'不味い',r:'まずい',zh:'難吃的',stem:'まず',ex:{
+    base:{jp:'このラーメンはとても__です。',zh:'這碗拉麵非常難吃。'},
+    past:{jp:'昨日食べた料理は__です。',zh:'昨天吃的料理很難吃。'},
+    te:{jp:'__、残してしまった。',zh:'因為很難吃，剩下沒吃完。'},
+    hyp:{jp:'__、もう注文しない。',zh:'如果難吃的話，就不再點了。'},
+  }},
+  {w:'辛い',r:'からい',zh:'辣的',stem:'から',ex:{
+    base:{jp:'このカレーはとても__です。',zh:'這個咖哩非常辣。'},
+    neg:{jp:'このスープは全然__です。',zh:'這個湯一點都不辣。'},
+    past:{jp:'先週食べた料理は__です。',zh:'上週吃的料理很辣。'},
+    te:{jp:'__、水をたくさん飲んだ。',zh:'因為很辣，喝了很多水。'},
+    hyp:{jp:'__、ミルクを飲んでください。',zh:'如果辣的話，請喝牛奶。'},
+  }},
+  {w:'甘い',r:'あまい',zh:'甜的',stem:'あま',ex:{
+    base:{jp:'このケーキはとても__です。',zh:'這個蛋糕非常甜。'},
+    neg:{jp:'このコーヒーは全然__です。',zh:'這杯咖啡一點都不甜。'},
+    past:{jp:'子供の頃食べたお菓子は__です。',zh:'小時候吃的點心很甜。'},
+    te:{jp:'__、虫歯になりそう。',zh:'因為太甜，感覺會蛀牙。'},
+    hyp:{jp:'__、砂糖を減らそう。',zh:'如果太甜，就少放點糖吧。'},
+  }},
+  {w:'強い',r:'つよい',zh:'強的',stem:'つよ',ex:{
+    base:{jp:'今日の風はとても__です。',zh:'今天的風非常強。'},
+    neg:{jp:'このお酒は全然__です。',zh:'這杯酒一點都不烈。'},
+    past:{jp:'昨日の台風は__です。',zh:'昨天的颱風很強。'},
+    te:{jp:'__、傘が壊れた。',zh:'因為風太強，雨傘壞了。'},
+    hyp:{jp:'__、外出を控えよう。',zh:'如果風太強，就別出門吧。'},
+  }},
+  {w:'弱い',r:'よわい',zh:'弱的',stem:'よわ',ex:{
+    base:{jp:'今日の風はとても__です。',zh:'今天的風非常弱。'},
+    neg:{jp:'彼の意志は全然__です。',zh:'他的意志一點都不薄弱。'},
+    past:{jp:'昔の電波は__です。',zh:'以前的訊號很弱。'},
+    te:{jp:'__、すぐに切れてしまった。',zh:'因為太弱，馬上就斷了。'},
+    hyp:{jp:'__、もう一度試そう。',zh:'如果太弱，再試一次吧。'},
+  }},
+];
+
+const NA_ADJ = [
+  {w:'静か',r:'しずか',zh:'安靜的',ex:{
+    base:{jp:'この図書館はとても__です。',zh:'這間圖書館非常安靜。'},
+    neg:{jp:'この道は夜でも全然__です。',zh:'這條路即使夜晚也一點都不安靜。'},
+    past:{jp:'昨日の教室は__です。',zh:'昨天的教室很安靜。'},
+    te:{jp:'__、住みやすい町だ。',zh:'因為安靜，是個容易居住的城鎮。'},
+    adv:{jp:'__話してください。',zh:'請安靜地說話。'},
+    hyp:{jp:'__、勉強できる。',zh:'如果安靜的話，就能念書。'},
+  }},
+  {w:'賑やか',r:'にぎやか',zh:'熱鬧的',ex:{
+    base:{jp:'お祭りの夜はとても__です。',zh:'祭典之夜非常熱鬧。'},
+    neg:{jp:'平日の昼間は全然__です。',zh:'平日白天一點都不熱鬧。'},
+    past:{jp:'去年の花火大会は__です。',zh:'去年的煙火大會很熱鬧。'},
+    te:{jp:'__、楽しい雰囲気だった。',zh:'因為熱鬧，氣氛很歡樂。'},
+    adv:{jp:'子供たちが__遊んでいる。',zh:'孩子們熱鬧地玩著。'},
+    hyp:{jp:'__、もっと人が来る。',zh:'如果熱鬧的話，會有更多人來。'},
+  }},
+  {w:'綺麗',r:'きれい',zh:'漂亮/乾淨的',ex:{
+    base:{jp:'この公園の花はとても__です。',zh:'這座公園的花非常漂亮。'},
+    neg:{jp:'この部屋は全然__です。',zh:'這個房間一點都不乾淨。'},
+    past:{jp:'昨日の夕焼けは__です。',zh:'昨天的夕陽很美。'},
+    te:{jp:'__、写真をたくさん撮った。',zh:'因為很漂亮，拍了很多照片。'},
+    adv:{jp:'部屋を__した。',zh:'把房間打掃乾淨了。'},
+    hyp:{jp:'__、もっと見ていたい。',zh:'如果漂亮的話，還想多看一會兒。'},
+  }},
+  {w:'有名',r:'ゆうめい',zh:'有名的',ex:{
+    base:{jp:'このレストランはとても__です。',zh:'這家餐廳非常有名。'},
+    neg:{jp:'このお店は全然__です。',zh:'這家店一點都不有名。'},
+    past:{jp:'昔この歌手は__です。',zh:'這位歌手以前很有名。'},
+    te:{jp:'__、観光客が多い。',zh:'因為很有名，觀光客很多。'},
+    hyp:{jp:'__、行ってみたい。',zh:'如果有名的話，想去看看。'},
+  }},
+  {w:'親切',r:'しんせつ',zh:'親切的',ex:{
+    base:{jp:'あの店員さんはとても__です。',zh:'那位店員非常親切。'},
+    neg:{jp:'この係員は全然__です。',zh:'這位工作人員一點都不親切。'},
+    past:{jp:'道を教えてくれた人は__です。',zh:'告訴我路的人很親切。'},
+    te:{jp:'__、すぐに助けてくれた。',zh:'因為很親切，馬上幫了我。'},
+    adv:{jp:'彼は__教えてくれた。',zh:'他親切地教了我。'},
+    hyp:{jp:'__、また聞いてみよう。',zh:'如果親切的話，下次再問問看。'},
+  }},
+  {w:'丁寧',r:'ていねい',zh:'有禮貌/仔細的',ex:{
+    base:{jp:'彼女の説明はとても__です。',zh:'她的說明非常仔細。'},
+    neg:{jp:'この対応は全然__です。',zh:'這個應對方式一點都不仔細。'},
+    past:{jp:'店員の対応は__です。',zh:'店員的應對很有禮貌。'},
+    te:{jp:'__、わかりやすかった。',zh:'因為講解仔細，很容易理解。'},
+    adv:{jp:'__説明してください。',zh:'請仔細地說明。'},
+    hyp:{jp:'__、信頼できる。',zh:'如果有禮貌的話，可以信賴。'},
+  }},
+  {w:'便利',r:'べんり',zh:'方便的',ex:{
+    base:{jp:'このアプリはとても__です。',zh:'這個應用程式非常方便。'},
+    neg:{jp:'この交通手段は全然__です。',zh:'這個交通方式一點都不方便。'},
+    past:{jp:'昔のシステムは__です。',zh:'以前的系統很方便。'},
+    te:{jp:'__、よく利用している。',zh:'因為方便，常常使用。'},
+    hyp:{jp:'__、みんな使うだろう。',zh:'如果方便的話，大家都會用吧。'},
+  }},
+  {w:'不便',r:'ふべん',zh:'不方便的',ex:{
+    base:{jp:'この場所はとても__です。',zh:'這個地方非常不方便。'},
+    neg:{jp:'この交通手段は全然__です。',zh:'這個交通方式一點都不會不方便。'},
+    past:{jp:'昔のシステムは__です。',zh:'以前的系統很不方便。'},
+    te:{jp:'__、みんな困っていた。',zh:'因為不方便，大家都很困擾。'},
+    hyp:{jp:'__、改善したほうがいい。',zh:'如果不方便的話，最好改善一下。'},
+  }},
+  {w:'大切',r:'たいせつ',zh:'重要/珍貴的',ex:{
+    base:{jp:'家族はとても__です。',zh:'家人非常重要。'},
+    neg:{jp:'この件は全然__です。',zh:'這件事一點都不重要。'},
+    past:{jp:'昔の思い出は__です。',zh:'過去的記憶很珍貴。'},
+    te:{jp:'__、大事に保管している。',zh:'因為很珍貴，妥善保管著。'},
+    adv:{jp:'物を__使ってください。',zh:'請珍惜地使用物品。'},
+    hyp:{jp:'__、無くさないようにしよう。',zh:'如果重要的話，要小心別丟了。'},
+  }},
+  {w:'大事',r:'だいじ',zh:'重要的',ex:{
+    base:{jp:'健康はとても__です。',zh:'健康非常重要。'},
+    neg:{jp:'これは全然__です。',zh:'這一點都不重要。'},
+    past:{jp:'昔この約束は__です。',zh:'以前這個約定很重要。'},
+    te:{jp:'__、忘れないようにメモした。',zh:'因為很重要，做了筆記避免忘記。'},
+    hyp:{jp:'__、しっかり伝えよう。',zh:'如果重要的話，要好好傳達。'},
+  }},
+  {w:'簡単',r:'かんたん',zh:'簡單的',ex:{
+    base:{jp:'この問題はとても__です。',zh:'這個問題非常簡單。'},
+    neg:{jp:'この料理は全然__です。',zh:'這道料理一點都不簡單。'},
+    past:{jp:'昨日の試験は__です。',zh:'昨天的考試很簡單。'},
+    te:{jp:'__、すぐに終わった。',zh:'因為很簡單，馬上就結束了。'},
+    adv:{jp:'__説明できる。',zh:'可以簡單地說明。'},
+    hyp:{jp:'__、誰でもできる。',zh:'如果簡單的話，誰都能做。'},
+  }},
+  {w:'複雑',r:'ふくざつ',zh:'複雜的',ex:{
+    base:{jp:'この手続きはとても__です。',zh:'這個手續非常複雜。'},
+    neg:{jp:'この作業は全然__です。',zh:'這項作業一點都不複雜。'},
+    past:{jp:'あの事件は__です。',zh:'那個事件很複雜。'},
+    te:{jp:'__、時間がかかった。',zh:'因為很複雜，花了不少時間。'},
+    hyp:{jp:'__、専門家に頼もう。',zh:'如果複雜的話，就找專家吧。'},
+  }},
+  {w:'真面目',r:'まじめ',zh:'認真的',ex:{
+    base:{jp:'彼はとても__です。',zh:'他非常認真。'},
+    neg:{jp:'彼の態度は全然__です。',zh:'他的態度一點都不認真。'},
+    past:{jp:'学生時代の彼は__です。',zh:'學生時代的他很認真。'},
+    te:{jp:'__、先生に褒められた。',zh:'因為很認真，被老師稱讚了。'},
+    hyp:{jp:'__、信頼できる。',zh:'如果認真的話，可以信賴。'},
+  }},
+  {w:'暇',r:'ひま',zh:'空閒的',ex:{
+    base:{jp:'今日はとても__です。',zh:'今天非常空閒。'},
+    neg:{jp:'今週は全然__です。',zh:'這週一點都不空閒。'},
+    past:{jp:'先週末は__です。',zh:'上週末很空閒。'},
+    te:{jp:'__、映画を見に行った。',zh:'因為很閒，去看電影了。'},
+    hyp:{jp:'__、一緒に出かけよう。',zh:'如果有空的話，一起出去吧。'},
+  }},
+  {w:'元気',r:'げんき',zh:'有活力的',ex:{
+    base:{jp:'おばあちゃんはとても__です。',zh:'奶奶非常有活力。'},
+    neg:{jp:'今日は全然__です。',zh:'今天一點精神都沒有。'},
+    past:{jp:'昨日は__です。',zh:'昨天很有精神。'},
+    te:{jp:'__、よく出かける。',zh:'因為有活力，常常出門。'},
+    hyp:{jp:'__、一緒に行こう。',zh:'如果有精神的話，一起去吧。'},
+  }},
+  {w:'丈夫',r:'じょうぶ',zh:'健壯/耐用的',ex:{
+    base:{jp:'このカバンはとても__です。',zh:'這個包包非常耐用。'},
+    neg:{jp:'このおもちゃは全然__です。',zh:'這個玩具一點都不耐用。'},
+    past:{jp:'子供の頃、私は__です。',zh:'小時候，我身體很健壯。'},
+    te:{jp:'__、長く使える。',zh:'因為耐用，可以用很久。'},
+    hyp:{jp:'__、安心して使える。',zh:'如果耐用的話，可以放心使用。'},
+  }},
+  {w:'好き',r:'すき',zh:'喜歡的',ex:{
+    base:{jp:'この音楽がとても__です。',zh:'非常喜歡這首音樂。'},
+    neg:{jp:'納豆が全然__です。',zh:'一點都不喜歡納豆。'},
+    past:{jp:'昔このアイドルが__です。',zh:'以前很喜歡這個偶像。'},
+    te:{jp:'__、毎日聞いている。',zh:'因為喜歡，每天都在聽。'},
+    hyp:{jp:'__、一緒に見に行こう。',zh:'如果喜歡的話，一起去看吧。'},
+  }},
+  {w:'嫌い',r:'きらい',zh:'討厭的',ex:{
+    base:{jp:'ゴキブリがとても__です。',zh:'非常討厭蟑螂。'},
+    neg:{jp:'野菜は全然__です。',zh:'一點都不討厭蔬菜。'},
+    past:{jp:'昔この食べ物が__です。',zh:'以前很討厭這個食物。'},
+    te:{jp:'__、近づきたくない。',zh:'因為討厭，不想靠近。'},
+    hyp:{jp:'__、食べなくてもいい。',zh:'如果討厭的話，不吃也沒關係。'},
+  }},
+  {w:'大好き',r:'だいすき',zh:'非常喜歡的',ex:{
+    base:{jp:'私は猫がとても__です。',zh:'我非常喜歡貓。'},
+    past:{jp:'子供の頃、このアニメが__です。',zh:'小時候非常喜歡這部動畫。'},
+    te:{jp:'__、毎日見ている。',zh:'因為非常喜歡，每天都看。'},
+    hyp:{jp:'__、グッズも買おう。',zh:'如果非常喜歡的話，也買周邊吧。'},
+  }},
+  {w:'上手',r:'じょうず',zh:'擅長的',ex:{
+    base:{jp:'彼女は料理がとても__です。',zh:'她做菜非常拿手。'},
+    neg:{jp:'彼はダンスが全然__です。',zh:'他跳舞一點都不擅長。'},
+    past:{jp:'昔から絵が__です。',zh:'從以前畫畫就很擅長。'},
+    te:{jp:'__、みんなに褒められた。',zh:'因為很擅長，被大家稱讚了。'},
+    hyp:{jp:'__、教えてほしい。',zh:'如果擅長的話，希望你教我。'},
+  }},
+  {w:'下手',r:'へた',zh:'不擅長的',ex:{
+    base:{jp:'私は歌がとても__です。',zh:'我唱歌非常不擅長。'},
+    neg:{jp:'彼は運転が全然__です。',zh:'他開車一點都不差。'},
+    past:{jp:'子供の頃、水泳が__です。',zh:'小時候游泳很不擅長。'},
+    te:{jp:'__、恥ずかしかった。',zh:'因為不擅長，覺得很丟臉。'},
+    hyp:{jp:'__、練習しよう。',zh:'如果不擅長的話，就練習吧。'},
+  }},
+  {w:'得意',r:'とくい',zh:'拿手的',ex:{
+    base:{jp:'彼は数学がとても__です。',zh:'他數學非常拿手。'},
+    neg:{jp:'私は料理が全然__です。',zh:'我做菜一點都不拿手。'},
+    past:{jp:'昔から絵が__です。',zh:'從以前畫畫就很拿手。'},
+    te:{jp:'__、コンテストに出した。',zh:'因為很拿手，參加了比賽。'},
+    hyp:{jp:'__、手伝ってほしい。',zh:'如果拿手的話，希望你能幫忙。'},
+  }},
+  {w:'苦手',r:'にがて',zh:'不擅長/不喜歡的',ex:{
+    base:{jp:'私は虫がとても__です。',zh:'我非常不喜歡蟲子。'},
+    neg:{jp:'彼は人前で話すのが全然__です。',zh:'他在人前說話一點都不會不自在。'},
+    past:{jp:'昔は英語が__です。',zh:'以前對英文很不擅長。'},
+    te:{jp:'__、近づきたくない。',zh:'因為不擅長，不想靠近。'},
+    hyp:{jp:'__、練習してみよう。',zh:'如果不擅長的話，練習看看吧。'},
+  }},
+  {w:'必要',r:'ひつよう',zh:'必要的',ex:{
+    base:{jp:'この資格はとても__です。',zh:'這個證照非常必要。'},
+    neg:{jp:'この道具は全然__です。',zh:'這個工具一點都不需要。'},
+    past:{jp:'昔この技術は__です。',zh:'以前這項技術是必要的。'},
+    te:{jp:'__、皆が用意した。',zh:'因為是必要的，大家都準備了。'},
+    hyp:{jp:'__、用意しておこう。',zh:'如果必要的話，先準備好吧。'},
+  }},
+  {w:'自由',r:'じゆう',zh:'自由的',ex:{
+    base:{jp:'この職場の時間はとても__です。',zh:'這個職場的時間非常自由。'},
+    neg:{jp:'この国の制度は全然__です。',zh:'這個國家的制度一點都不自由。'},
+    past:{jp:'昔の生活は__です。',zh:'以前的生活很自由。'},
+    te:{jp:'__、好きなことができる。',zh:'因為自由，可以做喜歡的事。'},
+    hyp:{jp:'__、もっと旅行したい。',zh:'如果自由的話，還想多去旅行。'},
+  }},
+  {w:'安全',r:'あんぜん',zh:'安全的',ex:{
+    base:{jp:'この道はとても__です。',zh:'這條路非常安全。'},
+    neg:{jp:'夜のこの公園は全然__です。',zh:'夜晚的這座公園一點都不安全。'},
+    past:{jp:'昔この地域は__です。',zh:'以前這個地區很安全。'},
+    te:{jp:'__、安心して通える。',zh:'因為安全，可以放心通行。'},
+    hyp:{jp:'__、子供も歩ける。',zh:'如果安全的話，孩子也能走。'},
+  }},
+  {w:'危険',r:'きけん',zh:'危險的',ex:{
+    base:{jp:'この道はとても__です。',zh:'這條路非常危險。'},
+    neg:{jp:'この遊び方は全然__です。',zh:'這種玩法一點都不危險。'},
+    past:{jp:'昔この場所は__です。',zh:'以前這個地方很危險。'},
+    te:{jp:'__、近づかなかった。',zh:'因為危險，沒有靠近。'},
+    hyp:{jp:'__、避けたほうがいい。',zh:'如果危險的話，最好避開。'},
+  }},
+  {w:'健康',r:'けんこう',zh:'健康的',ex:{
+    base:{jp:'おじいさんはとても__です。',zh:'爺爺非常健康。'},
+    neg:{jp:'最近の生活は全然__です。',zh:'最近的生活一點都不健康。'},
+    past:{jp:'昔は__です。',zh:'以前很健康。'},
+    te:{jp:'__、毎日元気に過ごしている。',zh:'因為健康，每天都過得很有精神。'},
+    hyp:{jp:'__、長生きできる。',zh:'如果健康的話，就能長壽。'},
+  }},
+  {w:'素敵',r:'すてき',zh:'很棒/迷人的',ex:{
+    base:{jp:'このドレスはとても__です。',zh:'這件洋裝非常迷人。'},
+    neg:{jp:'このデザインは全然__です。',zh:'這個設計一點都不迷人。'},
+    past:{jp:'去年見た夜景は__です。',zh:'去年看到的夜景很迷人。'},
+    te:{jp:'__、忘れられない。',zh:'因為很迷人，難以忘懷。'},
+    hyp:{jp:'__、また行きたい。',zh:'如果很棒的話，還想再去。'},
+  }},
+  {w:'特別',r:'とくべつ',zh:'特別的',ex:{
+    base:{jp:'今日はとても__です。',zh:'今天非常特別。'},
+    neg:{jp:'この日は全然__です。',zh:'這一天一點都不特別。'},
+    past:{jp:'去年の誕生日は__です。',zh:'去年的生日很特別。'},
+    te:{jp:'__、忘れられない一日になった。',zh:'因為很特別，成了難忘的一天。'},
+    hyp:{jp:'__、写真を残そう。',zh:'如果特別的話，就拍照留念吧。'},
+  }},
+  {w:'普通',r:'ふつう',zh:'普通的',ex:{
+    base:{jp:'この味はとても__です。',zh:'這個味道非常普通。'},
+    neg:{jp:'彼の実力は全然__です。',zh:'他的實力一點都不普通。'},
+    past:{jp:'昨日の出来事は__です。',zh:'昨天的事很普通。'},
+    te:{jp:'__、特に印象に残らなかった。',zh:'因為很普通，沒留下特別印象。'},
+    hyp:{jp:'__、誰でもできる。',zh:'如果普通的話，誰都能做到。'},
+  }},
+  {w:'正直',r:'しょうじき',zh:'誠實的',ex:{
+    base:{jp:'彼はとても__です。',zh:'他非常誠實。'},
+    neg:{jp:'彼女の説明は全然__です。',zh:'她的說明一點都不誠實。'},
+    past:{jp:'子供の頃から彼は__です。',zh:'從小他就很誠實。'},
+    te:{jp:'__、みんなに信頼されている。',zh:'因為誠實，受到大家信賴。'},
+    hyp:{jp:'__、安心して頼める。',zh:'如果誠實的話，可以放心託付。'},
+  }},
+  {w:'熱心',r:'ねっしん',zh:'熱心/積極的',ex:{
+    base:{jp:'彼は勉強にとても__です。',zh:'他學習非常積極。'},
+    neg:{jp:'彼の練習態度は全然__です。',zh:'他練習的態度一點都不積極。'},
+    past:{jp:'学生時代の彼は__です。',zh:'學生時代的他很積極。'},
+    te:{jp:'__、成績が上がった。',zh:'因為很積極，成績進步了。'},
+    hyp:{jp:'__、結果も出るだろう。',zh:'如果積極的話，也會有成果吧。'},
+  }},
+  {w:'積極的',r:'せっきょくてき',zh:'積極的',ex:{
+    base:{jp:'彼女は仕事にとても__です。',zh:'她對工作非常積極。'},
+    neg:{jp:'彼の態度は全然__です。',zh:'他的態度一點都不積極。'},
+    past:{jp:'学生時代から彼女は__です。',zh:'從學生時代開始她就很積極。'},
+    te:{jp:'__、すぐに行動した。',zh:'因為很積極，馬上就行動了。'},
+    hyp:{jp:'__、リーダーに向いている。',zh:'如果積極的話，適合當領導者。'},
+  }},
+  {w:'快適',r:'かいてき',zh:'舒適的',ex:{
+    base:{jp:'この部屋はとても__です。',zh:'這個房間非常舒適。'},
+    neg:{jp:'このホテルは全然__です。',zh:'這家飯店一點都不舒適。'},
+    past:{jp:'去年泊まった旅館は__です。',zh:'去年住的旅館很舒適。'},
+    te:{jp:'__、よく眠れた。',zh:'因為很舒適，睡得很好。'},
+    hyp:{jp:'__、また泊まりたい。',zh:'如果舒適的話，還想再住一次。'},
+  }},
+  {w:'変',r:'へん',zh:'奇怪的',ex:{
+    base:{jp:'この味はとても__です。',zh:'這個味道非常奇怪。'},
+    neg:{jp:'彼の行動は全然__です。',zh:'他的行為一點都不奇怪。'},
+    past:{jp:'昨日の天気は__です。',zh:'昨天的天氣很奇怪。'},
+    te:{jp:'__、みんな驚いた。',zh:'因為很奇怪，大家都嚇了一跳。'},
+    hyp:{jp:'__、病院に行こう。',zh:'如果奇怪的話，就去醫院吧。'},
+  }},
+  {w:'残念',r:'ざんねん',zh:'可惜/遺憾的',ex:{
+    base:{jp:'今回の結果はとても__です。',zh:'這次的結果非常可惜。'},
+    neg:{jp:'この結果は全然__です。',zh:'這個結果一點都不可惜。'},
+    past:{jp:'去年の試合結果は__です。',zh:'去年的比賽結果很可惜。'},
+    te:{jp:'__、悔しかった。',zh:'因為可惜，覺得不甘心。'},
+    hyp:{jp:'__、また挑戦しよう。',zh:'如果可惜的話，再挑戰一次吧。'},
+  }},
+  {w:'無駄',r:'むだ',zh:'浪費/徒勞的',ex:{
+    base:{jp:'この時間はとても__です。',zh:'這段時間非常浪費。'},
+    neg:{jp:'この練習は全然__です。',zh:'這項練習一點都不浪費。'},
+    past:{jp:'あの努力は__です。',zh:'那份努力是徒勞的。'},
+    te:{jp:'__、お金が無くなった。',zh:'因為浪費，錢都花光了。'},
+    hyp:{jp:'__、やめたほうがいい。',zh:'如果是浪費的話，不做比較好。'},
+  }},
+  {w:'立派',r:'りっぱ',zh:'出色/漂亮的',ex:{
+    base:{jp:'この建物はとても__です。',zh:'這棟建築非常出色。'},
+    neg:{jp:'この作品は全然__です。',zh:'這個作品一點都不出色。'},
+    past:{jp:'彼のスピーチは__です。',zh:'他的演講很出色。'},
+    te:{jp:'__、皆に褒められた。',zh:'因為很出色，受到大家稱讚。'},
+    hyp:{jp:'__、表彰されるだろう。',zh:'如果出色的話，會受到表揚吧。'},
+  }},
+  {w:'大変',r:'たいへん',zh:'辛苦的/嚴重的',ex:{
+    base:{jp:'今回の仕事はとても__です。',zh:'這次的工作非常辛苦。'},
+    neg:{jp:'この作業は全然__です。',zh:'這項作業一點都不辛苦。'},
+    past:{jp:'去年の引っ越しは__です。',zh:'去年的搬家很辛苦。'},
+    te:{jp:'__、皆で助け合った。',zh:'因為很辛苦，大家互相幫助。'},
+    hyp:{jp:'__、手伝ってもらおう。',zh:'如果辛苦的話，請人幫忙吧。'},
+  }},
+];
+
+// Conjugation generators
+function conjugateI(adj, form) {
+  // base 形 (辭書形) always uses the original written form (kanji if present)
+  if (form === 'base') return adj.w;
+
+  // Derive the conjugation stem preferring kanji: if adj.w ends in 'い' and
+  // isn't the irregular 'いい', strip the trailing い from the kanji form.
+  // This keeps kanji throughout conjugations (e.g. 暑い -> 暑くない, not あつくない).
+  let s;
+  if (adj.special) {
+    s = adj.stem; // いい -> よ (irregular, no kanji to preserve)
+  } else if (adj.w.endsWith('い')) {
+    s = adj.w.slice(0, -1);
+  } else {
+    s = adj.stem; // fallback safety net
+  }
+
+  switch(form) {
+    case 'neg':     return s + 'くない';
+    case 'negd':    return s + 'くないです';
+    case 'past':    return s + 'かった';
+    case 'pastd':   return s + 'かったです';
+    case 'pastneg': return s + 'くなかった';
+    case 'pastnegd':return s + 'くなかったです';
+    case 'te':      return s + 'くて';
+    case 'adv':     return s + 'く';
+    case 'hyp':     return s + 'ければ';
+    case 'naru':    return s + 'くなる';
+    case 'sou':     return s + 'そう';
+    case 'sugiru':  return s + 'すぎる';
+    case 'sa':      return s + 'さ';
+    default: return adj.w;
+  }
+}
+
+function conjugateNA(adj, form) {
+  const s = adj.w;
+  switch(form) {
+    case 'neg':     return s + 'ではない';
+    case 'negd':    return s + 'ではありません';
+    case 'past':    return s + 'だった';
+    case 'pastd':   return s + 'でした';
+    case 'pastneg': return s + 'ではなかった';
+    case 'pastnegd':return s + 'ではありませんでした';
+    case 'te':      return s + 'で';
+    case 'adv':     return s + 'に';
+    case 'hyp':     return s + 'なら';
+    case 'naru':    return s + 'になる';
+    case 'sou':     return s + 'そう';
+    case 'sugiru':  return s + 'すぎる';
+    case 'sa':      return s + 'さ';
+    case 'base':    return s + 'だ';
+    default: return s + 'だ';
+  }
+}
+
+// ══════════════════════════════════════════
+//  FURIGANA DICTIONARY (漢字→平假名，供例句注音提示用)
+// ══════════════════════════════════════════
+const FURIGANA_DICT = {"今日":"きょう","今朝":"けさ","今年":"こんねん","今週":"こんしゅう","今回":"こんかい","昨日":"きのう","去年":"きょねん","来週":"らいしゅう","先週":"せんしゅう","先週末":"せんしゅうまつ","先月":"せんげつ","毎日":"まいにち","夏休み":"なつやすみ","夏":"なつ","冬":"ふゆ","春":"はる","昼間":"ひるま","夜":"よる","時間":"じかん","時":"とき","頃":"ころ","最初":"さいしょ","最後":"さいご","最近":"さいきん","誕生日":"たんじょうび","学生時代":"がくせいじだい","一日":"いちにち","一緒":"いっしょ","一人暮らし":"ひとりぐらし","一人":"ひとり","彼女":"かのじょ","彼":"かれ","友達":"ともだち","家族":"かぞく","先生":"せんせい","店員":"てんいん","係員":"かかりいん","専門家":"せんもんか","歌手":"かしゅ","子供":"こども","妹":"いもうと","私":"わたし","皆":"みんな","子猫":"こねこ","猫":"ねこ","会社":"かいしゃ","学校":"がっこう","公園":"こうえん","図書館":"としょかん","教室":"きょうしつ","職場":"しょくば","病院":"びょういん","部屋":"へや","場所":"ばしょ","席":"せき","地域":"ちいき","国":"くに","町":"まち","駅":"えき","天気":"てんき","雰囲気":"ふんいき","空気":"くうき","気温":"きおん","写真":"しゃしん","傷口":"きずぐち","野菜":"やさい","荷物":"にもつ","椅子":"いす","家具":"かぐ","建物":"たてもの","自転車":"じてんしゃ","新幹線":"しんかんせん","電車":"でんしゃ","電話":"でんわ","電波":"でんぱ","携帯":"けいたい","菓子":"かし","寿司":"すし","砂糖":"さとう","夕日":"ゆうひ","夕焼け":"ゆうやけ","夜景":"やけい","景色":"けしき","虫歯":"むしば","納豆":"なっとう","音楽":"おんがく","道具":"どうぐ","技術":"ぎじゅつ","資格":"しかく","制度":"せいど","態度":"たいど","性格":"せいかく","意志":"いし","実力":"じつりょく","成績":"せいせき","印象":"いんしょう","気持ち":"きもち","笑顔":"えがお","約束":"やくそく","結果":"けっか","事件":"じけん","出来事":"できごと","問題":"もんだい","試験":"しけん","試合":"しあい","授業":"じゅぎょう","勉強":"べんきょう","練習態度":"れんしゅうたいど","練習":"れんしゅう","文法":"ぶんぽう","数学":"すうがく","英語":"えいご","料理":"りょうり","台風":"たいふう","地震":"じしん","観光客":"かんこうきゃく","交通手段":"こうつうしゅだん","対応":"たいおう","説明":"せつめい","評価":"ひょうか","信頼":"しんらい","改善":"かいぜん","失敗":"しっぱい","挑戦":"ちょうせん","努力":"どりょく","用意":"ようい","保管":"ほかん","利用":"りよう","運転":"うんてん","散歩":"さんぽ","旅行":"りょこう","旅館":"りょかん","出発":"しゅっぱつ","起床":"きしょう","通勤先":"つうきんさき","外出":"がいしゅつ","連絡":"れんらく","注文":"ちゅうもん","安心":"あんしん","大丈夫":"だいじょうぶ","大事":"だいじ","大変":"たいへん","健康":"けんこう","体調":"たいちょう","生活":"せいかつ","仕事":"しごと","作業":"さぎょう","作品":"さくひん","手続き":"てつづき","会議":"かいぎ","初心者":"しょしんしゃ","方法":"ほうほう","表彰":"ひょうしょう","花火大会":"はなびたいかい","便利":"べんり","長生き":"ながいき","暖房":"だんぼう","映画":"えいが","機械":"きかい","森":"もり","立派":"りっぱ","学生":"がくせい","経験":"けいけん","気":"き","働":"はたら","住":"す","伝":"つた","伸":"の","休":"やす","使":"つか","切":"き","別":"わか","出":"で","入":"はい","動":"うご","向":"む","合":"あ","回":"まわ","困":"こま","増":"ふ","壊":"こわ","多":"おお","好":"す","寝":"ね","届":"とど","帰":"かえ","座":"すわ","引":"ひ","忘":"わす","思":"おも","感":"かん","悔":"くや","恥":"は","持":"も","控":"ひか","教":"おし","撮":"と","止":"と","歩":"あゆ","残":"のこ","汚":"よご","泊":"と","泣":"な","涼":"すず","減":"へ","焼":"や","煮":"に","疲":"つか","立":"た","目立":"めだ","眠":"ねむ","着":"き","終":"お","続":"つづ","繋":"つな","置":"お","聞":"き","読":"よ","買":"か","走":"はし","越":"こ","通":"かよ","遊":"あそ","運":"はこ","過":"す","避":"さ","開":"あ","驚":"おどろ","飲":"の","食":"た","見":"み","行":"い","話":"はな","解":"と","笑":"わら","全然":"ぜんぜん","本当":"ほんとう","無理":"むり","温":"あたた","噛":"か","褒":"ほ","要":"い","近":"ちか","長":"なが","赤":"あか","黒":"くろ","白":"しろ","青":"あお","黄":"き","暑":"あつ","寒":"さむ","冷":"つめ","暖":"あたた","強":"つよ","弱":"よわ","高":"たか","低":"ひく","広":"ひろ","狭":"せま","重":"おも","軽":"かる","辛":"から","甘":"あま","薬":"くすり","間":"あいだ","隣":"となり","頼":"たの","風":"かぜ","頭":"あたま","顔":"かお","声":"こえ","髪":"かみ","肉":"にく","水":"みず","茶":"ちゃ","海":"うみ","空":"そら","山":"やま","道":"みち","本":"ほん","絵":"え","花":"はな","車":"くるま","金":"かね","酒":"さけ","服":"ふく","靴":"くつ","傘":"かさ","虫":"むし","物":"もの","人":"ひと","前":"まえ","後":"あと","中":"なか","日":"ひ","朝":"あさ","昔":"むかし","今":"いま","方":"ほう","度":"たび","件":"けん","上":"うえ","味":"あじ","店":"てん","屋":"や","歌":"うた","画":"が","泳":"えい","病":"びょう","涙":"なみだ","試":"し","合格":"ごうかく","返事":"へんじ","会":"あ","化":"け","屋敷":"やしき","手伝":"てつだ","足":"あし","誰":"だれ","家":"いえ","休憩":"きゅうけい","窓":"まど","外":"そと","手":"て","少":"すこ","壁":"かべ","祭":"まつ","毛":"け","無":"む","特":"とく","一":"いち","取":"と","先":"さき","格":"かく","来":"らい","平":"へい","助":"たす","咲":"さ","楽しい":"たのしい","悲しい":"かなしい","嬉しい":"うれしい","怖い":"こわい","恥ずかしい":"はずかしい","寂しい":"さびしい","忙しい":"いそがしい","痛い":"いたい","悪い":"わるい","難しい":"むずかしい","易しい":"やさしい","優しい":"やさしい","面白い":"おもしろい","美しい":"うつくしい","大きい":"おおきい","小さい":"ちいさい","長い":"ながい","短い":"みじかい","高い":"たかい","低い":"ひくい","広い":"ひろい","狭い":"せまい","重い":"おもい","軽い":"かるい","暑い":"あつい","寒い":"さむい","熱い":"あつい","冷たい":"つめたい","暖かい":"あたたかい","涼しい":"すずしい","柔らかい":"やわらかい","堅い":"かたい","近い":"ちかい","遠い":"とおい","早い":"はやい","遅い":"おそい","速い":"はやい","白い":"しろい","黒い":"くろい","赤い":"あかい","青い":"あおい","黄色い":"きいろい","不味い":"まずい","辛い":"からい","甘い":"あまい","強い":"つよい","弱い":"よわい","静か":"しずか","賑やか":"にぎやか","綺麗":"きれい","有名":"ゆうめい","親切":"しんせつ","丁寧":"ていねい","不便":"ふべん","大切":"たいせつ","簡単":"かんたん","複雑":"ふくざつ","真面目":"まじめ","暇":"ひま","元気":"げんき","丈夫":"じょうぶ","好き":"すき","嫌い":"きらい","大好き":"だいすき","上手":"じょうず","下手":"へた","得意":"とくい","苦手":"にがて","必要":"ひつよう","自由":"じゆう","安全":"あんぜん","危険":"きけん","素敵":"すてき","特別":"とくべつ","普通":"ふつう","正直":"しょうじき","熱心":"ねっしん","積極的":"せっきょくてき","快適":"かいてき","変":"へん","残念":"ざんねん","無駄":"むだ"};
+const FURIGANA_KEYS = Object.keys(FURIGANA_DICT).sort((a, b) => b.length - a.length);
+
+// Wrap kanji substrings in a sentence with hoverable/long-press spans showing furigana
+function annotateFurigana(text) {
+  let result = '';
+  let i = 0;
+  while (i < text.length) {
+    let matched = false;
+    for (const k of FURIGANA_KEYS) {
+      if (text.startsWith(k, i)) {
+        const reading = FURIGANA_DICT[k];
+        result += `<span class="furigana-term" data-reading="${reading}" tabindex="0">${k}</span>`;
+        i += k.length;
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      result += text[i];
+      i++;
+    }
+  }
+  return result;
+}
+
+// Touch devices have no :hover, so use a long-press (≈350ms) to toggle the
+// tooltip via a 'show-tip' class. Uses event delegation so dynamically
+// rendered furigana-term spans (re-created on every render() call) work
+// without needing to re-bind listeners each time.
+(function setupFuriganaLongPress() {
+  let pressTimer = null;
+  let activeEl = null;
+
+  function clearActive() {
+    if (activeEl) activeEl.classList.remove('show-tip');
+    activeEl = null;
+  }
+
+  document.addEventListener('touchstart', (e) => {
+    const term = e.target.closest && e.target.closest('.furigana-term');
+    if (!term) {
+      if (activeEl) clearActive();
+      return;
+    }
+    clearActive();
+    pressTimer = setTimeout(() => {
+      term.classList.add('show-tip');
+      activeEl = term;
+    }, 350);
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    clearTimeout(pressTimer);
+  }, { passive: true });
+
+  document.addEventListener('touchmove', () => {
+    clearTimeout(pressTimer);
+  }, { passive: true });
+})();
+
+const FORM_LABELS = {
+  neg: '否定形（普通體）',
+  negd: '否定形（丁寧體）',
+  past: '過去形（普通體）',
+  pastd: '過去形（丁寧體）',
+  pastneg: '過去否定（普通體）',
+  pastnegd: '過去否定（丁寧體）',
+  te: 'て形',
+  adv: '副詞形（〜く／〜に）',
+  hyp: '假設形（〜ければ／〜なら）',
+  naru: '〜くなる／〜になる',
+  sou: '〜そう',
+  sugiru: '〜すぎる',
+  sa: '〜さ（名詞化）',
+};
+
+// Form chip → forms mapping
+const CHIP_FORMS = {
+  neg:    ['neg','negd'],
+  past:   ['past','pastd'],
+  pastneg:['pastneg','pastnegd'],
+  te:     ['te'],
+  adv:    ['adv'],
+  hyp:    ['hyp'],
+  naru:   ['naru'],
+  sou:    ['sou'],
+  sugiru: ['sugiru'],
+  sa:     ['sa'],
+};
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentType = 'i';
+let currentMode = 'flash';
+let selectedChips = new Set(['neg','past','pastneg','te','adv','hyp','naru','sou','sugiru','sa']);
+let queue = [];
+let currentIdx = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let wrongList = [];
+let cardFlipped = false;
+let answered = false;
+
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+function getEnabledForms() {
+  let forms = [];
+  selectedChips.forEach(chip => {
+    CHIP_FORMS[chip].forEach(f => forms.push(f));
+  });
+  return forms;
+}
+
+function buildQueue(retryWrong = false) {
+  let adjs = [];
+  if (currentType === 'i') adjs = I_ADJ.map(a => ({...a, type:'i'}));
+  else if (currentType === 'na') adjs = NA_ADJ.map(a => ({...a, type:'na'}));
+  else adjs = [...I_ADJ.map(a=>({...a,type:'i'})), ...NA_ADJ.map(a=>({...a,type:'na'}))];
+
+  const forms = getEnabledForms();
+  if (forms.length === 0) return [];
+
+  let items = [];
+  if (retryWrong) {
+    items = [...wrongList];
+  } else {
+    adjs.forEach(adj => {
+      forms.forEach(form => {
+        items.push({adj, form});
+      });
+    });
+    // shuffle
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+  }
+  return items;
+}
+
+function getAnswer(item) {
+  if (item.adj.type === 'i') return conjugateI(item.adj, item.form);
+  else return conjugateNA(item.adj, item.form);
+}
+
+function updateStats() {
+  document.getElementById('stat-correct').textContent = '✓ ' + correctCount;
+  document.getElementById('stat-wrong').textContent = '✗ ' + wrongCount;
+  document.getElementById('stat-total').textContent = '共 ' + queue.length + ' 題';
+}
+
+// ══════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════
+function setType(t) {
+  currentType = t;
+  ['i','na','both'].forEach(x => {
+    const btn = document.getElementById('type-'+x);
+    btn.className = 'pill-btn';
+    if (x === t) {
+      if (t==='i') btn.classList.add('active-i');
+      else if (t==='na') btn.classList.add('active-na');
+      else btn.classList.add('active-both');
+    }
+  });
+  restart();
+}
+
+function setMode(m) {
+  currentMode = m;
+  ['flash','quiz','cnjp','ref'].forEach(x => {
+    const btn = document.getElementById('mode-'+x);
+    btn.className = 'pill-btn';
+    if (x === m) btn.classList.add('active-mode');
+  });
+  const ff = document.getElementById('form-filter');
+  ff.style.display = m === 'ref' ? 'none' : 'flex';
+  restart();
+}
+
+function toggleForm(el) {
+  const f = el.dataset.form;
+  if (selectedChips.has(f)) {
+    if (selectedChips.size <= 1) return;
+    selectedChips.delete(f);
+    el.classList.remove('selected');
+  } else {
+    selectedChips.add(f);
+    el.classList.add('selected');
+  }
+  restart();
+}
+
+function selectAllForms() {
+  document.querySelectorAll('.form-chip').forEach(el => {
+    selectedChips.add(el.dataset.form);
+    el.classList.add('selected');
+  });
+  restart();
+}
+
+function restart(retryWrong = false) {
+  if (!retryWrong) {
+    correctCount = 0;
+    wrongCount = 0;
+    wrongList = [];
+  }
+  queue = buildQueue(retryWrong);
+  currentIdx = 0;
+  answered = false;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// ══════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════
+function render() {
+  const area = document.getElementById('main-area');
+  if (currentMode === 'ref') { renderRef(area); return; }
+  if (queue.length === 0) {
+    area.innerHTML = `<div class="empty-state"><p>請至少選擇一種變化形！</p></div>`;
+    return;
+  }
+  if (currentIdx >= queue.length) { renderDone(area); return; }
+
+  const progress = `<div class="progress-row">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${(currentIdx/queue.length*100).toFixed(1)}%"></div></div>
+    <span class="progress-label">${currentIdx}／${queue.length}</span>
+  </div>`;
+
+  if (currentMode === 'flash') renderFlash(area, progress);
+  else if (currentMode === 'quiz') renderQuiz(area, progress);
+  else if (currentMode === 'cnjp') renderCnjp(area, progress);
+}
+
+// Map a conjugation form key to its base example-lookup key (handles 丁寧體 variants)
+function exKeyFor(form) {
+  const map = {
+    neg:'neg', negd:'neg',
+    past:'past', pastd:'past',
+    pastneg:'pastneg', pastnegd:'pastneg',
+    te:'te', adv:'adv', hyp:'hyp',
+    naru:'naru', sou:'sou', sugiru:'sugiru', sa:'sa', base:'base'
+  };
+  return map[form] || form;
+}
+
+function getExample(item) {
+  const adj = item.adj;
+  if (!adj.ex) return null;
+  const key = exKeyFor(item.form);
+  const ex = adj.ex[key];
+  if (!ex) return null;
+
+  // 丁寧體 forms (negd/pastd/pastnegd) reuse the same example template as
+  // their plain-form counterparts. Those templates often end the blank with
+  // a literal 'です' (e.g. '__です。') written for the plain-form answer.
+  // Since the 丁寧體 answer itself already ends in です (楽しくないです),
+  // filling it into a 'です'-suffixed template would duplicate です です.
+  // Detect that case and strip the redundant trailing です from the template.
+  const isTeineiForm = item.form === 'negd' || item.form === 'pastd' || item.form === 'pastnegd';
+  if (isTeineiForm && /__です/.test(ex.jp)) {
+    return { jp: ex.jp.replace('__です', '__'), zh: ex.zh };
+  }
+  return ex;
+}
+
+// ══════════════════════════════════════════
+//  TEXT-TO-SPEECH (例句語音)
+// ══════════════════════════════════════════
+const SPEAKER_ICON_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+
+function escapeForJs(str) {
+  return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+let jpVoice = null;
+function pickJaVoice() {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return null;
+  const voices = window.speechSynthesis.getVoices();
+  return voices.find(v => v.lang === 'ja-JP') || voices.find(v => v.lang && v.lang.startsWith('ja')) || null;
+}
+if (typeof window !== 'undefined' && window.speechSynthesis) {
+  jpVoice = pickJaVoice();
+  window.speechSynthesis.onvoiceschanged = () => { jpVoice = pickJaVoice(); };
+}
+
+function speakJP(text) {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    alert('您的瀏覽器不支援語音播放功能');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP';
+  if (jpVoice) utter.voice = jpVoice;
+  utter.rate = 0.9;
+  window.speechSynthesis.speak(utter);
+}
+
+function renderFlash(area, progress) {
+  const item = queue[currentIdx];
+  const adj = item.adj;
+  const isNA = adj.type === 'na';
+  const answer = getAnswer(item);
+  const formLabel = FORM_LABELS[item.form];
+  const example = getExample(item);
+
+  let exampleBlockBefore = '';
+  let exampleBlockAfter = '';
+  if (example) {
+    const gapped = example.jp.replace('__', '＿＿＿＿');
+    const gappedAnnotated = annotateFurigana(gapped);
+    exampleBlockBefore = `<div class="card-example" id="card-example-before">
+      <div class="example-jp">${gappedAnnotated}</div>
+    </div>`;
+
+    // Annotate the surrounding sentence and the answer separately, then splice
+    // together so the <span class="example-fill"> wrapper isn't corrupted by
+    // the furigana annotation pass (which only operates on plain text).
+    const [beforeBlank, afterBlank] = example.jp.split('__');
+    const beforeAnnotated = annotateFurigana(beforeBlank);
+    const afterAnnotated = annotateFurigana(afterBlank);
+    const answerAnnotated = annotateFurigana(answer);
+    const filled = `${beforeAnnotated}<span class="example-fill">${answerAnnotated}</span>${afterAnnotated}`;
+    const filledPlain = example.jp.replace('__', answer);
+    exampleBlockAfter = `<div class="card-example" id="card-example-after">
+      <div class="example-row">
+        <div class="example-jp">${filled}</div>
+        <button class="speak-btn" onclick="event.stopPropagation(); speakJP('${escapeForJs(filledPlain)}')" title="播放語音" aria-label="播放例句語音">${SPEAKER_ICON_SVG}</button>
+      </div>
+      <div class="example-zh">${example.zh}</div>
+    </div>`;
+  }
+
+  area.innerHTML = progress + `
+  <div class="flashcard-wrap">
+    <div class="flashcard" onclick="flipCard()">
+      <div class="card-prompt">請說出變化形</div>
+      <div class="card-word">${adj.w}</div>
+      <div class="card-reading">${adj.r}</div>
+      <div class="card-zh">${adj.zh}</div>
+      <div class="card-target ${isNA?'na':''}">${formLabel}</div>
+      ${exampleBlockBefore}
+      <div class="card-answer" id="card-answer">
+        <div class="answer-big">${answer}</div>
+        <div class="answer-note">${isNA?'な形容詞':'い形容詞'} ／ ${formLabel}</div>
+        ${exampleBlockAfter}
+      </div>
+      <div class="card-tap" id="card-tap">點擊卡片顯示答案</div>
+    </div>
+    <div class="btn-row" id="btn-row" style="display:none">
+      <button class="btn-wrong" onclick="markWrong()">✗ 不會</button>
+      <button class="btn-correct" onclick="markCorrect()">✓ 會了</button>
+    </div>
+  </div>`;
+}
+
+function flipCard() {
+  if (cardFlipped) return;
+  cardFlipped = true;
+  document.getElementById('card-answer').classList.add('show');
+  document.getElementById('card-tap').style.display = 'none';
+  document.getElementById('btn-row').style.display = 'flex';
+  const before = document.getElementById('card-example-before');
+  if (before) before.style.display = 'none';
+}
+
+function markCorrect() {
+  correctCount++;
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+function markWrong() {
+  wrongCount++;
+  wrongList.push(queue[currentIdx]);
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// Quiz mode
+function renderQuiz(area, progress) {
+  const item = queue[currentIdx];
+  const adj = item.adj;
+  const isNA = adj.type === 'na';
+  const formLabel = FORM_LABELS[item.form];
+
+  // Build example sentence context
+  let sentence = '';
+  if (item.form === 'neg' || item.form === 'negd') sentence = `今日は＿＿＿＿。`;
+  else if (item.form === 'past' || item.form === 'pastd') sentence = `昨日は＿＿＿＿。`;
+  else if (item.form === 'pastneg' || item.form === 'pastnegd') sentence = `昨日は＿＿＿＿。`;
+  else if (item.form === 'te') sentence = `＿＿＿＿、とても大変だ。`;
+  else if (item.form === 'adv') sentence = `＿＿＿＿なった。`;
+  else if (item.form === 'hyp') sentence = `＿＿＿＿、どうぞ。`;
+  else if (item.form === 'naru') sentence = `最近＿＿＿＿。`;
+  else if (item.form === 'sou') sentence = `あの店は＿＿＿＿だ。`;
+  else if (item.form === 'sugiru') sentence = `これは＿＿＿＿。`;
+  else if (item.form === 'sa') sentence = `この＿＿＿＿が好きだ。`;
+  else sentence = `＿＿＿＿。`;
+
+  area.innerHTML = progress + `
+  <div class="quiz-card">
+    <div class="quiz-target-label">
+      「<strong>${adj.w}</strong>」（${adj.r}）${adj.zh}的
+      <span class="quiz-target-form ${isNA?'na':''}">${formLabel}</span>
+      是什麼？
+    </div>
+    <div class="quiz-sentence" style="color:#bbb;font-size:0.9rem;margin-bottom:14px">${sentence}</div>
+    <input class="quiz-input" id="quiz-input" type="text" placeholder="輸入答案…" onkeydown="if(event.key==='Enter')checkQuiz()">
+    <div><button class="btn-submit" onclick="checkQuiz()">確認</button>
+    <button class="btn-next" id="btn-next" onclick="nextQuiz()">下一題 →</button></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-answer-reveal" id="quiz-reveal"></div>
+  </div>`;
+
+  setTimeout(() => { const inp = document.getElementById('quiz-input'); if(inp) inp.focus(); }, 50);
+}
+
+function checkQuiz() {
+  if (answered) return;
+  const item = queue[currentIdx];
+  const answer = getAnswer(item);
+  const input = document.getElementById('quiz-input');
+  const val = input.value.trim();
+  const fb = document.getElementById('quiz-feedback');
+  const rev = document.getElementById('quiz-reveal');
+  const btnNext = document.getElementById('btn-next');
+
+  if (val === answer) {
+    input.classList.add('correct-input');
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+  } else {
+    input.classList.add('wrong-input');
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = '✗ 不正確';
+    rev.textContent = `正確答案：${answer}`;
+    wrongCount++;
+    wrongList.push(item);
+  }
+  answered = true;
+  btnNext.style.display = 'inline-block';
+  updateStats();
+}
+
+function nextQuiz() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// CN→JP mode
+function renderCnjp(area, progress) {
+  const item = queue[currentIdx];
+  const adj = item.adj;
+  const isNA = adj.type === 'na';
+  const formLabel = FORM_LABELS[item.form];
+
+  area.innerHTML = progress + `
+  <div class="cnjp-card">
+    <div class="cnjp-hint">中文 → 日文</div>
+    <div class="cnjp-word">${adj.zh}</div>
+    <div class="cnjp-form-label">的 <span class="cnjp-form-badge ${isNA?'na':''}">${formLabel}</span></div>
+    <input class="quiz-input" id="cnjp-input" type="text" placeholder="輸入日文答案…" onkeydown="if(event.key==='Enter')checkCnjp()" style="margin-bottom:0">
+    <div><button class="btn-submit" onclick="checkCnjp()">確認</button>
+    <button class="btn-next" id="btn-next" onclick="nextCnjp()">下一題 →</button></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-answer-reveal" id="quiz-reveal"></div>
+  </div>`;
+
+  setTimeout(() => { const inp = document.getElementById('cnjp-input'); if(inp) inp.focus(); }, 50);
+}
+
+function checkCnjp() {
+  if (answered) return;
+  const item = queue[currentIdx];
+  const answer = getAnswer(item);
+  const input = document.getElementById('cnjp-input');
+  const val = input.value.trim();
+  const fb = document.getElementById('quiz-feedback');
+  const rev = document.getElementById('quiz-reveal');
+  const btnNext = document.getElementById('btn-next');
+
+  if (val === answer) {
+    input.classList.add('correct-input');
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+  } else {
+    input.classList.add('wrong-input');
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = '✗ 不正確';
+    rev.textContent = `正確答案：${answer}`;
+    wrongCount++;
+    wrongList.push(item);
+  }
+  answered = true;
+  btnNext.style.display = 'inline-block';
+  updateStats();
+}
+
+function nextCnjp() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// Done screen
+function renderDone(area) {
+  const total = correctCount + wrongCount;
+  const pct = total > 0 ? Math.round(correctCount / total * 100) : 0;
+  area.innerHTML = `<div class="done-state">
+    <div class="big">${pct}%</div>
+    <h2>練習完成！</h2>
+    <p>正確 ${correctCount} 題，錯誤 ${wrongCount} 題（正確率 ${pct}%）</p>
+    ${wrongCount > 0 ? `<button class="btn-retry-wrong" onclick="restart(true)">重練錯題（${wrongCount}題）</button>` : ''}
+    <button class="btn-restart" onclick="restart(false)">重新開始</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+//  REFERENCE TABLE
+// ══════════════════════════════════════════
+function renderRef(area) {
+  const forms = [
+    {key:'base', label:'辭書形', tag:'base'},
+    {key:'neg', label:'否定（普通）', tag:'neg'},
+    {key:'negd', label:'否定（丁寧）', tag:'neg'},
+    {key:'past', label:'過去（普通）', tag:'past'},
+    {key:'pastd', label:'過去（丁寧）', tag:'past'},
+    {key:'pastneg', label:'過去否定（普通）', tag:'pastneg'},
+    {key:'pastnegd', label:'過去否定（丁寧）', tag:'pastneg'},
+    {key:'te', label:'て形', tag:'other'},
+    {key:'adv', label:'副詞形', tag:'other'},
+    {key:'hyp', label:'假設形', tag:'other'},
+    {key:'naru', label:'〜くなる／〜になる', tag:'other'},
+    {key:'sou', label:'〜そう', tag:'other'},
+    {key:'sugiru', label:'〜すぎる', tag:'other'},
+    {key:'sa', label:'〜さ', tag:'other'},
+  ];
+
+  let adjs_i = currentType !== 'na' ? I_ADJ : [];
+  let adjs_na = currentType !== 'i' ? NA_ADJ : [];
+
+  function tagClass(tag, isNA) {
+    if (tag === 'base') return isNA ? 'ft-base-na' : 'ft-base';
+    if (tag === 'neg') return 'ft-neg';
+    if (tag === 'past') return 'ft-past';
+    if (tag === 'pastneg') return 'ft-pastneg';
+    return 'ft-other';
+  }
+
+  let iHtml = adjs_i.map((adj, idx) => {
+    const rows = forms.map(f => {
+      const ans = conjugateI(adj, f.key);
+      const tc = tagClass(f.tag, false);
+      return `<tr><td><span class="form-tag ${tc}">${f.label}</span></td><td style="font-size:1rem">${ans}</td></tr>`;
+    }).join('');
+    return `<div class="ref-table-wrap collapsed" style="margin-bottom:14px" data-idx="i-${idx}">
+      <div class="ref-adj-header i" onclick="toggleRefCard(this)">
+        <span class="ref-header-text">い形容詞 ／ ${adj.w}（${adj.r}）— ${adj.zh}</span>
+        <span class="ref-toggle-icon">▼</span>
+      </div>
+      <table class="ref-table"><tbody>${rows}</tbody></table>
+    </div>`;
+  }).join('');
+
+  let naHtml = adjs_na.map((adj, idx) => {
+    const rows = forms.map(f => {
+      const ans = conjugateNA(adj, f.key);
+      const tc = tagClass(f.tag, true);
+      return `<tr><td><span class="form-tag ${tc}">${f.label}</span></td><td style="font-size:1rem">${ans}</td></tr>`;
+    }).join('');
+    return `<div class="ref-table-wrap collapsed" style="margin-bottom:14px" data-idx="na-${idx}">
+      <div class="ref-adj-header na" onclick="toggleRefCard(this)">
+        <span class="ref-header-text">な形容詞 ／ ${adj.w}（${adj.r}）— ${adj.zh}</span>
+        <span class="ref-toggle-icon">▼</span>
+      </div>
+      <table class="ref-table"><tbody>${rows}</tbody></table>
+    </div>`;
+  }).join('');
+
+  area.innerHTML = `
+    <input class="ref-search" id="ref-search" placeholder="搜尋形容詞（日文或中文）…" oninput="filterRef(this.value)">
+    <div class="ref-controls">
+      <button class="ref-control-btn" onclick="expandAllRef()">全部展開</button>
+      <button class="ref-control-btn" onclick="collapseAllRef()">全部收合</button>
+    </div>
+    <div id="ref-content">${iHtml}${naHtml}</div>`;
+}
+
+function toggleRefCard(headerEl) {
+  const wrap = headerEl.closest('.ref-table-wrap');
+  wrap.classList.toggle('collapsed');
+}
+
+function expandAllRef() {
+  document.querySelectorAll('#ref-content .ref-table-wrap').forEach(el => el.classList.remove('collapsed'));
+}
+
+function collapseAllRef() {
+  document.querySelectorAll('#ref-content .ref-table-wrap').forEach(el => el.classList.add('collapsed'));
+}
+
+function filterRef(val) {
+  const v = val.trim().toLowerCase();
+  document.querySelectorAll('#ref-content .ref-table-wrap').forEach(el => {
+    const header = el.querySelector('.ref-adj-header').textContent.toLowerCase();
+    const matches = !v || header.includes(v);
+    el.style.display = matches ? '' : 'none';
+    if (v && matches) el.classList.remove('collapsed');
+    if (!v) el.classList.add('collapsed');
+  });
+}
+
+
+// ══════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════
+const THEME_ORDER = ['light', 'dark', 'gray'];
+const THEME_ICONS = {
+  light: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line></svg>`,
+  dark: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`,
+  gray: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" stroke="none"></path></svg>`,
+};
+const THEME_TITLES = { light: '亮色模式', dark: '深色模式', gray: '黑白模式' };
+
+function setTheme(t) {
+  document.body.classList.remove('dark', 'grayscale');
+  if (t === 'dark') document.body.classList.add('dark');
+  else if (t === 'gray') document.body.classList.add('grayscale');
+
+  const icon = document.getElementById('theme-icon');
+  const btn = document.getElementById('theme-toggle');
+  if (icon) icon.innerHTML = THEME_ICONS[t];
+  if (btn) btn.title = THEME_TITLES[t];
+
+  try { localStorage.setItem('adj-theme', t); } catch(e) {}
+}
+
+function cycleTheme() {
+  let current = 'light';
+  try { current = localStorage.getItem('adj-theme') || 'light'; } catch(e) {}
+  const idx = THEME_ORDER.indexOf(current);
+  const next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];
+  setTheme(next);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+(function(){
+  try {
+    const saved = localStorage.getItem('adj-theme');
+    setTheme(saved || 'light');
+  } catch(e) {
+    setTheme('light');
+  }
+})();
+restart();
+</script>
+</body>
+</html>

@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="日文助詞學習工具，涵蓋格助詞・副助詞・接續助詞，支援單字卡、填空、參考表三種練習模式。">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="joshi-drill｜日文助詞學習">
+<meta property="og:description" content="格助詞・副助詞・接続助詞の学習ツール">
+<meta property="og:type" content="website">
+<title>joshi-drill｜日文助詞學習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: #f0f2f7;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ══ DARK MODE ══ */
+body.dark {
+  background: #0f1117;
+  color: #e8e8f0;
+}
+body.dark .header,
+body.dark .settings-bar,
+body.dark .usage-filter {
+  background: #1a1c26;
+  border-color: #2e3044;
+}
+body.dark .header h1 { color: #e8e8f0; }
+body.dark .header-stats { color: #aaa; }
+body.dark .stat-badge { background: #2e3044; color: #ccc; }
+body.dark .stat-badge.correct { background: #0d3d28; color: #4ecca3; }
+body.dark .stat-badge.wrong { background: #3d0d0d; color: #f08080; }
+body.dark .settings-label { color: #666; }
+body.dark .pill-btn { background: #1a1c26; border-color: #3a3d52; color: #aaa; }
+body.dark .pill-btn:hover { border-color: #666; }
+body.dark .pill-btn.active-kaku { background: #162436; border-color: #4a90d9; color: #7ab8f0; }
+body.dark .pill-btn.active-fuku { background: #2d1a08; border-color: #e07a2f; color: #f0a870; }
+body.dark .pill-btn.active-setsu { background: #1e1228; border-color: #8a5fd9; color: #b090e8; }
+body.dark .pill-btn.active-both { background: #1e1a08; border-color: #d9c34a; color: #e8d878; }
+body.dark .pill-btn.active-mode { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .divider-v { background: #2e3044; }
+body.dark .usage-chip { background: #1a1c26; border-color: #3a3d52; color: #888; }
+body.dark .usage-chip.selected { background: #e8e8f0; border-color: #e8e8f0; color: #1a1c26; }
+body.dark .select-all-btn { color: #7ab8f0; }
+body.dark .flashcard,
+body.dark .quiz-card { background: #1a1c26; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+body.dark .card-prompt { color: #555; }
+body.dark .card-word { color: #e8e8f0; }
+body.dark .card-cat-badge.kaku { background: #162436; color: #7ab8f0; }
+body.dark .card-cat-badge.fuku { background: #2d1a08; color: #f0a870; }
+body.dark .card-cat-badge.setsu { background: #1e1228; color: #b090e8; }
+body.dark .card-usage { background: #162436; color: #7ab8f0; }
+body.dark .card-sentence-jp { color: #e8e8f0; }
+body.dark .card-sentence-zh { color: #888; }
+body.dark .card-answer { border-top-color: #2e3044; }
+body.dark .answer-exp { color: #aaa; }
+body.dark .card-tap { color: #444; }
+body.dark .btn-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .btn-wrong:hover { background: #5a1515; }
+body.dark .btn-correct { background: #0d3d28; color: #4ecca3; }
+body.dark .btn-correct:hover { background: #155c3d; }
+body.dark .quiz-blank-fill { color: #4ecca3; border-bottom-color: #4ecca3; }
+body.dark .quiz-sentence { color: #ccc; }
+body.dark .quiz-zh { color: #888; }
+body.dark .quiz-input { background: #0f1117; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .quiz-input:focus { border-color: #4a90d9; }
+body.dark .quiz-input.correct-input { background: #0d3d28; border-color: #4ecca3; }
+body.dark .quiz-input.wrong-input { background: #3d0d0d; border-color: #f08080; }
+body.dark .quiz-feedback.ok { color: #4ecca3; }
+body.dark .quiz-feedback.ng { color: #f08080; }
+body.dark .quiz-answer-reveal { color: #888; }
+body.dark .quiz-exp-reveal { color: #777; }
+body.dark .choice-btn { background: #1a1c26; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .choice-btn:hover:not(:disabled) { border-color: #4a90d9; background: #162030; }
+body.dark .choice-btn.choice-correct { background: #0d3d28; border-color: #4ecca3; color: #4ecca3; }
+body.dark .choice-btn.choice-wrong { background: #3d0d0d; border-color: #f08080; color: #f08080; }
+body.dark .ref-search { background: #1a1c26; border-color: #3a3d52; color: #e8e8f0; }
+body.dark .ref-search:focus { border-color: #4a90d9; }
+body.dark .ref-table-wrap { background: #1a1c26; }
+body.dark .ref-p-header.kaku { background: #162436; color: #7ab8f0; border-color: #2a4060; }
+body.dark .ref-p-header.fuku { background: #2d1a08; color: #f0a870; border-color: #5a3010; }
+body.dark .ref-p-header.setsu { background: #1e1228; color: #b090e8; border-color: #3a2050; }
+body.dark .ref-p-header:hover { filter: brightness(1.25); }
+body.dark .ref-usage-row { border-color: #23253a; }
+body.dark .ref-usage-label { color: #e8e8f0; }
+body.dark .ref-usage-exp { color: #999; }
+body.dark .ref-usage-jp { color: #7ab8f0; }
+body.dark .ref-usage-zh { color: #777; }
+body.dark .ref-usage-row:hover { background: #1e2030; }
+body.dark .cat-intro-card.kaku { background: #131c2a; border-color: #2a4060; }
+body.dark .cat-intro-card.fuku { background: #251a0c; border-color: #5a3010; }
+body.dark .cat-intro-card.setsu { background: #1c1428; border-color: #3a2050; }
+body.dark .cat-intro-card.kaku .cat-intro-title { color: #7ab8f0; }
+body.dark .cat-intro-card.fuku .cat-intro-title { color: #f0a870; }
+body.dark .cat-intro-card.setsu .cat-intro-title { color: #b090e8; }
+body.dark .cat-intro-role { color: #777; }
+body.dark .cat-intro-exp { color: #ccc; }
+body.dark .cat-intro-list { color: #999; }
+body.dark .cat-intro-list-label { color: #777; }
+body.dark .progress-bar-bg { background: #2e3044; }
+body.dark .btn-submit { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-submit:hover { background: #ccc; }
+body.dark .btn-next { background: #162436; color: #7ab8f0; }
+body.dark .btn-next:hover { background: #1e3a56; }
+body.dark .btn-restart { background: #e8e8f0; color: #1a1c26; }
+body.dark .btn-restart:hover { background: #ccc; }
+body.dark .btn-retry-wrong { background: #3d0d0d; color: #f08080; }
+body.dark .done-state h2 { color: #e8e8f0; }
+body.dark .done-state p { color: #888; }
+body.dark .empty-state { color: #555; }
+
+/* ══ GRAYSCALE MODE ══ */
+body.grayscale { filter: grayscale(1); }
+body.grayscale.dark { filter: grayscale(1); }
+
+/* ══ Theme toggle button (single, cycles light→dark→gray) ══ */
+.theme-toggle-btn {
+  border: none; background: transparent; cursor: pointer;
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; color: #666; transition: background 0.15s;
+}
+.theme-toggle-btn:hover { background: #f0f2f7; }
+.theme-toggle-btn svg { display: block; }
+
+.speak-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%; border: none; background: transparent;
+  color: #4a90d9; cursor: pointer; vertical-align: middle; margin-left: 6px; flex-shrink: 0;
+  transition: background 0.15s; padding: 0;
+}
+.speak-btn:hover { background: #e8f4fd; }
+.speak-btn:active { background: #c5e0f8; }
+.speak-btn svg { display: block; }
+
+/* ── Furigana (ruby) ── */
+ruby { display: inline ruby; }
+rt {
+  font-size: 0.55em; color: #888; text-align: center;
+  line-height: 1.2; letter-spacing: 0.03em;
+}
+body.dark rt { color: #777; }
+.particle-hl { color: #4a90d9; font-weight: 700; }
+body.dark .particle-hl { color: #7ab8f0; }
+.card-sentence-jp ruby, .ref-usage-jp ruby { display: inline ruby; }
+.card-sentence-jp rt, .ref-usage-jp rt { visibility: hidden; }
+.card-sentence-jp:hover rt,
+.ref-usage-jp:hover rt { visibility: visible; }
+body.dark .theme-toggle-btn { color: #ccc; }
+body.dark .theme-toggle-btn:hover { background: #242636; }
+body.dark .speak-btn { color: #7ab8f0; }
+body.dark .speak-btn:hover { background: #162436; }
+body.dark .speak-btn:active { background: #1e3a56; }
+
+/* ── Header ── */
+.header {
+  background: #fff; border-bottom: 1px solid #e4e6ef; padding: 12px 20px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.header h1 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; flex: 1; min-width: 160px; }
+.header-stats { display: flex; gap: 10px; align-items: center; font-size: 0.82rem; color: #666; }
+.stat-badge { background: #f0f2f7; border-radius: 999px; padding: 3px 10px; font-weight: 600; }
+.stat-badge.correct { background: #e6f9f0; color: #0a7a4a; }
+.stat-badge.wrong { background: #fde8e8; color: #c0392b; }
+
+/* ── Settings Panel ── */
+.settings-bar {
+  background: #fff; border-bottom: 1px solid #e4e6ef; padding: 10px 20px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.settings-label { font-size: 0.8rem; font-weight: 700; color: #888; white-space: nowrap; }
+
+.pill-btn {
+  border: 2px solid #ddd; background: #fff; border-radius: 999px; padding: 4px 14px;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+  color: #555; white-space: nowrap;
+}
+.pill-btn:hover { border-color: #aaa; }
+.pill-btn.active-kaku { background: #e8f4fd; border-color: #4a90d9; color: #2563a8; }
+.pill-btn.active-fuku { background: #fef3e8; border-color: #e07a2f; color: #b85c10; }
+.pill-btn.active-setsu { background: #f0e8fd; border-color: #8a5fd9; color: #5a2ba8; }
+.pill-btn.active-both { background: #fdf9e0; border-color: #d9c34a; color: #8a7a10; }
+.pill-btn.active-mode { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+
+.divider-v { width: 1px; height: 24px; background: #e4e6ef; margin: 0 4px; }
+
+/* ── Usage Filter (per-category checkbox row, like form-filter) ── */
+.usage-filter {
+  background: #fff; border-bottom: 1px solid #e4e6ef; padding: 12px 20px;
+  display: flex; gap: 10px 8px; flex-wrap: wrap; align-items: center;
+}
+.usage-chip {
+  border: 1.5px solid #ddd; background: #fff; border-radius: 6px; padding: 4px 12px;
+  font-size: 0.78rem; cursor: pointer; color: #666; transition: all 0.13s; user-select: none;
+  margin: 2px 0;
+}
+.usage-chip.selected { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+#particle-chips { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.select-all-btn {
+  font-size: 0.75rem; color: #4a90d9; cursor: pointer; text-decoration: underline;
+  margin-left: 6px; white-space: nowrap;
+}
+
+/* ── Main Area ── */
+.main { padding: 24px 20px; max-width: 720px; margin: 0 auto; }
+
+/* ── Flashcard Mode ── */
+.flashcard-wrap { perspective: 1000px; }
+.flashcard {
+  width: 100%; min-height: 220px; background: #fff; border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 32px 26px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; cursor: pointer; transition: box-shadow 0.2s; position: relative;
+}
+.flashcard:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.13); }
+.card-prompt { font-size: 0.82rem; color: #aaa; margin-bottom: 10px; letter-spacing: 0.05em; }
+.card-cat-badge {
+  display: inline-block; font-size: 0.72rem; font-weight: 700; border-radius: 999px;
+  padding: 2px 12px; margin-bottom: 10px;
+}
+.card-cat-badge.kaku { background: #e8f4fd; color: #2563a8; }
+.card-cat-badge.fuku { background: #fef3e8; color: #b85c10; }
+.card-cat-badge.setsu { background: #f0e8fd; color: #5a2ba8; }
+.card-word { font-size: 2.2rem; font-weight: 700; color: #1a1a2e; letter-spacing: 0.04em; margin-bottom: 10px; }
+.card-usage {
+  font-size: 0.98rem; color: #2563a8; font-weight: 600; background: #e8f4fd;
+  border-radius: 8px; padding: 8px 16px; margin-bottom: 16px; line-height: 1.5;
+}
+.card-sentence-jp { font-size: 1.15rem; color: #333; line-height: 1.8; margin-bottom: 6px; }
+.card-sentence-zh { font-size: 0.92rem; color: #888; }
+.card-answer { display: none; margin-top: 20px; width: 100%; border-top: 1px dashed #eee; padding-top: 16px; text-align: center; }
+.card-answer.show { display: block; }
+.answer-exp { font-size: 0.9rem; color: #555; line-height: 1.6; }
+.card-tap { font-size: 0.78rem; color: #ccc; margin-top: 14px; }
+.btn-row { display: flex; gap: 12px; margin-top: 18px; justify-content: center; }
+.btn-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-wrong:hover { background: #f5c6c6; }
+.btn-correct { background: #e6f9f0; color: #0a7a4a; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btn-correct:hover { background: #b8edcf; }
+
+/* ── Quiz Mode (fill-in-blank) ── */
+.quiz-card { background: #fff; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 28px 24px; }
+.quiz-cat-badge { display: inline-block; font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 2px 12px; margin-bottom: 12px; }
+.quiz-cat-badge.kaku { background: #e8f4fd; color: #2563a8; }
+.quiz-cat-badge.fuku { background: #fef3e8; color: #b85c10; }
+.quiz-cat-badge.setsu { background: #f0e8fd; color: #5a2ba8; }
+.quiz-usage-label { font-size: 0.85rem; color: #888; margin-bottom: 14px; line-height: 1.6; }
+.quiz-usage-label strong { color: #4a4a6e; }
+.quiz-sentence { font-size: 1.2rem; line-height: 2; margin-bottom: 6px; color: #1a1a2e; }
+.quiz-blank-fill { display: inline-block; min-width: 50px; border-bottom: 2px solid #4a90d9; color: #4a90d9; font-weight: 700; text-align: center; vertical-align: bottom; }
+.quiz-zh { font-size: 0.92rem; color: #888; margin-bottom: 18px; }
+.quiz-input {
+  width: 100%; border: 2px solid #ddd; border-radius: 10px; padding: 10px 14px;
+  font-size: 1.1rem; outline: none; transition: border 0.15s; font-family: inherit; color: #1a1a2e;
+}
+.quiz-input:focus { border-color: #4a90d9; }
+.quiz-input.correct-input { border-color: #0a7a4a; background: #e6f9f0; }
+.quiz-input.wrong-input { border-color: #c0392b; background: #fde8e8; }
+.quiz-feedback { margin-top: 12px; font-size: 0.95rem; min-height: 24px; font-weight: 600; }
+.quiz-feedback.ok { color: #0a7a4a; }
+.quiz-feedback.ng { color: #c0392b; }
+.quiz-answer-reveal { font-size: 0.9rem; color: #555; margin-top: 6px; }
+.quiz-exp-reveal { font-size: 0.85rem; color: #888; margin-top: 6px; line-height: 1.6; }
+
+/* ── Choice Mode (multiple choice) ── */
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; margin-bottom: 16px; }
+.choice-btn {
+  border: 2px solid #ddd; background: #fff; border-radius: 12px; padding: 14px 10px;
+  font-size: 1.15rem; font-weight: 700; color: #1a1a2e; cursor: pointer;
+  transition: all 0.15s; font-family: inherit;
+}
+.choice-btn:hover:not(:disabled) { border-color: #4a90d9; background: #f5faff; }
+.choice-btn:disabled { cursor: default; }
+.choice-btn.choice-correct { background: #e6f9f0; border-color: #0a7a4a; color: #0a7a4a; }
+.choice-btn.choice-wrong { background: #fde8e8; border-color: #c0392b; color: #c0392b; }
+
+/* ── Reference Mode ── */
+.ref-search {
+  width: 100%; border: 2px solid #ddd; border-radius: 10px; padding: 10px 16px;
+  font-size: 1rem; outline: none; margin-bottom: 16px; font-family: inherit; transition: border 0.15s;
+}
+.ref-search:focus { border-color: #4a90d9; }
+.ref-table-wrap { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
+.ref-p-header { padding: 12px 18px; font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; transition: filter 0.1s; }
+.ref-p-header:hover { filter: brightness(0.97); }
+.ref-chevron { display: inline-block; font-size: 0.75rem; transition: transform 0.18s; opacity: 0.6; }
+.ref-p-header.expanded .ref-chevron { transform: rotate(90deg); }
+.ref-p-name { flex: 1; }
+.ref-p-header.kaku { background: #e8f4fd; color: #2563a8; border-bottom: 1px solid #b8d9f5; }
+.ref-p-header.fuku { background: #fef3e8; color: #b85c10; border-bottom: 1px solid #f5c89a; }
+.ref-p-header.setsu { background: #f0e8fd; color: #5a2ba8; border-bottom: 1px solid #d5c0f5; }
+.ref-p-header .cat-tag { font-size: 0.7rem; font-weight: 700; opacity: 0.7; }
+.ref-usage-row { padding: 12px 18px; border-bottom: 1px solid #f0f0f0; }
+.ref-usage-row:last-child { border-bottom: none; }
+.ref-usage-row:hover { background: #fafbff; }
+.ref-usage-label { font-weight: 700; font-size: 0.88rem; margin-bottom: 4px; }
+.ref-usage-exp { font-size: 0.82rem; color: #777; margin-bottom: 8px; line-height: 1.6; }
+.ref-usage-jp { font-size: 0.98rem; color: #2563a8; margin-bottom: 2px; }
+.ref-usage-zh { font-size: 0.82rem; color: #999; }
+
+/* ── Category Intro Cards (top of reference table) ── */
+.cat-intro-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.cat-intro-card {
+  border-radius: 14px; padding: 16px 18px; border: 1.5px solid transparent;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+.cat-intro-card.kaku { background: #f5faff; border-color: #b8d9f5; }
+.cat-intro-card.fuku { background: #fffaf3; border-color: #f5c89a; }
+.cat-intro-card.setsu { background: #faf6ff; border-color: #d5c0f5; }
+.cat-intro-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.cat-intro-title { font-size: 1.05rem; font-weight: 700; }
+.cat-intro-card.kaku .cat-intro-title { color: #2563a8; }
+.cat-intro-card.fuku .cat-intro-title { color: #b85c10; }
+.cat-intro-card.setsu .cat-intro-title { color: #5a2ba8; }
+.cat-intro-role { font-size: 0.82rem; color: #888; font-weight: 600; }
+.cat-intro-exp { font-size: 0.88rem; color: #444; line-height: 1.75; margin-bottom: 10px; }
+.cat-intro-list { font-size: 0.85rem; color: #666; line-height: 1.7; }
+.cat-intro-list-label { font-weight: 700; color: #888; margin-right: 2px; }
+
+/* ── Progress bar ── */
+.progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.progress-bar-bg { flex: 1; height: 8px; background: #e4e6ef; border-radius: 999px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #4a90d9, #6ab0f5); border-radius: 999px; transition: width 0.3s; }
+.progress-label { font-size: 0.8rem; color: #888; white-space: nowrap; }
+
+/* ── Empty / Done ── */
+.empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+.empty-state .big { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 1rem; }
+.done-state { text-align: center; padding: 40px 20px; }
+.done-state .big { font-size: 3.5rem; margin-bottom: 10px; }
+.done-state h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.done-state p { color: #666; margin-bottom: 20px; }
+.btn-restart { background: #1a1a2e; color: #fff; border: none; border-radius: 10px; padding: 12px 32px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.btn-restart:hover { background: #2d2d4e; }
+.btn-retry-wrong { background: #fde8e8; color: #c0392b; border: none; border-radius: 10px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-right: 10px; }
+
+/* submit btn */
+.btn-submit { background: #1a1a2e; color: #fff; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 14px; transition: background 0.15s; }
+.btn-submit:hover { background: #2d2d4e; }
+.btn-next { background: #e8f4fd; color: #2563a8; border: none; border-radius: 10px; padding: 10px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 14px; margin-left: 10px; transition: background 0.15s; display: none; }
+.btn-next:hover { background: #c5e0f8; }
+
+@media (max-width: 500px) {
+  .card-word { font-size: 1.7rem; }
+  .quiz-sentence { font-size: 1.05rem; }
+  .main { padding: 16px 12px; }
+  .settings-bar, .usage-filter { padding: 8px 12px; }
+  .header { padding: 10px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>🇯🇵 日文助詞學習</h1>
+  <div class="header-stats">
+    <span class="stat-badge correct" id="stat-correct">✓ 0</span>
+    <span class="stat-badge wrong" id="stat-wrong">✗ 0</span>
+    <span class="stat-badge" id="stat-total">共 0 題</span>
+  </div>
+  <button class="theme-toggle-btn" id="theme-toggle" onclick="cycleTheme()" title="切換主題"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="22"></line><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"></line><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"></line><line x1="2" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="22" y2="12"></line><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"></line><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"></line></svg></button>
+</div>
+
+<!-- Settings: Category + Mode -->
+<div class="settings-bar">
+  <span class="settings-label">範圍</span>
+  <button class="pill-btn active-both" id="cat-both" onclick="setCat('both')">全部混合</button>
+  <button class="pill-btn" id="cat-kaku" onclick="setCat('kaku')">格助詞</button>
+  <button class="pill-btn" id="cat-fuku" onclick="setCat('fuku')">副助詞</button>
+  <button class="pill-btn" id="cat-setsu" onclick="setCat('setsu')">接續助詞</button>
+  <div class="divider-v"></div>
+  <span class="settings-label">模式</span>
+  <button class="pill-btn active-mode" id="mode-flash" onclick="setMode('flash')">單字卡</button>
+  <button class="pill-btn" id="mode-quiz" onclick="setMode('quiz')">填空</button>
+  <button class="pill-btn" id="mode-choice" onclick="setMode('choice')">選擇題</button>
+  <button class="pill-btn" id="mode-ref" onclick="setMode('ref')">參考表</button>
+</div>
+
+<!-- Particle filter (hidden in ref mode) -->
+<div class="usage-filter" id="usage-filter">
+  <span class="settings-label">助詞</span>
+  <span id="particle-chips"></span>
+  <span class="select-all-btn" onclick="selectAllParticles()">全選</span>
+</div>
+
+<!-- Main content -->
+<div class="main" id="main-area"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  日文助詞資料庫：格助詞 9 ＋ 副助詞 14 ＋ 接續助詞 15
+// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  日文助詞資料庫：格助詞 9 ＋ 副助詞 14 ＋ 接續助詞 15
+//  每個助詞包含：分類、用法清單（說明＋例句＋填空題）
+// ══════════════════════════════════════════════════════════
+
+const PARTICLES = [
+
+// ════════════════════ 格助詞 (9) ════════════════════
+{
+  p: 'が', cat: 'kaku', reading: '',
+  usages: [
+    { label:'動作／狀態的主語', exp:'表示動作或狀態的主體（誰／什麼在做動作或處於狀態）。',
+      jp:'お尻【が】痛いです。', zh:'屁股痛。', blank:'お尻＿＿＿痛いです。', ans:'が' },
+    { label:'狀態的對象（想要・喜歡・厭惡等）', exp:'搭配欲しい、好き、嫌い、できる等表示感情或能力的對象。',
+      jp:'お金【が】好きです。', zh:'我喜歡錢。', blank:'お金＿＿＿好きです。', ans:'が' },
+    { label:'新資訊／第一次提及的主語', exp:'句子中第一次出現、屬於新資訊的主語，常與は的「已知主題」對比。',
+      jp:'昔、ある所に王様【が】いました。', zh:'從前在某個地方住著一位國王。', blank:'昔、ある所に王様＿＿＿いました。', ans:'が' },
+  ]
+},
+{
+  p: 'を', cat: 'kaku', reading: '',
+  usages: [
+    { label:'動作的對象（他動詞）', exp:'表示他動詞動作所及的對象物。',
+      jp:'バナナ【を】食べます。', zh:'吃香蕉。', blank:'バナナ＿＿＿食べます。', ans:'を' },
+    { label:'移動／離開／穿越的場所', exp:'搭配自動詞（散歩する、降りる、渡る等）表示經過、離開或穿越的場所。',
+      jp:'公園【を】散歩します。', zh:'在公園裡散步。', blank:'公園＿＿＿散歩します。', ans:'を' },
+    { label:'動作經歷的期間', exp:'表示度過、經歷的一段時間。',
+      jp:'楽しい時間【を】過ごした。', zh:'渡過了快樂的時光。', blank:'楽しい時間＿＿＿過ごした。', ans:'を' },
+  ]
+},
+{
+  p: 'に', cat: 'kaku', reading: '',
+  usages: [
+    { label:'動作發生的時間點', exp:'表示明確的時間點。',
+      jp:'月曜日【に】行きます。', zh:'星期一會去。', blank:'月曜日＿＿＿行きます。', ans:'に' },
+    { label:'表示存在', exp:'搭配ある／いる表示某處存在某物或某人。',
+      jp:'トイレ【に】花子がいます。', zh:'廁所裡有花子。', blank:'トイレ＿＿＿花子がいます。', ans:'に' },
+    { label:'進入點／歸著點', exp:'表示動作到達或進入的地點。',
+      jp:'彼女の部屋【に】入ります。', zh:'進入她的房間。', blank:'彼女の部屋＿＿＿入ります。', ans:'に' },
+    { label:'所有主', exp:'表示「擁有」的對象，常搭配ある／いる。',
+      jp:'私【に】わかるはずがありません。', zh:'我不可能會知道的。', blank:'私＿＿＿わかるはずがありません。', ans:'に' },
+    { label:'對象（人）', exp:'表示動作所朝向的對象（人）。',
+      jp:'好きな人【に】告白する。', zh:'向喜歡的人告白。', blank:'好きな人＿＿＿告白する。', ans:'に' },
+    { label:'對象（事物）', exp:'表示心理活動、態度所針對的事物對象。',
+      jp:'週休5日制【に】賛成します。', zh:'贊成週休五日制。', blank:'週休5日制＿＿＿賛成します。', ans:'に' },
+    { label:'變化的結果', exp:'搭配なる、変える等表示變化後的結果狀態。',
+      jp:'もうすぐ夏【に】なります。', zh:'馬上就要變成夏天了。', blank:'もうすぐ夏＿＿＿なります。', ans:'に' },
+    { label:'動作主（被動／使役）', exp:'被動句或使役句中表示動作的發出者。',
+      jp:'先生【に】教えてもらいます。', zh:'請老師教導。', blank:'先生＿＿＿教えてもらいます。', ans:'に' },
+    { label:'目的', exp:'搭配移動動詞，表示前往的目的。',
+      jp:'映画を見【に】行きます。', zh:'去看電影。', blank:'映画を見＿＿＿行きます。', ans:'に' },
+    { label:'評價、勝劣、成敗的對象', exp:'表示比較、評價、勝敗所針對的基準。',
+      jp:'試合【に】負けます。', zh:'輸掉比賽。', blank:'試合＿＿＿負けます。', ans:'に' },
+    { label:'內容物的多寡（富む・乏しい・欠ける等）', exp:'表示某方面內容的豐富或欠缺。',
+      jp:'想像力【に】乏しいです。', zh:'缺乏想像力。', blank:'想像力＿＿＿乏しいです。', ans:'に' },
+    { label:'原因、理由（悩む・苦しむ等）', exp:'搭配特定動詞表示心理上感受的原因。',
+      jp:'恋【に】悩んでいます。', zh:'為情所困。', blank:'恋＿＿＿悩んでいます。', ans:'に' },
+  ]
+},
+{
+  p: 'へ', cat: 'kaku', reading: '',
+  usages: [
+    { label:'移動的方向、場所', exp:'表示移動的方向，語感較に更強調「朝向」而非「到達」。',
+      jp:'台北【へ】行きます。', zh:'前往台北。', blank:'台北＿＿＿行きます。', ans:'へ' },
+  ]
+},
+{
+  p: 'で', cat: 'kaku', reading: '',
+  usages: [
+    { label:'動作發生的地點', exp:'表示動作、事件發生的場所。',
+      jp:'新興宮【で】お祭りがあります。', zh:'在新興宮有廟會。', blank:'新興宮＿＿＿お祭りがあります。', ans:'で' },
+    { label:'方法、手段', exp:'表示用來進行動作的工具或交通方式。',
+      jp:'バス【で】行きます。', zh:'坐公車去。', blank:'バス＿＿＿行きます。', ans:'で' },
+    { label:'原因、理由', exp:'表示客觀事實所造成的原因。',
+      jp:'鳥インフルエンザ【で】隔離されました。', zh:'因為禽流感被隔離了。', blank:'鳥インフルエンザ＿＿＿隔離されました。', ans:'で' },
+    { label:'範圍（在…之中）', exp:'表示比較或舉例的範圍。',
+      jp:'一年【で】夏が一番嫌いです。', zh:'一年當中最討厭夏天。', blank:'一年＿＿＿夏が一番嫌いです。', ans:'で' },
+    { label:'材料', exp:'表示製作物品所使用的材料。',
+      jp:'紙【で】船を作ります。', zh:'用紙做船。', blank:'紙＿＿＿船を作ります。', ans:'で' },
+    { label:'期限、上限', exp:'表示完成動作所需或所限的時間範圍。',
+      jp:'30分【で】レポートを書きます。', zh:'花30分鐘寫完報告。', blank:'30分＿＿＿レポートを書きます。', ans:'で' },
+    { label:'動作主（團體／人數）', exp:'表示進行動作的團體或人數單位。',
+      jp:'3人【で】やります。', zh:'由3人來做。', blank:'3人＿＿＿やります。', ans:'で' },
+    { label:'狀態、樣子', exp:'表示動作進行時的狀態或樣子。',
+      jp:'大声【で】叫びます。', zh:'大聲呼叫。', blank:'大声＿＿＿叫びます。', ans:'で' },
+    { label:'目的', exp:'表示為了某個目的而進行的後續動作。',
+      jp:'旅行【で】京都に行きました。', zh:'為了旅行去了京都。', blank:'旅行＿＿＿京都に行きました。', ans:'で' },
+  ]
+},
+{
+  p: 'と', cat: 'kaku', reading: '',
+  usages: [
+    { label:'共同動作者、動作的對象', exp:'表示一起進行動作的對象。',
+      jp:'彼女【と】別れました。', zh:'跟女友分手了。', blank:'彼女＿＿＿別れました。', ans:'と' },
+    { label:'引用內容', exp:'搭配思う、言う等動詞引用想法或話語的內容。',
+      jp:'仕事は大変だ【と】思います。', zh:'我覺得工作很辛苦。', blank:'仕事は大変だ＿＿＿思います。', ans:'と' },
+    { label:'變化的結果', exp:'表示變化後到達的結果或狀態，書面語感較強。',
+      jp:'一丸【と】なって戦います。', zh:'齊心協力作戰。', blank:'一丸＿＿＿なって戦います。', ans:'と' },
+    { label:'人、物品的列舉（全部列出）', exp:'列舉出所有的項目，與や（部分列舉）不同。',
+      jp:'「米血」【と】「臭豆腐」を食べます。', zh:'吃米血和臭豆腐。', blank:'「米血」＿＿＿「臭豆腐」を食べます。', ans:'と' },
+  ]
+},
+{
+  p: 'から', cat: 'kaku', reading: '',
+  usages: [
+    { label:'時間、場所的起始點', exp:'表示動作或狀態開始的時間點或地點。',
+      jp:'授業は午後3時【から】始まります。', zh:'課從下午3點開始。', blank:'授業は午後3時＿＿＿始まります。', ans:'から' },
+    { label:'原因、理由', exp:'表示導致某結果的原因。',
+      jp:'疲れ【から】、病気になりました。', zh:'因為勞累而生病了。', blank:'疲れ＿＿＿、病気になりました。', ans:'から' },
+    { label:'情報的來源', exp:'表示判斷、推測所依據的資訊來源。',
+      jp:'成績【から】考えると、勉強をやめたほうがいいですよ。', zh:'從成績來看，你還是放棄唸書比較好。', blank:'成績＿＿＿考えると、勉強をやめたほうがいいですよ。', ans:'から' },
+    { label:'動作主（由…來做）', exp:'表示動作的發起者，常用於「由～來」的語境。',
+      jp:'私【から】彼女に電話しましょうか。', zh:'由我來打電話給她吧。', blank:'私＿＿＿彼女に電話しましょうか。', ans:'から' },
+    { label:'經由點', exp:'表示動作經過、通過的地點。',
+      jp:'鼠は排水管【から】家に入りました。', zh:'老鼠是從排水管進來家裡的。', blank:'鼠は排水管＿＿＿家に入りました。', ans:'から' },
+    { label:'原料（製成後外觀／性質改變）', exp:'表示原料經過加工後變成另一種東西，原料看不太出來。',
+      jp:'お酒は米【から】作ります。', zh:'酒是用米做的。', blank:'お酒は米＿＿＿作ります。', ans:'から' },
+  ]
+},
+{
+  p: 'まで', cat: 'kaku', reading: '',
+  usages: [
+    { label:'時間的限度、動作的到達點', exp:'表示動作或狀態持續到的終點。',
+      jp:'授業は午後4時半【まで】です。', zh:'課上到下午4點半。', blank:'授業は午後4時半＿＿＿です。', ans:'まで' },
+    { label:'範圍（從…到…）', exp:'常與から搭配，表示範圍的終點。',
+      jp:'11時から1時【まで】食べ放題をしました。', zh:'從11點到1點吃了吃到飽。', blank:'11時から1時＿＿＿食べ放題をしました。', ans:'まで' },
+  ]
+},
+{
+  p: 'より', cat: 'kaku', reading: '',
+  usages: [
+    { label:'比較的對象', exp:'表示比較的基準對象，相當於「比起…」。',
+      jp:'私はドウェイン・ジョンソン【より】強いです。', zh:'我比巨石強森強壯。', blank:'私はドウェイン・ジョンソン＿＿＿強いです。', ans:'より' },
+    { label:'時間、場所的起點（書面語）', exp:'與から意思相近，但語感更正式、書面化。',
+      jp:'これ【より】先は立ち入り禁止です。', zh:'從這裡開始禁止進入。', blank:'これ＿＿＿先は立ち入り禁止です。', ans:'より' },
+  ]
+},
+
+// ════════════════════ 副助詞 (14) ════════════════════
+{
+  p: 'は', cat: 'fuku', reading: '',
+  usages: [
+    { label:'提示主題', exp:'提出句子的主題，表示「關於…」，常與已知資訊搭配。',
+      jp:'これ【は】私の本です。', zh:'這是我的書。', blank:'これ＿＿＿私の本です。', ans:'は' },
+    { label:'對比、區別', exp:'用於對比兩個事物，暗示「至於另一個則不同」。',
+      jp:'肉【は】好きですが、魚【は】嫌いです。', zh:'肉的話喜歡，但魚就不喜歡。', blank:'肉＿＿＿好きですが、魚＿＿＿嫌いです。', ans:'は' },
+  ]
+},
+{
+  p: 'も', cat: 'fuku', reading: '',
+  usages: [
+    { label:'並列、附加（也）', exp:'表示「同樣也」，用於追加同類的事物。',
+      jp:'私【も】行きます。', zh:'我也去。', blank:'私＿＿＿行きます。', ans:'も' },
+    { label:'強調極限（一個都不…／連…也）', exp:'搭配否定句強調「一個也不」、「完全沒有」。',
+      jp:'一人【も】いません。', zh:'一個人也沒有。', blank:'一人＿＿＿いません。', ans:'も' },
+    { label:'數量之多（竟然有…之多）', exp:'搭配數量詞表示數量出乎意料地多。',
+      jp:'1万円【も】かかりました。', zh:'竟然花了一萬日圓之多。', blank:'1万円＿＿＿かかりました。', ans:'も' },
+  ]
+},
+{
+  p: 'だけ', cat: 'fuku', reading: '',
+  usages: [
+    { label:'限定（只有、僅僅）', exp:'表示限定在某個範圍內，語感中性。',
+      jp:'これ【だけ】あれば十分です。', zh:'只要有這個就足夠了。', blank:'これ＿＿＿あれば十分です。', ans:'だけ' },
+  ]
+},
+{
+  p: 'しか', cat: 'fuku', reading: '',
+  usages: [
+    { label:'限定＋否定（只…而已，帶不滿語感）', exp:'後面必須接否定形，常帶有「太少了」的不滿語氣。',
+      jp:'千円【しか】ありません。', zh:'只有一千日圓而已。', blank:'千円＿＿＿ありません。', ans:'しか' },
+  ]
+},
+{
+  p: 'でも', cat: 'fuku', reading: '',
+  usages: [
+    { label:'舉例代表（…之類的也可以）', exp:'舉一個例子代表同類事物，語感隨意、放寬標準。',
+      jp:'お茶【でも】飲みませんか。', zh:'要不要喝個茶之類的？', blank:'お茶＿＿＿飲みませんか。', ans:'でも' },
+    { label:'即使…也（極端例子）', exp:'舉出極端的例子表示「即使是…的情況下也」。',
+      jp:'子供【でも】できます。', zh:'就連小孩子也做得到。', blank:'子供＿＿＿できます。', ans:'でも' },
+  ]
+},
+{
+  p: 'くらい／ぐらい', cat: 'fuku', reading: '',
+  usages: [
+    { label:'大約的程度、數量', exp:'表示大概的數量或程度，相當於「大約」。',
+      jp:'1時間【くらい】かかります。', zh:'大概要花一個小時。', blank:'1時間＿＿＿かかります。', ans:'くらい' },
+    { label:'最低限度（至少…）', exp:'表示這是最起碼、最低限度的要求或程度。',
+      jp:'それ【くらい】わかります。', zh:'那種程度我懂。', blank:'それ＿＿＿わかります。', ans:'くらい' },
+  ]
+},
+{
+  p: 'さえ', cat: 'fuku', reading: '',
+  usages: [
+    { label:'舉極端例子強調（連…都）', exp:'舉出一個最容易達成的例子，強調「連這個都…」來突顯程度。',
+      jp:'子供【さえ】わかります。', zh:'連小孩子都懂。', blank:'子供＿＿＿わかります。', ans:'さえ' },
+    { label:'さえ～ば（只要…就）', exp:'搭配ば形表示「只要滿足這個條件就…」。',
+      jp:'お金【さえ】あれば幸せだ。', zh:'只要有錢就幸福了。', blank:'お金＿＿＿あれば幸せだ。', ans:'さえ' },
+  ]
+},
+{
+  p: 'ばかり', cat: 'fuku', reading: '',
+  usages: [
+    { label:'淨是、總是（負面語感）', exp:'表示總是、淨做某件事，常帶有負面或不滿的語氣。',
+      jp:'彼はゲーム【ばかり】しています。', zh:'他總是只打電動。', blank:'彼はゲーム＿＿＿しています。', ans:'ばかり' },
+    { label:'刚刚…（接過去形＋ばかり）', exp:'接た形之後，表示動作剛剛完成不久。',
+      jp:'食べた【ばかり】です。', zh:'剛吃完。', blank:'食べた＿＿＿です。', ans:'ばかり' },
+  ]
+},
+{
+  p: 'ほど', cat: 'fuku', reading: '',
+  usages: [
+    { label:'程度比較（…的程度）', exp:'表示大致的程度，常用於比較句中。',
+      jp:'彼【ほど】上手ではありません。', zh:'沒有他那麼厲害。', blank:'彼＿＿＿上手ではありません。', ans:'ほど' },
+    { label:'程度愈…愈…（～ば～ほど）', exp:'與ば搭配構成「越…越…」的句型。',
+      jp:'勉強すればする【ほど】わかります。', zh:'越學習就越懂。', blank:'勉強すればする＿＿＿わかります。', ans:'ほど' },
+  ]
+},
+{
+  p: 'きり', cat: 'fuku', reading: '',
+  usages: [
+    { label:'僅限於（只有…而已）', exp:'表示僅限於某個數量或範圍，語感類似だけ但更強調「僅此一次」。',
+      jp:'一度【きり】しか会っていません。', zh:'只見過一次而已。', blank:'一度＿＿＿しか会っていません。', ans:'きり' },
+    { label:'自從…就一直（～たきり）', exp:'接た形，表示自從某動作後就維持那個狀態沒有改變。',
+      jp:'彼は出かけた【きり】帰ってきません。', zh:'他出門之後就一直沒回來。', blank:'彼は出かけた＿＿＿帰ってきません。', ans:'きり' },
+  ]
+},
+{
+  p: 'こそ', cat: 'fuku', reading: '',
+  usages: [
+    { label:'強調主題（正是…、才是…）', exp:'強烈強調前面的詞，表示「正是這個（不是別的）」。',
+      jp:'今度【こそ】成功します。', zh:'這次一定會成功。', blank:'今度＿＿＿成功します。', ans:'こそ' },
+    { label:'これこそ／こちらこそ等慣用表現', exp:'常見於寒暄語中表達禮貌的強調，如「こちらこそ」（彼此彼此）。',
+      jp:'こちら【こそ】お世話になりました。', zh:'彼此彼此，承蒙您的照顧。', blank:'こちら＿＿＿お世話になりました。', ans:'こそ' },
+  ]
+},
+{
+  p: 'なんて', cat: 'fuku', reading: '',
+  usages: [
+    { label:'輕視、不以為然', exp:'用於表示對某事物的輕視、否定評價。',
+      jp:'勉強【なんて】嫌いです。', zh:'我才不喜歡讀書這種事。', blank:'勉強＿＿＿嫌いです。', ans:'なんて' },
+    { label:'驚訝、意外（沒想到竟然…）', exp:'表示對某件事感到意外、驚訝。',
+      jp:'彼が結婚する【なんて】驚きました。', zh:'他竟然要結婚了，真令人驚訝。', blank:'彼が結婚する＿＿＿驚きました。', ans:'なんて' },
+  ]
+},
+{
+  p: 'など', cat: 'fuku', reading: '',
+  usages: [
+    { label:'舉例（…等等）', exp:'舉出部分例子，暗示還有其他同類的東西。',
+      jp:'りんごやバナナ【など】が好きです。', zh:'喜歡蘋果、香蕉等等。', blank:'りんごやバナナ＿＿＿が好きです。', ans:'など' },
+    { label:'輕視、謙遜（…這種東西）', exp:'用於謙遜或輕視自己／他人提及的事物。',
+      jp:'私【など】には無理です。', zh:'像我這種人是辦不到的。', blank:'私＿＿＿には無理です。', ans:'など' },
+  ]
+},
+{
+  p: 'まで（強調）', cat: 'fuku', reading: '',
+  usages: [
+    { label:'甚至連…都（強調極限）', exp:'與格助詞まで（限度）不同，這裡表示「甚至到了…的程度」，帶有驚訝語感。',
+      jp:'彼【まで】私を疑っています。', zh:'連他都懷疑我。', blank:'彼＿＿＿私を疑っています。', ans:'まで' },
+    { label:'～までして（不惜做到…的程度）', exp:'表示為了達成某事，不惜採取極端的手段。',
+      jp:'嘘をついて【まで】も行きたかった。', zh:'甚至不惜說謊也想去。', blank:'嘘をついて＿＿＿も行きたかった。', ans:'まで' },
+  ]
+},
+
+// ════════════════════ 接續助詞 (15) ════════════════════
+{
+  p: 'から', cat: 'setsu', reading: '',
+  usages: [
+    { label:'原因、理由（主觀、口語）', exp:'接在句子後表示原因，語感較主觀、口語化，常用於說話者的主張。',
+      jp:'雨が降っている【から】、行きません。', zh:'因為在下雨，所以不去。', blank:'雨が降っている＿＿＿、行きません。', ans:'から' },
+  ]
+},
+{
+  p: 'ので', cat: 'setsu', reading: '',
+  usages: [
+    { label:'原因、理由（客觀、委婉）', exp:'語感比から更客觀、委婉，常用於正式場合或委婉請求。',
+      jp:'時間がない【ので】、急ぎましょう。', zh:'因為沒時間了，我們快點吧。', blank:'時間がない＿＿＿、急ぎましょう。', ans:'ので' },
+  ]
+},
+{
+  p: 'のに', cat: 'setsu', reading: '',
+  usages: [
+    { label:'逆接（明明…卻…，帶不滿、意外語感）', exp:'表示前項與後項結果不符，帶有不滿、遺憾或意外的語氣。',
+      jp:'頑張った【のに】、失敗しました。', zh:'明明很努力了，卻失敗了。', blank:'頑張った＿＿＿、失敗しました。', ans:'のに' },
+  ]
+},
+{
+  p: 'て', cat: 'setsu', reading: '',
+  usages: [
+    { label:'連接動作（先後順序）', exp:'連接兩個動作，表示先做前項再做後項。',
+      jp:'朝起き【て】、顔を洗います。', zh:'早上起床後洗臉。', blank:'朝起き＿＿＿、顔を洗います。', ans:'て' },
+    { label:'原因、理由（自然產生的因果）', exp:'表示前項自然導致後項的情緒或狀態。',
+      jp:'彼に会え【て】、嬉しいです。', zh:'能見到他真開心。', blank:'彼に会え＿＿＿、嬉しいです。', ans:'て' },
+  ]
+},
+{
+  p: 'し', cat: 'setsu', reading: '',
+  usages: [
+    { label:'列舉理由（而且…，暗示還有其他）', exp:'列舉一個理由或事實，暗示還有其他類似的理由。',
+      jp:'安い【し】、美味しいです。', zh:'既便宜又好吃。', blank:'安い＿＿＿、美味しいです。', ans:'し' },
+  ]
+},
+{
+  p: 'ながら', cat: 'setsu', reading: '',
+  usages: [
+    { label:'同時動作（一邊…一邊…）', exp:'表示兩個動作同時進行。',
+      jp:'音楽を聞き【ながら】勉強します。', zh:'一邊聽音樂一邊學習。', blank:'音楽を聞き＿＿＿勉強します。', ans:'ながら' },
+    { label:'逆接（雖然…但是…）', exp:'表示前後內容矛盾，相當於「雖然…但卻」。',
+      jp:'知ってい【ながら】、教えてくれませんでした。', zh:'雖然知道，卻沒告訴我。', blank:'知ってい＿＿＿、教えてくれませんでした。', ans:'ながら' },
+  ]
+},
+{
+  p: 'たら', cat: 'setsu', reading: '',
+  usages: [
+    { label:'條件（如果…的話，個別＋偶發）', exp:'表示具體、個別情況下的假設條件，口語常用。',
+      jp:'雨が降っ【たら】、中止します。', zh:'如果下雨的話就取消。', blank:'雨が降っ＿＿＿、中止します。', ans:'たら' },
+  ]
+},
+{
+  p: 'ば', cat: 'setsu', reading: '',
+  usages: [
+    { label:'條件（如果…就…，一般／恆常條件）', exp:'表示一般性、恆常成立的條件關係，書面語感較強。',
+      jp:'春になれ【ば】、桜が咲きます。', zh:'如果到了春天，滻花就會開。', blank:'春になれ＿＿＿、桜が咲きます。', ans:'ば' },
+  ]
+},
+{
+  p: 'と', cat: 'setsu', reading: '',
+  usages: [
+    { label:'條件（一旦…就必然…，必然結果）', exp:'表示前項一發生，後項就必然會發生，常用於自然法則或習慣性結果。',
+      jp:'春になる【と】、桜が咲きます。', zh:'一到春天，滻花就會開。', blank:'春になる＿＿＿、桜が咲きます。', ans:'と' },
+  ]
+},
+{
+  p: 'なら', cat: 'setsu', reading: '',
+  usages: [
+    { label:'條件（如果是…的話，針對假設前提）', exp:'針對對方提出的話題或假設前提做出回應，常用於「如果是…的情況」。',
+      jp:'行く【なら】、早く準備してください。', zh:'如果要去的話，請早點準備。', blank:'行く＿＿＿、早く準備してください。', ans:'なら' },
+  ]
+},
+{
+  p: 'けど／けれども', cat: 'setsu', reading: '',
+  usages: [
+    { label:'逆接（雖然…但是…，口語常用）', exp:'表示前後內容相反或對比，語感較口語、輕鬆。',
+      jp:'好きだ【けど】、買えません。', zh:'雖然喜歡，但買不起。', blank:'好きだ＿＿＿、買えません。', ans:'けど' },
+  ]
+},
+{
+  p: 'つつ', cat: 'setsu', reading: '',
+  usages: [
+    { label:'同時動作（一邊…一邊…，書面語）', exp:'與ながら意思相近，但語感更正式、書面化。',
+      jp:'歩き【つつ】、考えます。', zh:'一邊走一邊思考。', blank:'歩き＿＿＿、考えます。', ans:'つつ' },
+    { label:'逆接（明明…卻…，～つつも）', exp:'常以「つつも」的形式表示「雖然知道…卻還是」的矛盾心理。',
+      jp:'悪いと知り【つつ】も、嘘をついた。', zh:'明明知道不好，卻還是說了謊。', blank:'悪いと知り＿＿＿も、嘘をついた。', ans:'つつ' },
+  ]
+},
+{
+  p: 'ものの', cat: 'setsu', reading: '',
+  usages: [
+    { label:'逆接（雖然…但是…，書面語）', exp:'表示前項成立，但後項出現與預期不符的結果，書面語感強。',
+      jp:'約束した【ものの】、果たせなかった。', zh:'雖然約定好了，卻沒能做到。', blank:'約束した＿＿＿、果たせなかった。', ans:'ものの' },
+  ]
+},
+{
+  p: 'くせに', cat: 'setsu', reading: '',
+  usages: [
+    { label:'逆接（明明…卻…，帶責備、不滿語感）', exp:'表示前後矛盾，且帶有強烈的責備、不滿或輕視語氣。',
+      jp:'子供の【くせに】、偉そうに言うな。', zh:'明明只是個小孩，別說得那麼了不起。', blank:'子供の＿＿＿、偉そうに言うな。', ans:'くせに' },
+  ]
+},
+{
+  p: 'とたん', cat: 'setsu', reading: '',
+  usages: [
+    { label:'剛…就…（瞬間發生的後續事件）', exp:'表示前項動作剛完成的瞬間，後項事件就立刻發生，常帶有意外性。',
+      jp:'家を出た【とたん】、雨が降り出した。', zh:'剛踏出家門，就開始下雨了。', blank:'家を出た＿＿＿、雨が降り出した。', ans:'とたん' },
+  ]
+},
+];
+
+const CAT_LABELS = {
+  kaku: '格助詞',
+  fuku: '副助詞',
+  setsu: '接續助詞',
+};
+
+const ANSWER_POOL = [...new Set(PARTICLES.flatMap(p => p.usages.map(u => u.ans)))];
+
+const CAT_INTRO = {
+  kaku: {
+    title: '格助詞',
+    role: '決定句子的基本語法結構',
+    exp: '接在名詞之後，表示該名詞在句子中所扮演的「格」（語法角色），例如動作的主語、目的語、方向、地點、起點、比較對象等。格助詞是構成日文句子不可或缺的骨架，幾乎每一句話都會用到，且通常只有一個固定用法，不太能省略或替換。',
+  },
+  fuku: {
+    title: '副助詞',
+    role: '為內容附加語氣、範圍與強調',
+    exp: '可以接在名詞、動詞、形容詞等各種詞類之後，為前面的內容附加「限定、舉例、程度、強調、輕視」等額外的語氣與意義。副助詞不負責決定句子的基本語法結構，而是用來調整說話的重點、態度與情緒色彩，拿掉之後句子通常仍然成立，只是語感會改變。',
+  },
+  setsu: {
+    title: '接續助詞',
+    role: '連接前後句子，表示邏輯關係',
+    exp: '接在用言（動詞・形容詞・形容動詞）或句子之後，用來連接前後兩個子句，表示原因、條件、逆接、並列、同時動作等邏輯關係。接續助詞是把短句組合成複雜句、表達完整想法的關鍵，許多接續助詞語意相近但語感（口語／書面、主觀／客觀）不同，需要依情境選用。',
+  },
+};
+
+const SPEAK_ICON_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,9 7,9 11,5 11,19 7,15 3,15" fill="currentColor" stroke="none"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18 6a8 8 0 0 1 0 12"></path></svg>';
+
+
+const FURIGANA_MAP = {
+  'お尻【が】痛いです。': '{お尻|おしり}【が】{痛|いた}いです。',
+  'お金【が】好きです。': '{お金|おかね}【が】{好|す}きです。',
+  '昔、ある所に王様【が】いました。': '{昔|むかし}、ある{所|ところ}に{王様|おうさま}【が】いました。',
+  'バナナ【を】食べます。': 'バナナ【を】{食|た}べます。',
+  '公園【を】散歩します。': '{公園|こうえん}【を】{散歩|さんぽ}します。',
+  '楽しい時間【を】過ごした。': '{楽|たの}しい{時間|じかん}【を】{過|す}ごした。',
+  '月曜日【に】行きます。': '{月曜日|げつようび}【に】{行|い}きます。',
+  'トイレ【に】花子がいます。': 'トイレ【に】{花子|はなこ}がいます。',
+  '彼女の部屋【に】入ります。': '{彼女|かのじょ}の{部屋|へや}【に】{入|はい}ります。',
+  '私【に】わかるはずがありません。': '{私|わたし}【に】わかるはずがありません。',
+  '好きな人【に】告白する。': '{好|す}きな{人|ひと}【に】{告白|こくはく}する。',
+  '週休5日制【に】賛成します。': '{週休|しゅうきゅう}5{日制|にちせい}【に】{賛成|さんせい}します。',
+  'もうすぐ夏【に】なります。': 'もうすぐ{夏|なつ}【に】なります。',
+  '先生【に】教えてもらいます。': '{先生|せんせい}【に】{教|おし}えてもらいます。',
+  '映画を見【に】行きます。': '{映画|えいが}を{見|み}【に】{行|い}きます。',
+  '試合【に】負けます。': '{試合|しあい}【に】{負|ま}けます。',
+  '想像力【に】乏しいです。': '{想像力|そうぞうりょく}【に】{乏|とぼ}しいです。',
+  '恋【に】悩んでいます。': '{恋|こい}【に】{悩|なや}んでいます。',
+  '台北【へ】行きます。': '{台北|たいぺい}【へ】{行|い}きます。',
+  '新興宮【で】お祭りがあります。': '{新興宮|しんこうきゅう}【で】お{祭|まつ}りがあります。',
+  'バス【で】行きます。': 'バス【で】{行|い}きます。',
+  '鳥インフルエンザ【で】隔離されました。': '{鳥|とり}インフルエンザ【で】{隔離|かくり}されました。',
+  '一年【で】夏が一番嫌いです。': '{一年|いちねん}【で】{夏|なつ}が{一番|いちばん}{嫌|きら}いです。',
+  '紙【で】船を作ります。': '{紙|かみ}【で】{船|ふね}を{作|つく}ります。',
+  '30分【で】レポートを書きます。': '30{分|ふん}【で】レポートを{書|か}きます。',
+  '3人【で】やります。': '3{人|にん}【で】やります。',
+  '大声【で】叫びます。': '{大声|おおごえ}【で】{叫|さけ}びます。',
+  '旅行【で】京都に行きました。': '{旅行|りょこう}【で】{京都|きょうと}に{行|い}きました。',
+  '彼女【と】別れました。': '{彼女|かのじょ}【と】{別|わか}れました。',
+  '仕事は大変だ【と】思います。': '{仕事|しごと}は{大変|たいへん}だ【と】{思|おも}います。',
+  '一丸【と】なって戦います。': '{一丸|いちがん}【と】なって{戦|たたか}います。',
+  '「米血」【と】「臭豆腐」を食べます。': '「{米血|みーしぇー}」【と】「{臭豆腐|ちょうとうふ}」を{食|た}べます。',
+  '授業は午後3時【から】始まります。': '{授業|じゅぎょう}は{午後|ごご}3{時|じ}【から】{始|はじ}まります。',
+  '疲れ【から】、病気になりました。': '{疲|つか}れ【から】、{病気|びょうき}になりました。',
+  '成績【から】考えると、勉強をやめたほうがいいですよ。': '{成績|せいせき}【から】{考|かんが}えると、{勉強|べんきょう}をやめたほうがいいですよ。',
+  '私【から】彼女に電話しましょうか。': '{私|わたし}【から】{彼女|かのじょ}に{電話|でんわ}しましょうか。',
+  '鼠は排水管【から】家に入りました。': '{鼠|ねずみ}は{排水管|はいすいかん}【から】{家|いえ}に{入|はい}りました。',
+  'お酒は米【から】作ります。': 'お{酒|さけ}は{米|こめ}【から】{作|つく}ります。',
+  '授業は午後4時半【まで】です。': '{授業|じゅぎょう}は{午後|ごご}4{時|じ}{半|はん}【まで】です。',
+  '11時から1時【まで】食べ放題をしました。': '11{時|じ}から1{時|じ}【まで】{食|た}べ{放題|ほうだい}をしました。',
+  '私はドウェイン・ジョンソン【より】強いです。': '{私|わたし}はドウェイン・ジョンソン【より】{強|つよ}いです。',
+  'これ【より】先は立ち入り禁止です。': 'これ【より】{先|さき}は{立|た}ち{入|い}り{禁止|きんし}です。',
+  'これ【は】私の本です。': 'これ【は】{私|わたし}の{本|ほん}です。',
+  '肉【は】好きですが、魚【は】嫌いです。': '{肉|にく}【は】{好|す}きですが、{魚|さかな}【は】{嫌|きら}いです。',
+  '私【も】行きます。': '{私|わたし}【も】{行|い}きます。',
+  '一人【も】いません。': '{一人|ひとり}【も】いません。',
+  '1万円【も】かかりました。': '1{万円|まんえん}【も】かかりました。',
+  'これ【だけ】あれば十分です。': 'これ【だけ】あれば{十分|じゅうぶん}です。',
+  '千円【しか】ありません。': '{千円|せんえん}【しか】ありません。',
+  'お茶【でも】飲みませんか。': 'お{茶|ちゃ}【でも】{飲|の}みませんか。',
+  '子供【でも】できます。': '{子供|こども}【でも】できます。',
+  '1時間【くらい】かかります。': '1{時間|じかん}【くらい】かかります。',
+  'それ【くらい】わかります。': 'それ【くらい】わかります。',
+  '子供【さえ】わかります。': '{子供|こども}【さえ】わかります。',
+  'お金【さえ】あれば幸せだ。': 'お{金|かね}【さえ】あれば{幸|しあわ}せだ。',
+  '彼はゲーム【ばかり】しています。': '{彼|かれ}はゲーム【ばかり】しています。',
+  '食べた【ばかり】です。': '{食|た}べた【ばかり】です。',
+  '彼【ほど】上手ではありません。': '{彼|かれ}【ほど】{上手|じょうず}ではありません。',
+  '勉強すればする【ほど】わかります。': '{勉強|べんきょう}すればする【ほど】わかります。',
+  '一度【きり】しか会っていません。': '{一度|いちど}【きり】しか{会|あ}っていません。',
+  '彼は出かけた【きり】帰ってきません。': '{彼|かれ}は{出|で}かけた【きり】{帰|かえ}ってきません。',
+  '今度【こそ】成功します。': '{今度|こんど}【こそ】{成功|せいこう}します。',
+  'こちら【こそ】お世話になりました。': 'こちら【こそ】お{世話|せわ}になりました。',
+  '勉強【なんて】嫌いです。': '{勉強|べんきょう}【なんて】{嫌|きら}いです。',
+  '彼が結婚する【なんて】驚きました。': '{彼|かれ}が{結婚|けっこん}する【なんて】{驚|おどろ}きました。',
+  'りんごやバナナ【など】が好きです。': 'りんごやバナナ【など】が{好|す}きです。',
+  '私【など】には無理です。': '{私|わたし}【など】には{無理|むり}です。',
+  '彼【まで】私を疑っています。': '{彼|かれ}【まで】{私|わたし}を{疑|うたが}っています。',
+  '嘘をついて【まで】も行きたかった。': '{嘘|うそ}をついて【まで】も{行|い}きたかった。',
+  '雨が降っている【から】、行きません。': '{雨|あめ}が{降|ふ}っている【から】、{行|い}きません。',
+  '時間がない【ので】、急ぎましょう。': '{時間|じかん}がない【ので】、{急|いそ}ぎましょう。',
+  '頑張った【のに】、失敗しました。': '{頑張|がんば}った【のに】、{失敗|しっぱい}しました。',
+  '朝起き【て】、顔を洗います。': '{朝|あさ}{起|お}き【て】、{顔|かお}を{洗|あら}います。',
+  '彼に会え【て】、嬉しいです。': '{彼|かれ}に{会|あ}え【て】、{嬉|うれ}しいです。',
+  '安い【し】、美味しいです。': '{安|やす}い【し】、{美味|おい}しいです。',
+  '音楽を聞き【ながら】勉強します。': '{音楽|おんがく}を{聞|き}き【ながら】{勉強|べんきょう}します。',
+  '知ってい【ながら】、教えてくれませんでした。': '{知|し}ってい【ながら】、{教|おし}えてくれませんでした。',
+  '雨が降っ【たら】、中止します。': '{雨|あめ}が{降|ふ}っ【たら】、{中止|ちゅうし}します。',
+  '春になれ【ば】、桜が咲きます。': '{春|はる}になれ【ば】、{桜|さくら}が{咲|さ}きます。',
+  '春になる【と】、桜が咲きます。': '{春|はる}になる【と】、{桜|さくら}が{咲|さ}きます。',
+  '行く【なら】、早く準備してください。': '{行|い}く【なら】、{早|はや}く{準備|じゅんび}してください。',
+  '好きだ【けど】、買えません。': '{好|す}きだ【けど】、{買|か}えません。',
+  '歩き【つつ】、考えます。': '{歩|ある}き【つつ】、{考|かんが}えます。',
+  '悪いと知り【つつ】も、嘘をついた。': '{悪|わる}いと{知|し}り【つつ】も、{嘘|うそ}をついた。',
+  '約束した【ものの】、果たせなかった。': '{約束|やくそく}した【ものの】、{果|は}たせなかった。',
+  '子供の【くせに】、偉そうに言うな。': '{子供|こども}の【くせに】、{偉|えら}そうに{言|い}うな。',
+  '家を出た【とたん】、雨が降り出した。': '{家|いえ}を{出|で}た【とたん】、{雨|あめ}が{降|ふ}り{出|だ}した。'
+};
+
+function renderFurigana(jp) {
+  const annotated = FURIGANA_MAP[jp] || jp;
+  let html = annotated
+    .replace(/{([^|]+)\|([^}]+)}/g, '<ruby>$1<rt>$2</rt></ruby>')
+    .replace(/【([^】]+)】/g, '<span class="particle-hl">$1</span>');
+  return html;
+}
+
+function escAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+}
+
+function stripBrackets(s) {
+  return String(s).replace(/[【】]/g, '');
+}
+
+function speakJP(btn) {
+  if (!('speechSynthesis' in window)) return;
+  const text = btn.dataset.text;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP';
+  utter.rate = 0.95;
+  window.speechSynthesis.speak(utter);
+}
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentCat = 'both';
+let currentMode = 'flash';
+let selectedParticles = new Set(PARTICLES.map(p => p.p));
+let queue = [];
+let currentIdx = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let wrongList = [];
+let cardFlipped = false;
+let answered = false;
+
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+function getVisibleParticles() {
+  return PARTICLES.filter(p => currentCat === 'both' || p.cat === currentCat);
+}
+
+function renderParticleChips() {
+  const visible = getVisibleParticles();
+  const container = document.getElementById('particle-chips');
+  container.innerHTML = visible.map(p => {
+    const sel = selectedParticles.has(p.p) ? 'selected' : '';
+    return `<span class="usage-chip ${sel}" data-particle="${p.p}" onclick="toggleParticle(this)">${p.p}</span>`;
+  }).join('');
+}
+
+function toggleParticle(el) {
+  const name = el.dataset.particle;
+  if (selectedParticles.has(name)) {
+    selectedParticles.delete(name);
+    el.classList.remove('selected');
+  } else {
+    selectedParticles.add(name);
+    el.classList.add('selected');
+  }
+  restart();
+}
+
+function selectAllParticles() {
+  getVisibleParticles().forEach(p => selectedParticles.add(p.p));
+  renderParticleChips();
+  restart();
+}
+
+function buildQueue(retryWrong = false) {
+  if (retryWrong) return [...wrongList];
+
+  const visible = getVisibleParticles().filter(p => selectedParticles.has(p.p));
+  let items = [];
+  visible.forEach(p => {
+    p.usages.forEach(u => {
+      items.push({ particle: p.p, cat: p.cat, usage: u });
+    });
+  });
+  // shuffle
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  return items;
+}
+
+function updateStats() {
+  document.getElementById('stat-correct').textContent = '✓ ' + correctCount;
+  document.getElementById('stat-wrong').textContent = '✗ ' + wrongCount;
+  document.getElementById('stat-total').textContent = '共 ' + queue.length + ' 題';
+}
+
+function catLabel(cat) { return CAT_LABELS[cat]; }
+
+// ══════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════
+function setCat(c) {
+  currentCat = c;
+  ['both','kaku','fuku','setsu'].forEach(x => {
+    const btn = document.getElementById('cat-'+x);
+    btn.className = 'pill-btn';
+    if (x === c) btn.classList.add('active-'+x);
+  });
+  selectedParticles = new Set(getVisibleParticles().map(p => p.p));
+  renderParticleChips();
+  updateFilterVisibility();
+  restart();
+}
+
+function setMode(m) {
+  currentMode = m;
+  ['flash','quiz','choice','ref'].forEach(x => {
+    const btn = document.getElementById('mode-'+x);
+    btn.className = 'pill-btn';
+    if (x === m) btn.classList.add('active-mode');
+  });
+  updateFilterVisibility();
+  restart();
+}
+
+function updateFilterVisibility() {
+  // Particle picker only makes sense when narrowed to one category;
+  // with "全部混合" selected there'd be 38 chips at once, so we hide it.
+  const uf = document.getElementById('usage-filter');
+  const shouldShow = currentMode !== 'ref' && currentCat !== 'both';
+  uf.style.display = shouldShow ? 'flex' : 'none';
+}
+
+function restart(retryWrong = false) {
+  if (!retryWrong) {
+    correctCount = 0;
+    wrongCount = 0;
+    wrongList = [];
+  }
+  queue = buildQueue(retryWrong);
+  currentIdx = 0;
+  answered = false;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// ══════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════
+function render() {
+  const area = document.getElementById('main-area');
+  if (currentMode === 'ref') { renderRef(area); return; }
+  if (queue.length === 0) {
+    area.innerHTML = `<div class="empty-state"><div class="big">🤔</div><p>請至少選擇一個助詞！</p></div>`;
+    return;
+  }
+  if (currentIdx >= queue.length) { renderDone(area); return; }
+
+  const progress = `<div class="progress-row">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${(currentIdx/queue.length*100).toFixed(1)}%"></div></div>
+    <span class="progress-label">${currentIdx}／${queue.length}</span>
+  </div>`;
+
+  if (currentMode === 'flash') renderFlash(area, progress);
+  else if (currentMode === 'quiz') renderQuiz(area, progress);
+  else if (currentMode === 'choice') renderChoice(area, progress);
+}
+
+function renderFlash(area, progress) {
+  const item = queue[currentIdx];
+  const u = item.usage;
+  const speakText = escAttr(stripBrackets(u.jp));
+
+  area.innerHTML = progress + `
+  <div class="flashcard-wrap">
+    <div class="flashcard" onclick="flipCard()">
+      <div class="card-prompt">這個助詞的用法是？</div>
+      <div class="card-cat-badge ${item.cat}">${catLabel(item.cat)}</div>
+      <div class="card-word">${item.particle}</div>
+      <div class="card-sentence-jp">${renderFurigana(u.jp)}<button class="speak-btn" data-text="${speakText}" onclick="event.stopPropagation(); speakJP(this)" title="播放發音">${SPEAK_ICON_SVG}</button></div>
+      <div class="card-sentence-zh">${u.zh}</div>
+      <div class="card-answer" id="card-answer">
+        <div class="card-usage">${u.label}</div>
+        <div class="answer-exp">${u.exp}</div>
+      </div>
+      <div class="card-tap" id="card-tap">點擊卡片顯示用法說明</div>
+    </div>
+    <div class="btn-row" id="btn-row" style="display:none">
+      <button class="btn-wrong" onclick="markWrong()">✗ 不會</button>
+      <button class="btn-correct" onclick="markCorrect()">✓ 會了</button>
+    </div>
+  </div>`;
+}
+
+function flipCard() {
+  if (cardFlipped) return;
+  cardFlipped = true;
+  document.getElementById('card-answer').classList.add('show');
+  document.getElementById('card-tap').style.display = 'none';
+  document.getElementById('btn-row').style.display = 'flex';
+}
+
+function markCorrect() {
+  correctCount++;
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+function markWrong() {
+  wrongCount++;
+  wrongList.push(queue[currentIdx]);
+  currentIdx++;
+  cardFlipped = false;
+  updateStats();
+  render();
+}
+
+// Quiz mode (fill-in-blank)
+function renderQuiz(area, progress) {
+  const item = queue[currentIdx];
+  const u = item.usage;
+  // blank field contains the "＿＿＿" placeholder; replace with an input-styled blank
+  const sentenceHtml = u.blank.replace('＿＿＿', `<span class="quiz-blank-fill">　？　</span>`);
+
+  area.innerHTML = progress + `
+  <div class="quiz-card">
+    <div class="quiz-cat-badge ${item.cat}">${catLabel(item.cat)}</div>
+    <div class="quiz-usage-label">用法：<strong>${u.label}</strong></div>
+    <div class="quiz-sentence">${sentenceHtml}</div>
+    <div class="quiz-zh">${u.zh}</div>
+    <input class="quiz-input" id="quiz-input" type="text" placeholder="請輸入助詞…" onkeydown="if(event.key==='Enter')checkQuiz()">
+    <div><button class="btn-submit" onclick="checkQuiz()">確認</button>
+    <button class="btn-next" id="btn-next" onclick="nextQuiz()">下一題 →</button></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-answer-reveal" id="quiz-reveal"></div>
+    <div class="quiz-exp-reveal" id="quiz-exp"></div>
+  </div>`;
+
+  setTimeout(() => { const inp = document.getElementById('quiz-input'); if(inp) inp.focus(); }, 50);
+}
+
+function checkQuiz() {
+  if (answered) return;
+  const item = queue[currentIdx];
+  const u = item.usage;
+  const input = document.getElementById('quiz-input');
+  const val = input.value.trim();
+  const fb = document.getElementById('quiz-feedback');
+  const rev = document.getElementById('quiz-reveal');
+  const exp = document.getElementById('quiz-exp');
+  const btnNext = document.getElementById('btn-next');
+
+  if (val === u.ans) {
+    input.classList.add('correct-input');
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+  } else {
+    input.classList.add('wrong-input');
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = '✗ 不正確';
+    rev.textContent = `正確答案：${u.ans}`;
+    exp.textContent = u.exp;
+    wrongCount++;
+    wrongList.push(item);
+  }
+  answered = true;
+  btnNext.style.display = 'inline-block';
+  updateStats();
+}
+
+function nextQuiz() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// Multiple-choice mode (選擇題)
+function pickDistractors(correctAns, count) {
+  const pool = ANSWER_POOL.filter(a => a !== correctAns);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, count);
+}
+
+function renderChoice(area, progress) {
+  const item = queue[currentIdx];
+  const u = item.usage;
+  const sentenceHtml = u.blank.replace('＿＿＿', `<span class="quiz-blank-fill">　？　</span>`);
+
+  let options = [u.ans, ...pickDistractors(u.ans, 3)];
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+
+  const optionsHtml = options.map(opt =>
+    `<button class="choice-btn" data-ans="${opt}" onclick="checkChoice(this)">${opt}</button>`
+  ).join('');
+
+  area.innerHTML = progress + `
+  <div class="quiz-card">
+    <div class="quiz-cat-badge ${item.cat}">${catLabel(item.cat)}</div>
+    <div class="quiz-usage-label">用法：<strong>${u.label}</strong></div>
+    <div class="quiz-sentence">${sentenceHtml}</div>
+    <div class="quiz-zh">${u.zh}</div>
+    <div class="choice-grid" id="choice-grid">${optionsHtml}</div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-exp-reveal" id="quiz-exp"></div>
+    <button class="btn-next" id="btn-next" onclick="nextChoice()">下一題 →</button>
+  </div>`;
+}
+
+function checkChoice(btn) {
+  if (answered) return;
+  answered = true;
+  const item = queue[currentIdx];
+  const u = item.usage;
+  const chosen = btn.dataset.ans;
+  const fb = document.getElementById('quiz-feedback');
+  const exp = document.getElementById('quiz-exp');
+  const btnNext = document.getElementById('btn-next');
+
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.ans === u.ans) b.classList.add('choice-correct');
+    else if (b === btn) b.classList.add('choice-wrong');
+  });
+
+  if (chosen === u.ans) {
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ 正確！';
+    correctCount++;
+    updateStats();
+    setTimeout(() => { currentIdx++; answered = false; render(); }, 700);
+  } else {
+    fb.className = 'quiz-feedback ng';
+    fb.textContent = `✗ 不正確，正確答案：${u.ans}`;
+    exp.textContent = u.exp;
+    wrongCount++;
+    wrongList.push(item);
+    btnNext.style.display = 'inline-block';
+    updateStats();
+  }
+}
+
+function nextChoice() {
+  currentIdx++;
+  answered = false;
+  render();
+}
+
+// Done screen
+function renderDone(area) {
+  const total = correctCount + wrongCount;
+  const pct = total > 0 ? Math.round(correctCount / total * 100) : 0;
+  let emoji = pct >= 90 ? '🎉' : pct >= 70 ? '👍' : pct >= 50 ? '💪' : '📖';
+  area.innerHTML = `<div class="done-state">
+    <div class="big">${emoji}</div>
+    <h2>練習完成！</h2>
+    <p>正確 ${correctCount} 題，錯誤 ${wrongCount} 題（正確率 ${pct}%）</p>
+    ${wrongCount > 0 ? `<button class="btn-retry-wrong" onclick="restart(true)">重練錯題（${wrongCount}題）</button>` : ''}
+    <button class="btn-restart" onclick="restart(false)">重新開始</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+//  REFERENCE TABLE
+// ══════════════════════════════════════════
+function renderRef(area) {
+  const groups = { kaku: [], fuku: [], setsu: [] };
+  PARTICLES.forEach(p => groups[p.cat].push(p));
+
+  function renderIntro(catKey) {
+    const info = CAT_INTRO[catKey];
+    const particleList = groups[catKey].map(p => p.p).join('、');
+    return `<div class="cat-intro-card ${catKey}">
+      <div class="cat-intro-header">
+        <span class="cat-intro-title">${info.title}</span>
+        <span class="cat-intro-role">${info.role}</span>
+      </div>
+      <div class="cat-intro-exp">${info.exp}</div>
+      <div class="cat-intro-list"><span class="cat-intro-list-label">收錄助詞：</span>${particleList}</div>
+    </div>`;
+  }
+
+  function renderGroup(catKey) {
+    return groups[catKey].map(p => {
+      const rows = p.usages.map(u => `
+        <div class="ref-usage-row">
+          <div class="ref-usage-label">${u.label}</div>
+          <div class="ref-usage-exp">${u.exp}</div>
+          <div class="ref-usage-jp">${renderFurigana(u.jp)}<button class="speak-btn" data-text="${escAttr(stripBrackets(u.jp))}" onclick="event.stopPropagation(); speakJP(this)" title="播放發音">${SPEAK_ICON_SVG}</button></div>
+          <div class="ref-usage-zh">${u.zh}</div>
+        </div>`).join('');
+      return `<div class="ref-table-wrap" style="margin-bottom:14px" data-search="${p.p.toLowerCase()}">
+        <div class="ref-p-header ${p.cat}" onclick="toggleRefCard(this)">
+          <span class="ref-chevron">▸</span>
+          <span class="ref-p-name">${p.p}</span>
+          <span class="cat-tag">${catLabel(p.cat)}</span>
+        </div>
+        <div class="ref-usage-body" style="display:none">${rows}</div>
+      </div>`;
+    }).join('');
+  }
+
+  const introHtml = `<div class="cat-intro-grid">${renderIntro('kaku')}${renderIntro('fuku')}${renderIntro('setsu')}</div>`;
+  const html = renderGroup('kaku') + renderGroup('fuku') + renderGroup('setsu');
+
+  area.innerHTML = introHtml + `
+    <input class="ref-search" id="ref-search" placeholder="搜尋助詞（例如：に、から、のに）…" oninput="filterRef(this.value)">
+    <div id="ref-content">${html}</div>`;
+}
+
+function toggleRefCard(headerEl) {
+  const body = headerEl.nextElementSibling;
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  headerEl.classList.toggle('expanded', !isOpen);
+}
+
+function filterRef(val) {
+  const v = val.trim().toLowerCase();
+  document.querySelectorAll('#ref-content .ref-table-wrap').forEach(el => {
+    const key = el.dataset.search;
+    const match = !v || key.includes(v);
+    el.style.display = match ? '' : 'none';
+    if (v && match) {
+      const header = el.querySelector('.ref-p-header');
+      const body = el.querySelector('.ref-usage-body');
+      body.style.display = 'block';
+      header.classList.add('expanded');
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════
+const THEME_ORDER = ['light', 'dark', 'gray'];
+const THEME_ICON_SVG = {
+  light: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="22"></line><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"></line><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"></line><line x1="2" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="22" y2="12"></line><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"></line><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"></line></svg>',
+  dark: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
+  gray: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path></svg>',
+};
+const THEME_TITLE = { light: '亮色模式（點擊切換）', dark: '深色模式（點擊切換）', gray: '黑白模式（點擊切換）' };
+let currentTheme = 'light';
+
+function setTheme(t) {
+  currentTheme = t;
+  document.body.classList.remove('dark', 'grayscale');
+  if (t === 'dark') document.body.classList.add('dark');
+  else if (t === 'gray') document.body.classList.add('grayscale');
+  const btn = document.getElementById('theme-toggle');
+  btn.innerHTML = THEME_ICON_SVG[t];
+  btn.title = THEME_TITLE[t];
+  try { localStorage.setItem('joshi-theme', t); } catch(e) {}
+}
+
+function cycleTheme() {
+  const idx = THEME_ORDER.indexOf(currentTheme);
+  const next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];
+  setTheme(next);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+(function(){
+  try {
+    const saved = localStorage.getItem('joshi-theme');
+    if (saved) setTheme(saved);
+  } catch(e) {}
+})();
+renderParticleChips();
+updateFilterVisibility();
+restart();
+</script>
+</body>
+</html>

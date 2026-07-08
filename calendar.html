@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JP日歷</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="light"]{
+    --bg-page: #e9edf0;
+    --bg-content: #faf8f3;
+    --bg-card: #ffffff;
+    --bg-card-dim1: #eef1f4;
+    --bg-card-dim2: #dfe4e9;
+    --text-primary: #1c2b3a;
+    --text-secondary: #5c6b7a;
+    --text-muted: #8b97a3;
+    --header-bg: #2c3b30;
+    --header-text: #ffffff;
+    --header-text-soft: rgba(255,255,255,0.62);
+    --tab-bg: #ffffff;
+    --tab-border: #e6e9ed;
+    --tab-active-text: #1c3d2e;
+    --tab-active-line: #3d6b4f;
+    --tab-text: #97a1ab;
+    --accent-red: #bb3e2e;
+    --accent-red-soft: rgba(187,62,46,0.08);
+    --accent-brass: #b08d57;
+    --accent-green: #2f6f5c;
+    --btn-soft-border: #d7dde3;
+    --btn-soft-text: #4a5663;
+  }
+  :root[data-theme="dark"]{
+    --bg-page: #0e1116;
+    --bg-content: #161b22;
+    --bg-card: #1d242c;
+    --bg-card-dim1: #242c35;
+    --bg-card-dim2: #2c3540;
+    --text-primary: #eef1f4;
+    --text-secondary: #aab4be;
+    --text-muted: #707d89;
+    --header-bg: #1c241e;
+    --header-text: #f4f6f8;
+    --header-text-soft: rgba(244,246,248,0.6);
+    --tab-bg: #161b22;
+    --tab-border: #242c35;
+    --tab-active-text: #f4f6f8;
+    --tab-active-line: #4ba189;
+    --tab-text: #6b7682;
+    --accent-red: #e0584a;
+    --accent-red-soft: rgba(224,88,74,0.12);
+    --accent-brass: #caa66c;
+    --accent-green: #4ba189;
+    --btn-soft-border: #2c3540;
+    --btn-soft-text: #c4cdd6;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:var(--bg-page);
+    color:var(--text-primary);
+    font-family:'Noto Sans TC', sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:28px 14px;
+  }
+  .app-shell{
+    width:100%;
+    max-width:460px;
+    border-radius:20px;
+    overflow:hidden;
+    background:var(--bg-content);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+  }
+
+  .topbar{
+    background: var(--header-bg);
+    padding:18px 18px 16px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .topbar-title-row{ display:flex; align-items:baseline; gap:8px; }
+  .topbar-title-row h1{
+    margin:0;
+    font-family:'Noto Sans TC', sans-serif;
+    font-weight:700;
+    font-size:17px;
+    color:var(--header-text);
+  }
+  .topbar .subtitle{
+    margin:5px 0 0;
+    font-size:12px;
+    color:var(--header-text-soft);
+  }
+  .theme-toggle{
+    width:30px; height:30px;
+    border-radius:50%;
+    background: transparent;
+    border:none;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .theme-toggle:hover{ background: rgba(255,255,255,0.12); }
+  .theme-toggle svg{ width:17px; height:17px; color:var(--header-text); }
+  .theme-toggle .icon-sun{ display:none; }
+  .theme-toggle .icon-moon{ display:block; }
+  [data-theme="dark"] .theme-toggle .icon-sun{ display:block; }
+  [data-theme="dark"] .theme-toggle .icon-moon{ display:none; }
+
+  nav.main-tabs{
+    display:flex;
+    background:var(--tab-bg);
+    border-bottom:1px solid var(--tab-border);
+  }
+  .main-tab{
+    flex:1;
+    background:none; border:none;
+    padding:13px 6px 11px;
+    font-family:'Noto Sans TC', sans-serif;
+    font-size:14px;
+    color:var(--tab-text);
+    cursor:pointer;
+    position:relative;
+  }
+  .main-tab.active{ color:var(--tab-active-text); font-weight:600; }
+  .main-tab.active::after{
+    content:''; position:absolute; left:24%; right:24%; bottom:-1px; height:2px;
+    background:var(--tab-active-line); border-radius:2px;
+  }
+
+  main.content{ padding:18px 18px 24px; }
+  .page{ display:none; }
+  .page.active{ display:block; }
+
+  .ref-section{ margin-top:14px; }
+  .ref-section:first-child{ margin-top:2px; }
+  .ref-section-header{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:none;
+    border:none;
+    padding:6px 2px;
+    cursor:pointer;
+  }
+  .ref-section-title{
+    font-size:12.5px;
+    font-weight:500;
+    color:var(--text-muted);
+  }
+  .ref-section-count{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    color:var(--text-muted);
+    margin-left:6px;
+  }
+  .ref-section-header .chevron{
+    width:14px; height:14px;
+    color:var(--text-muted);
+    transition: transform 0.2s ease;
+    transform: rotate(0deg);
+  }
+  .ref-section-header.collapsed .chevron{ transform: rotate(-90deg); }
+  .ref-section-body{ margin-top:8px; }
+  .ref-section-body.collapsed{ display:none; }
+  .ref-card{
+    background:var(--bg-card);
+    border:1px solid var(--tab-border);
+    border-radius:16px;
+    padding:13px 16px;
+    margin-bottom:9px;
+  }
+  .ref-card-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .ref-term{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:19px;
+    color:var(--text-primary);
+  }
+  .ref-reading{ font-size:13px; color:var(--text-secondary); margin-top:4px; }
+  .ref-chinese{ font-size:12px; color:var(--text-secondary); margin-top:4px; }
+  .ref-classical{ font-size:11.5px; color:var(--accent-brass); margin-top:6px; font-family:'Shippori Mincho', serif; }
+  .chip{ font-size:11px; padding:3px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+  .chip-regular{ background:var(--bg-card-dim1); color:var(--text-secondary); }
+  .chip-irregular{ background:var(--accent-red-soft); color:var(--accent-red); }
+
+  .deck-tabs{ display:flex; gap:6px; margin-bottom:16px; }
+  .deck-tab{
+    flex:1; background:var(--bg-card-dim1); border:1px solid transparent; border-radius:10px;
+    padding:8px 6px; font-family:'Noto Sans TC', sans-serif; font-size:13px; color:var(--text-secondary); cursor:pointer;
+  }
+  .deck-tab .deck-count{ display:block; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-muted); margin-top:2px; }
+  .deck-tab.active{ background:var(--bg-card); border-color:var(--tab-active-line); color:var(--tab-active-text); font-weight:500; }
+
+  .hint-line{ font-size:12.5px; color:var(--text-secondary); margin:0 0 18px; text-align:center; }
+
+  .stage{ position:relative; height:250px; margin-bottom:20px; }
+  .stack{ position:absolute; inset:0; border-radius:14px; box-shadow:0 6px 14px rgba(0,0,0,0.10); }
+  .stack.s2{ background:var(--bg-card-dim2); transform: translateY(13px) rotate(2.2deg); z-index:1; }
+  .stack.s1{ background:var(--bg-card-dim1); transform: translateY(6px) rotate(-1.6deg); z-index:2; }
+  .card{ position:absolute; inset:0; z-index:3; perspective:1200px; cursor:pointer; }
+  .card-inner{ position:relative; width:100%; height:100%; transition: transform 0.5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; }
+  .card.flipped .card-inner{ transform: rotateY(180deg); }
+  .face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    background:var(--bg-card); border-radius:14px; border:1px solid var(--tab-border);
+    box-shadow:0 8px 18px rgba(0,0,0,0.10);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:26px 20px; text-align:center;
+  }
+  .face-back{ transform: rotateY(180deg); }
+  .ring{ position:absolute; top:13px; width:13px; height:13px; border-radius:50%; background:var(--bg-content); box-shadow: inset 0 1px 3px rgba(0,0,0,0.25); }
+  .ring.left{ left:18px; } .ring.right{ right:18px; }
+  .card-front-main{ font-family:'Shippori Mincho', serif; font-weight:700; font-size:52px; color:var(--text-primary); line-height:1.1; }
+  .card-hint{ font-size:12px; color:var(--text-secondary); margin-top:14px; }
+  .card-back-reading{ font-family:'Shippori Mincho', serif; font-weight:500; font-size:29px; color:var(--text-primary); }
+  .card-back-note{ font-size:12px; color:var(--accent-green); margin-top:10px; }
+  .badge-irregular{ display:none; align-items:center; margin-top:14px; font-size:11px; color:var(--accent-red); border:1px solid var(--accent-red); border-radius:20px; padding:3px 10px; background:var(--accent-red-soft); }
+
+  .stamp{ position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; pointer-events:none; opacity:0; }
+  .stamp.show{ animation: stampIn 0.7s ease-out forwards; }
+  @keyframes stampIn{
+    0%{ opacity:0; transform:scale(1.9) rotate(-14deg); }
+    28%{ opacity:0.92; transform:scale(0.92) rotate(-9deg); }
+    50%{ opacity:0.95; transform:scale(1.04) rotate(-9deg); }
+    78%{ opacity:0.9; }
+    100%{ opacity:0; transform:scale(1.06) rotate(-9deg); }
+  }
+  .stamp-mark{ width:90px; height:90px; border-radius:50%; border:3px solid var(--accent-red); color:var(--accent-red); display:flex; align-items:center; justify-content:center; font-family:'Shippori Mincho', serif; font-weight:700; font-size:30px; background: var(--accent-red-soft); }
+
+  .done-state{
+    display:none; position:absolute; inset:0; background:var(--bg-card); border-radius:14px; border:1px solid var(--tab-border);
+    box-shadow:0 8px 18px rgba(0,0,0,0.10); flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; z-index:4;
+  }
+  .done-state h3{ font-family:'Shippori Mincho', serif; color:var(--text-primary); font-size:19px; margin:0 0 8px; }
+  .done-state p{ color:var(--text-secondary); font-size:13px; margin:0; }
+
+  .actions{ display:flex; gap:10px; margin-bottom:20px; }
+  button{ font-family:'Noto Sans TC', sans-serif; cursor:pointer; border:none; }
+  .btn{ flex:1; padding:12px 10px; border-radius:10px; font-size:14px; font-weight:500; }
+  .btn-soft{ background:transparent; border:1px solid var(--btn-soft-border); color:var(--btn-soft-text); }
+  .btn-soft:hover{ background:var(--bg-card-dim1); }
+  .btn-solid{ background:var(--accent-red); color:#fff; }
+  .btn-solid:hover{ filter:brightness(0.93); }
+
+  .progress-track{ height:8px; background:var(--bg-card-dim1); border-radius:6px; overflow:hidden; margin-bottom:8px; }
+  .progress-fill{ height:100%; background:var(--accent-brass); width:0%; transition: width 0.4s ease; }
+  .progress-text{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-muted); text-align:right; margin:0 0 18px; }
+  .reset-link{ background:none; color:var(--text-muted); font-size:12px; text-decoration:underline; display:block; margin:0 auto; padding:4px; }
+  .reset-link:hover{ color:var(--text-secondary); }
+
+  .quiz-intro{ text-align:center; padding:34px 10px 20px; }
+  .quiz-progress-row{
+    display:flex; justify-content:space-between;
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-muted);
+    margin-bottom:14px;
+  }
+  .quiz-question-card{
+    background:var(--bg-card); border:1px solid var(--tab-border); border-radius:14px;
+    padding:30px 20px; text-align:center; margin-bottom:16px;
+    box-shadow:0 8px 18px rgba(0,0,0,0.08);
+  }
+  .quiz-question-term{ font-family:'Shippori Mincho', serif; font-weight:700; font-size:42px; color:var(--text-primary); }
+  .quiz-question-sub{ font-size:12px; color:var(--text-muted); margin-top:8px; }
+  .quiz-options{ display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+  .quiz-option{
+    background:var(--bg-card); border:1px solid var(--tab-border); border-radius:10px;
+    padding:11px 14px; font-size:14px; color:var(--text-primary);
+    text-align:left; cursor:pointer; display:flex; flex-direction:column;
+  }
+  .quiz-option:hover{ background:var(--bg-card-dim1); }
+  .quiz-option.correct{ border-color:var(--accent-green); background:rgba(47,111,92,0.1); }
+  .quiz-option.wrong{ border-color:var(--accent-red); background:var(--accent-red-soft); }
+  .quiz-option.disabled{ cursor:default; pointer-events:none; }
+  .quiz-result{ text-align:center; padding:34px 10px 20px; }
+  .quiz-result h3{ font-family:'Shippori Mincho', serif; font-size:21px; margin:0 0 10px; color:var(--text-primary); }
+  .quiz-result p{ color:var(--text-secondary); font-size:14px; margin:0 0 18px; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div>
+      <div class="topbar-title-row">
+        <h1>JP日歷</h1>
+      </div>
+      <p class="subtitle">月份・星期・日期・記憶卡・測驗</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="切換深色／淺色模式">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+  </header>
+
+  <nav class="main-tabs" id="mainTabs">
+    <button class="main-tab active" data-page="reference">速查表</button>
+    <button class="main-tab" data-page="flashcards">記憶卡</button>
+    <button class="main-tab" data-page="quiz">測驗</button>
+  </nav>
+
+  <main class="content">
+    <section id="page-reference" class="page active">
+      <div class="ref-section">
+        <button class="ref-section-header collapsed" data-target="refMonths">
+          <span class="ref-section-title">月份<span class="ref-section-count">12</span></span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="ref-list ref-section-body collapsed" id="refMonths"></div>
+      </div>
+      <div class="ref-section">
+        <button class="ref-section-header collapsed" data-target="refWeekdays">
+          <span class="ref-section-title">星期<span class="ref-section-count">7</span></span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="ref-list ref-section-body collapsed" id="refWeekdays"></div>
+      </div>
+      <div class="ref-section">
+        <button class="ref-section-header collapsed" data-target="refDates">
+          <span class="ref-section-title">日期<span class="ref-section-count">31</span></span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="ref-list ref-section-body collapsed" id="refDates"></div>
+      </div>
+    </section>
+
+    <section id="page-flashcards" class="page">
+      <div class="deck-tabs" id="deckTabs">
+        <button class="deck-tab" data-cat="months">月份<span class="deck-count">0/12</span></button>
+        <button class="deck-tab" data-cat="weekdays">星期<span class="deck-count">0/7</span></button>
+        <button class="deck-tab" data-cat="dates">日期<span class="deck-count">0/31</span></button>
+      </div>
+
+      <div class="stage">
+        <div class="stack s2"></div>
+        <div class="stack s1"></div>
+        <div class="card" id="card">
+          <div class="card-inner" id="cardInner">
+            <div class="face face-front">
+              <span class="ring left"></span><span class="ring right"></span>
+              <div class="card-front-main" id="frontMain">4月</div>
+              <div class="card-hint">點一下看讀音</div>
+            </div>
+            <div class="face face-back">
+              <span class="ring left"></span><span class="ring right"></span>
+              <div class="card-back-reading" id="backReading">しがつ</div>
+              <div class="card-back-note" id="backNote" style="display:none;"></div>
+              <div class="badge-irregular" id="badgeIrregular">特殊念法</div>
+            </div>
+          </div>
+        </div>
+        <div class="stamp" id="stamp"><div class="stamp-mark">済</div></div>
+        <div class="done-state" id="doneState">
+          <h3 id="doneTitle">全部記住了！</h3>
+          <p>可以切換到別的分類，或重置這個分類再練一次。</p>
+        </div>
+      </div>
+
+      <div class="actions" id="actions">
+        <button class="btn btn-soft" id="btnPractice">還不熟</button>
+        <button class="btn btn-solid" id="btnMastered">記住了 ✓</button>
+      </div>
+
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <p class="progress-text" id="progressText">0 / 12 已掌握</p>
+
+      <button class="reset-link" id="resetLink">重置這個分類的進度</button>
+    </section>
+
+    <section id="page-quiz" class="page">
+      <div class="deck-tabs" id="quizDeckTabs">
+        <button class="deck-tab quiz-deck-tab active" data-cat="months">月份</button>
+        <button class="deck-tab quiz-deck-tab" data-cat="weekdays">星期</button>
+        <button class="deck-tab quiz-deck-tab" data-cat="dates">日期</button>
+      </div>
+
+      <div id="quizIntro" class="quiz-intro">
+        <p class="hint-line">從目前分類隨機出題，選出正確的讀音，最多 10 題。</p>
+        <button class="btn btn-solid" id="btnStartQuiz">開始測驗</button>
+      </div>
+
+      <div id="quizPlay" class="quiz-play" style="display:none;">
+        <div class="quiz-progress-row">
+          <span id="quizProgressText">第 1 / 10 題</span>
+          <span id="quizScoreText">得分 0</span>
+        </div>
+        <div class="quiz-question-card">
+          <div class="quiz-question-term" id="quizTerm">4月</div>
+          <div class="quiz-question-sub">請選出正確的讀音</div>
+        </div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <button class="btn btn-soft" id="btnNextQuestion" style="display:none;">下一題</button>
+      </div>
+
+      <div id="quizResult" class="quiz-result" style="display:none;">
+        <h3 id="quizResultTitle">測驗完成！</h3>
+        <p id="quizResultText"></p>
+        <button class="btn btn-solid" id="btnRetryQuiz">再測一次</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const monthsRaw = [
+  ['1月','いちがつ','ichigatsu',0,'一月','睦月','むつき'],
+  ['2月','にがつ','nigatsu',0,'二月','如月','きさらぎ'],
+  ['3月','さんがつ','sangatsu',0,'三月','弥生','やよい'],
+  ['4月','しがつ','shigatsu',1,'四月','卯月','うづき'],
+  ['5月','ごがつ','gogatsu',0,'五月','皐月','さつき'],
+  ['6月','ろくがつ','rokugatsu',0,'六月','水無月','みなづき'],
+  ['7月','しちがつ','shichigatsu',1,'七月','文月','ふみづき'],
+  ['8月','はちがつ','hachigatsu',0,'八月','葉月','はづき'],
+  ['9月','くがつ','kugatsu',1,'九月','長月','ながつき'],
+  ['10月','じゅうがつ','juugatsu',0,'十月','神無月','かんなづき'],
+  ['11月','じゅういちがつ','juuichigatsu',0,'十一月','霜月','しもつき'],
+  ['12月','じゅうにがつ','juunigatsu',0,'十二月','師走','しわす']
+];
+const weekdaysRaw = [
+  ['月曜日','げつようび','getsuyoubi','月＝月亮','星期一'],
+  ['火曜日','かようび','kayoubi','火＝火','星期二'],
+  ['水曜日','すいようび','suiyoubi','水＝水','星期三'],
+  ['木曜日','もくようび','mokuyoubi','木＝樹木','星期四'],
+  ['金曜日','きんようび','kinyoubi','金＝金屬','星期五'],
+  ['土曜日','どようび','doyoubi','土＝土地','星期六'],
+  ['日曜日','にちようび','nichiyoubi','日＝太陽','星期日']
+];
+const datesRaw = [
+  ['1日','ついたち','tsuitachi',1],['2日','ふつか','futsuka',1],['3日','みっか','mikka',1],
+  ['4日','よっか','yokka',1],['5日','いつか','itsuka',1],['6日','むいか','muika',1],
+  ['7日','なのか','nanoka',1],['8日','ようか','youka',1],['9日','ここのか','kokonoka',1],
+  ['10日','とおか','tooka',1],['11日','じゅういちにち','juuichinichi',0],['12日','じゅうににち','juuninichi',0],
+  ['13日','じゅうさんにち','juusannichi',0],['14日','じゅうよっか','juuyokka',1],['15日','じゅうごにち','juugonichi',0],
+  ['16日','じゅうろくにち','juurokunichi',0],['17日','じゅうしちにち','juushichinichi',0],['18日','じゅうはちにち','juuhachinichi',0],
+  ['19日','じゅうくにち','juukunichi',0],['20日','はつか','hatsuka',1],['21日','にじゅういちにち','nijuuichinichi',0],
+  ['22日','にじゅうににち','nijuuninichi',0],['23日','にじゅうさんにち','nijuusannichi',0],['24日','にじゅうよっか','nijuuyokka',1],
+  ['25日','にじゅうごにち','nijuugonichi',0],['26日','にじゅうろくにち','nijuurokunichi',0],['27日','にじゅうしちにち','nijuushichinichi',0],
+  ['28日','にじゅうはちにち','nijuuhachinichi',0],['29日','にじゅうくにち','nijuukunichi',0],['30日','さんじゅうにち','sanjuunichi',0],
+  ['31日','さんじゅういちにち','sanjuuichinichi',0]
+];
+
+const DATA = {
+  months: { label:'月份', items: monthsRaw.map((d,i)=>({id:'m'+(i+1), front:d[0], reading:d[1], romaji:d[2], irregular:!!d[3], chinese:d[4], classicalKanji:d[5], classicalReading:d[6]})) },
+  weekdays: { label:'星期', items: weekdaysRaw.map((d,i)=>({id:'w'+(i+1), front:d[0], reading:d[1], romaji:d[2], note:d[3], irregular:false, chinese:d[4]})) },
+  dates: { label:'日期', items: datesRaw.map((d,i)=>({id:'d'+(i+1), front:d[0], reading:d[1], romaji:d[2], irregular:!!d[3], chinese:(i+1)+'號'})) }
+};
+const weekdayColors = ['#7c5cbf','#d1453b','#3b82c4','#4f8a5b','#c9952f','#7a7a7a','#d97a3f'];
+
+let progress = { months:[], weekdays:[], dates:[] };
+let currentCategory = 'months';
+let queue = [];
+let currentCard = null;
+
+const root = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const cardEl = document.getElementById('card');
+const frontMain = document.getElementById('frontMain');
+const backReading = document.getElementById('backReading');
+const backNote = document.getElementById('backNote');
+const badgeIrregular = document.getElementById('badgeIrregular');
+const stampEl = document.getElementById('stamp');
+const doneState = document.getElementById('doneState');
+const doneTitle = document.getElementById('doneTitle');
+const actionsEl = document.getElementById('actions');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function renderRefList(elId, items, kind){
+  const el = document.getElementById(elId);
+  el.innerHTML = items.map((it,idx) => {
+    let chipHtml;
+    if(kind === 'weekdays'){
+      const color = weekdayColors[idx % weekdayColors.length];
+      chipHtml = '<span class="chip" style="background:'+color+'1A;color:'+color+';">'+it.note+'</span>';
+    } else if(it.irregular){
+      chipHtml = '<span class="chip chip-irregular">特殊念法</span>';
+    } else {
+      chipHtml = '<span class="chip chip-regular">規則念法</span>';
+    }
+    const classicalHtml = (kind === 'months')
+      ? '<div class="ref-classical">古名：'+it.classicalKanji+'（'+it.classicalReading+'）</div>'
+      : '';
+    return '<div class="ref-card"><div class="ref-card-top"><div class="ref-term">'+it.front+'</div>'+chipHtml+'</div><div class="ref-reading">'+it.reading+'</div><div class="ref-chinese">'+it.chinese+'</div>'+classicalHtml+'</div>';
+  }).join('');
+}
+
+function renderReferenceLists(){
+  renderRefList('refMonths', DATA.months.items, 'months');
+  renderRefList('refWeekdays', DATA.weekdays.items, 'weekdays');
+  renderRefList('refDates', DATA.dates.items, 'dates');
+}
+
+function buildQueue(catKey){
+  const all = DATA[catKey].items;
+  const mastered = progress[catKey] || [];
+  const remaining = all.filter(it => !mastered.includes(it.id));
+  queue = shuffle(remaining.slice());
+}
+
+function renderCard(){
+  cardEl.classList.remove('flipped');
+  frontMain.textContent = currentCard.front;
+  backReading.textContent = currentCard.reading;
+  if(currentCard.note){ backNote.textContent = currentCard.note; backNote.style.display='block'; }
+  else { backNote.style.display='none'; }
+  badgeIrregular.style.display = currentCard.irregular ? 'inline-flex' : 'none';
+  cardEl.style.display='block';
+  doneState.style.display='none';
+  actionsEl.style.display='flex';
+}
+
+function renderDone(){
+  doneTitle.textContent = '「' + DATA[currentCategory].label + '」全部記住了！';
+  cardEl.style.display='none';
+  doneState.style.display='flex';
+  actionsEl.style.display='none';
+}
+
+function showNextCard(){
+  if(queue.length === 0){ currentCard = null; renderDone(); return; }
+  currentCard = queue.shift();
+  renderCard();
+}
+
+function updateProgressUI(){
+  const total = DATA[currentCategory].items.length;
+  const masteredCount = (progress[currentCategory] || []).length;
+  progressFill.style.width = (masteredCount/total*100) + '%';
+  progressText.textContent = masteredCount + ' / ' + total + ' 已掌握';
+  document.querySelectorAll('#deckTabs .deck-tab').forEach(btn => {
+    const cat = btn.dataset.cat;
+    const span = btn.querySelector('.deck-count');
+    span.textContent = (progress[cat]||[]).length + '/' + DATA[cat].items.length;
+    btn.classList.toggle('active', cat === currentCategory);
+  });
+}
+
+function setCategory(catKey){
+  currentCategory = catKey;
+  buildQueue(catKey);
+  showNextCard();
+  updateProgressUI();
+}
+
+async function saveProgress(){
+  try{ await window.storage.set('jp-calendar-progress', JSON.stringify(progress), false); }
+  catch(e){ console.error('save failed', e); }
+}
+
+async function loadProgress(){
+  try{
+    const res = await window.storage.get('jp-calendar-progress', false);
+    if(res && res.value){ progress = JSON.parse(res.value); }
+  }catch(e){ /* no saved progress yet, keep defaults */ }
+}
+
+async function saveTheme(theme){
+  try{ await window.storage.set('jp-calendar-theme', theme, false); }
+  catch(e){ console.error('save theme failed', e); }
+}
+
+async function loadTheme(){
+  let theme = 'light';
+  try{
+    const res = await window.storage.get('jp-calendar-theme', false);
+    if(res && res.value){ theme = res.value; }
+  }catch(e){ /* default light */ }
+  root.setAttribute('data-theme', theme);
+}
+
+function markMastered(){
+  if(!currentCard) return;
+  const list = progress[currentCategory];
+  if(!list.includes(currentCard.id)){ list.push(currentCard.id); saveProgress(); }
+  stampEl.classList.add('show');
+  setTimeout(() => {
+    stampEl.classList.remove('show');
+    updateProgressUI();
+    showNextCard();
+  }, 680);
+}
+
+function markNeedsPractice(){
+  if(!currentCard) return;
+  const insertAt = Math.min(queue.length, 3);
+  queue.splice(insertAt, 0, currentCard);
+  showNextCard();
+}
+
+function resetCurrentCategory(){
+  if(!confirm('要重置「' + DATA[currentCategory].label + '」的學習進度嗎？')) return;
+  progress[currentCategory] = [];
+  saveProgress();
+  setCategory(currentCategory);
+}
+
+let quizCategory = 'months';
+let quizQueue = [];
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function setQuizCategory(cat){
+  quizCategory = cat;
+  document.querySelectorAll('#quizDeckTabs .quiz-deck-tab').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  showQuizIntro();
+}
+
+function showQuizIntro(){
+  document.getElementById('quizIntro').style.display = 'block';
+  document.getElementById('quizPlay').style.display = 'none';
+  document.getElementById('quizResult').style.display = 'none';
+}
+
+function startQuiz(){
+  const items = DATA[quizCategory].items;
+  const count = Math.min(10, items.length);
+  quizQueue = shuffle(items.slice()).slice(0, count);
+  quizIndex = 0;
+  quizScore = 0;
+  document.getElementById('quizIntro').style.display = 'none';
+  document.getElementById('quizResult').style.display = 'none';
+  document.getElementById('quizPlay').style.display = 'block';
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  quizAnswered = false;
+  const items = DATA[quizCategory].items;
+  const correct = quizQueue[quizIndex];
+  document.getElementById('quizProgressText').textContent = '第 ' + (quizIndex+1) + ' / ' + quizQueue.length + ' 題';
+  document.getElementById('quizScoreText').textContent = '得分 ' + quizScore;
+  document.getElementById('quizTerm').textContent = correct.front;
+
+  const pool = items.filter(it => it.id !== correct.id);
+  const distractors = shuffle(pool.slice()).slice(0, Math.min(3, pool.length));
+  const options = shuffle([correct, ...distractors]);
+
+  const optionsEl = document.getElementById('quizOptions');
+  optionsEl.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.dataset.id = opt.id;
+    btn.innerHTML = '<span>'+opt.reading+'</span>';
+    btn.addEventListener('click', () => selectQuizOption(opt, correct));
+    optionsEl.appendChild(btn);
+  });
+  document.getElementById('btnNextQuestion').style.display = 'none';
+}
+
+function selectQuizOption(opt, correct){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  const isCorrect = opt.id === correct.id;
+  if(isCorrect){ quizScore++; }
+  document.querySelectorAll('.quiz-option').forEach(b => {
+    b.classList.add('disabled');
+    if(b.dataset.id === correct.id){ b.classList.add('correct'); }
+    else if(b.dataset.id === opt.id){ b.classList.add('wrong'); }
+  });
+  document.getElementById('quizScoreText').textContent = '得分 ' + quizScore;
+  if(isCorrect){
+    document.getElementById('btnNextQuestion').style.display = 'none';
+    setTimeout(nextQuestion, 600);
+  } else {
+    document.getElementById('btnNextQuestion').style.display = 'block';
+  }
+}
+
+function nextQuestion(){
+  quizIndex++;
+  if(quizIndex >= quizQueue.length){ showQuizResult(); }
+  else { renderQuizQuestion(); }
+}
+
+function showQuizResult(){
+  document.getElementById('quizPlay').style.display = 'none';
+  document.getElementById('quizResult').style.display = 'block';
+  document.getElementById('quizResultTitle').textContent = '測驗完成！';
+  document.getElementById('quizResultText').textContent = quizQueue.length + ' 題中答對 ' + quizScore + ' 題';
+}
+
+document.getElementById('cardInner').parentElement.addEventListener('click', () => {
+  cardEl.classList.toggle('flipped');
+});
+document.getElementById('btnMastered').addEventListener('click', (e) => { e.stopPropagation(); markMastered(); });
+document.getElementById('btnPractice').addEventListener('click', (e) => { e.stopPropagation(); markNeedsPractice(); });
+document.getElementById('resetLink').addEventListener('click', resetCurrentCategory);
+document.querySelectorAll('#deckTabs .deck-tab').forEach(btn => {
+  btn.addEventListener('click', () => setCategory(btn.dataset.cat));
+});
+document.querySelectorAll('#quizDeckTabs .quiz-deck-tab').forEach(btn => {
+  btn.addEventListener('click', () => setQuizCategory(btn.dataset.cat));
+});
+document.getElementById('btnStartQuiz').addEventListener('click', startQuiz);
+document.getElementById('btnNextQuestion').addEventListener('click', nextQuestion);
+document.getElementById('btnRetryQuiz').addEventListener('click', startQuiz);
+document.querySelectorAll('.main-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.main-tab').forEach(b => b.classList.toggle('active', b === btn));
+    const target = btn.dataset.page;
+    document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + target));
+  });
+});
+document.querySelectorAll('.ref-section-header').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const body = document.getElementById(btn.dataset.target);
+    const collapsed = body.classList.toggle('collapsed');
+    btn.classList.toggle('collapsed', collapsed);
+  });
+});
+themeToggle.addEventListener('click', () => {
+  const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  saveTheme(next);
+});
+
+(async function init(){
+  await loadTheme();
+  await loadProgress();
+  renderReferenceLists();
+  setCategory('months');
+  showQuizIntro();
+})();
+</script>
+</body>
+</html>

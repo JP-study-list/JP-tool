@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自他動詞 学習ツール</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#222;min-height:100vh;transition:background .2s,color .2s}
+body.dark{background:#15161a;color:#e8e8ec}
+body.grayscale{filter:grayscale(1)}
+.theme-toggle{display:flex;gap:4px}
+.icon-btn{border:1px solid #ddd;background:#fff;border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#555;transition:all .15s;padding:0}
+.icon-btn:hover{border-color:#aaa;background:#f5f5f0}
+.icon-btn svg{width:18px;height:18px;display:block}
+body.dark .icon-btn{background:#1f2026;border-color:#34353c;color:#ccc}
+body.dark .icon-btn:hover{border-color:#555;background:#272830}
+.title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px}
+body.dark h1{color:#e8e8ec}
+body.dark .tab{background:#1f2026;border-color:#34353c;color:#aaa}
+body.dark .tab.on{background:#e8e8ec;color:#15161a;border-color:#e8e8ec}
+body.dark .card{background:#1f2026;border-color:#2e2f37}
+body.dark .pgw{background:#2e2f37}
+body.dark .flip-area{background:#191a1f;border-color:#34353c}
+body.dark .vbig{color:#e8e8ec}
+body.dark .rbig{color:#999}
+body.dark .mbig{color:#888}
+body.dark .fhint{color:#666}
+body.dark .ji-s{background:#0d2e24;border-color:#1d4d3e}
+body.dark .ta-s{background:#0e2336;border-color:#1f4163}
+body.dark .plj{color:#4ecca3}
+body.dark .plt{color:#7ab8f0}
+body.dark .pv{color:#e8e8ec}
+body.dark .pr3{color:#999}
+body.dark .exb{background:#191a1f}
+body.dark .exj{color:#e8e8ec}
+body.dark .exc{color:#999}
+body.dark .nb{background:#1f2026;border-color:#34353c;color:#e8e8ec}
+body.dark .nb:hover{background:#272830}
+body.dark .cnt{color:#999}
+body.dark .sb{background:#191a1f}
+body.dark .qv,body.dark .snum{color:#e8e8ec}
+body.dark .qr,body.dark .qp{color:#999}
+body.dark .ob{background:#1f2026;border-color:#34353c;color:#e8e8ec}
+body.dark .ob:hover{background:#272830}
+body.dark .or{color:#999}
+body.dark .oc{background:#0d3d28!important;border-color:#1d9e75!important;color:#4ecca3!important}
+body.dark .ow{background:#3d0d0d!important;border-color:#e24b4a!important;color:#f08080!important}
+body.dark .rc{background:#0d3d28;color:#4ecca3}
+body.dark .rw{background:#3d0d0d;color:#f08080}
+body.dark .lr{border-color:#2e2f37}
+body.dark .lh{border-color:#34353c;color:#999}
+body.dark .re{color:#aaa}
+body.dark .pj{background:#0d3d28;color:#4ecca3}
+body.dark .pt{background:#0e2336;color:#7ab8f0}
+body.dark .pr{background:#241f3d;color:#b090e8}
+body.dark .r1{background:#1c1830;border-color:#7f77dd}
+body.dark .r2{background:#0d3d28;border-color:#1d9e75}
+body.dark .r3{background:#3a1f10;border-color:#d85a30}
+body.dark .r4{background:#0e2336;border-color:#378add}
+.wrap{max-width:680px;margin:0 auto;padding:1.5rem 1rem}
+h1{font-size:20px;font-weight:500;color:#222}
+.tabs{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;font-size:14px}
+.tab.on{background:#222;color:#fff;border-color:#222;font-weight:500}
+.sc{display:none}.sc.on{display:block}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.pgw{background:#e8e8e8;border-radius:20px;height:4px;margin-bottom:1.25rem}
+.pgf{height:4px;border-radius:20px;background:#1D9E75;transition:width .3s}
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.pj{background:#E1F5EE;color:#0F6E56}.pt{background:#E6F1FB;color:#185FA5}.pr{background:#EEEDFE;color:#3C3489}
+.flip-area{min-height:180px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;padding:1rem;border-radius:8px;background:#fafafa;border:1px dashed #ddd;margin-bottom:1rem}
+.vbig{font-size:48px;font-weight:500;text-align:center;margin:0.5rem 0 0.25rem}
+.rbig{font-size:18px;color:#666;text-align:center}
+.mbig{font-size:15px;color:#888;text-align:center;margin:0.4rem 0 0.75rem}
+.fhint{font-size:12px;color:#aaa;margin-top:0.75rem}
+.pr2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.pcs{padding:1rem;border-radius:8px;text-align:center}
+.ji-s{background:#E1F5EE;border:1px solid #9FE1CB}.ta-s{background:#E6F1FB;border:1px solid #B5D4F4}
+.pl{font-size:11px;font-weight:500;margin-bottom:4px}.plj{color:#0F6E56}.plt{color:#185FA5}
+.pv{font-size:28px;font-weight:500;color:#222}
+.pr3{font-size:13px;color:#888;margin-top:2px}
+.exb{background:#f8f8f5;border-radius:8px;padding:0.75rem 1rem;margin:0.4rem 0}
+.exj{font-size:15px;color:#222;margin-bottom:2px}
+.exc{font-size:13px;color:#888}
+.nr{display:flex;align-items:center;justify-content:space-between;margin-top:0.75rem}
+.nb{padding:7px 18px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#222;cursor:pointer;font-size:14px}
+.nb:hover{background:#f5f5f0}
+.cnt{font-size:13px;color:#888}
+.sb{background:#f8f8f5;border-radius:8px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.snum{font-weight:500;font-size:18px}
+.qv{font-size:50px;font-weight:500;text-align:center;margin-bottom:0.25rem}
+.qr{font-size:17px;color:#666;text-align:center;margin-bottom:1.25rem}
+.qp{font-size:14px;color:#888;margin-bottom:0.75rem;text-align:center}
+.qo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.ob{padding:14px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:21px;font-weight:500;color:#222;text-align:center}
+.ob:hover{background:#f5f5f0}
+.ob .or{font-size:12px;color:#888;margin-top:2px;font-weight:400}
+.oc{background:#E1F5EE!important;border-color:#1D9E75!important;color:#085041!important}
+.ow{background:#FCEBEB!important;border-color:#E24B4A!important;color:#501313!important}
+.qres{text-align:center;padding:0.75rem;border-radius:8px;font-size:15px;font-weight:500;margin-bottom:0.75rem;min-height:44px}
+.rc{background:#E1F5EE;color:#0F6E56}.rw{background:#FCEBEB;color:#A32D2D}
+.lr{display:grid;grid-template-columns:1fr 1fr 1fr 1.5fr;gap:0;border-bottom:1px solid #f0f0f0;padding:9px 4px;align-items:center;font-size:13px}
+.lh{font-size:11px;font-weight:500;color:#888;border-bottom:1px solid #e0e0e0;padding-bottom:8px;margin-bottom:2px;padding:8px 4px}
+.rb{border-left:3px solid;padding:0.65rem 1rem;border-radius:0 8px 8px 0;margin-bottom:0.75rem}
+.r1{border-color:#7F77DD;background:#EEEDFE}
+.r2{border-color:#1D9E75;background:#E1F5EE}
+.r3{border-color:#D85A30;background:#FAECE7}
+.r4{border-color:#378ADD;background:#E6F1FB}
+.rt{font-size:13px;font-weight:500;margin-bottom:4px}
+.re{font-size:13px;color:#555}
+.exj-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.spk-btn{border:none;background:transparent;cursor:pointer;color:#888;padding:4px;display:flex;align-items:center;justify-content:center;border-radius:6px;flex-shrink:0;transition:all .15s}
+.spk-btn:hover{background:#eee;color:#222}
+.spk-btn svg{width:16px;height:16px;display:block}
+.spk-btn.playing{color:#1D9E75}
+body.dark .spk-btn{color:#999}
+body.dark .spk-btn:hover{background:#272830;color:#e8e8ec}
+body.dark .spk-btn.playing{color:#4ecca3}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="title-row">
+  <h1>🇯🇵 自他動詞 学習ツール</h1>
+  <div class="theme-toggle">
+    <button class="icon-btn" id="th-btn" onclick="cycleTheme()" title="切換主題" aria-label="切換日夜模式"></button>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab on" onclick="sw('fc',0)">單字卡</button>
+  <button class="tab" onclick="sw('qz',1)">測驗</button>
+  <button class="tab" onclick="sw('ls',2)">對照表</button>
+  <button class="tab" onclick="sw('rl',3)">記憶技巧</button>
+</div>
+
+<!-- 單字卡 -->
+<div id="fc" class="sc on">
+  <div class="pgw"><div class="pgf" id="fp" style="width:4%"></div></div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <span class="pill pj">自動詞</span><span class="pill pr" id="fr"></span>
+    </div>
+    <div class="flip-area" onclick="flip()">
+      <div id="ff">
+        <div class="vbig" id="fv"></div>
+        <div class="rbig" id="fd"></div>
+        <div class="mbig" id="fm"></div>
+        <div class="fhint">點擊查看配對動詞 ▼</div>
+      </div>
+      <div id="fb" style="display:none;width:100%">
+        <div class="pr2">
+          <div class="pcs ji-s"><div class="pl plj">自動詞（が）</div><div class="pv" id="bjv"></div><div class="pr3" id="bjr"></div></div>
+          <div class="pcs ta-s"><div class="pl plt">他動詞（を）</div><div class="pv" id="btv"></div><div class="pr3" id="btr"></div></div>
+        </div>
+        <div class="exb"><div class="exj-row"><div class="exj" id="ej1"></div><button class="spk-btn" onclick="speak(D[fi].e1,this,event)" title="播放例句" aria-label="播放例句語音"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 9 7 9 11 5 11 19 7 15 3 15 3 9"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18 6a8.5 8.5 0 0 1 0 12"></path></svg></button></div><div class="exc" id="ec1"></div></div>
+        <div class="exb"><div class="exj-row"><div class="exj" id="ej2"></div><button class="spk-btn" onclick="speak(D[fi].e2,this,event)" title="播放例句" aria-label="播放例句語音"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 9 7 9 11 5 11 19 7 15 3 15 3 9"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18 6a8.5 8.5 0 0 1 0 12"></path></svg></button></div><div class="exc" id="ec2"></div></div>
+      </div>
+    </div>
+    <div class="nr">
+      <button class="nb" onclick="mv(-1)">← 上一個</button>
+      <span class="cnt" id="fc_cnt">1 / 25</span>
+      <button class="nb" onclick="mv(1)">下一個 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- 測驗 -->
+<div id="qz" class="sc">
+  <div class="sb">
+    <span style="color:#888;font-size:14px">得分</span>
+    <span class="snum" id="qs">0 / 0</span>
+    <button class="nb" onclick="rq()" style="font-size:13px;padding:5px 12px">重新開始</button>
+  </div>
+  <div class="pgw"><div class="pgf" id="qpg" style="width:0%"></div></div>
+  <div class="card" style="text-align:center">
+    <div class="qp" id="qpr"></div>
+    <div class="qv" id="qv"></div>
+    <div class="qr" id="qrd"></div>
+    <div class="qo" id="qo"></div>
+    <div class="qres" id="qrs"></div>
+    <button class="nb" id="qnx" onclick="nq()" style="display:none;margin:0 auto">下一題 →</button>
+  </div>
+</div>
+
+<!-- 對照表 -->
+<div id="ls" class="sc">
+  <div class="card">
+    <div class="lr lh"><div>自動詞</div><div>他動詞</div><div>規律</div><div>中文</div></div>
+    <div id="lb"></div>
+  </div>
+</div>
+
+<!-- 記憶技巧 -->
+<div id="rl" class="sc">
+  <div class="card">
+    <p style="font-size:14px;color:#888;margin-bottom:1.25rem">掌握語尾變化規律，快速推測配對！</p>
+    <div class="rb r1"><div class="rt" style="color:#3C3489">規律① ～まる → ～める</div><div class="re">始まる→始める　集まる→集める　決まる→決める　止まる→止める　閉まる→閉める</div></div>
+    <div class="rb r2"><div class="rt" style="color:#085041">規律② ～れる → ～す（或～る）</div><div class="re">壊れる→壊す　汚れる→汚す　割れる→割る　切れる→切る</div></div>
+    <div class="rb r3"><div class="rt" style="color:#993C1D">規律③ ～える → ～す／～やす</div><div class="re">消える→消す　増える→増やす</div></div>
+    <div class="rb r4"><div class="rt" style="color:#185FA5">規律④ ～く → ～ける／～かす</div><div class="re">開く→開ける　続く→続ける　乾く→乾かす　動く→動かす</div></div>
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f0f0f0">
+      <p style="font-size:14px;font-weight:500;margin-bottom:0.75rem">助詞の鐵則</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="pcs ji-s" style="text-align:left;padding:1rem">
+          <div class="pl plj" style="margin-bottom:6px">自動詞</div>
+          <div style="font-size:20px;font-weight:500">N <span style="color:#1D9E75">が</span> V</div>
+          <div style="font-size:12px;color:#888;margin-top:4px">事情「自然發生」</div>
+          <div style="font-size:13px;margin-top:6px">ドア<span style="color:#1D9E75;font-weight:600">が</span>開く</div>
+        </div>
+        <div class="pcs ta-s" style="text-align:left;padding:1rem">
+          <div class="pl plt" style="margin-bottom:6px">他動詞</div>
+          <div style="font-size:20px;font-weight:500">N <span style="color:#185FA5">を</span> V</div>
+          <div style="font-size:12px;color:#888;margin-top:4px">「人為動作」影響對象</div>
+          <div style="font-size:13px;margin-top:6px">ドア<span style="color:#185FA5;font-weight:600">を</span>開ける</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const D=[
+{ji:'開く',jr:'あく',ta:'開ける',tr:'あける',zh:'打開',e1:'ドアが開く',c1:'門開了（自然發生）',e2:'私がドアを開ける',c2:'我把門打開',rule:'く→ける'},
+{ji:'閉まる',jr:'しまる',ta:'閉める',tr:'しめる',zh:'關閉',e1:'窓が閉まる',c1:'窗戶關上了',e2:'私が窓を閉める',c2:'我把窗關上',rule:'まる→める'},
+{ji:'消える',jr:'きえる',ta:'消す',tr:'けす',zh:'熄滅／關掉',e1:'電気が消える',c1:'燈熄了',e2:'私が電気を消す',c2:'我把燈關掉',rule:'える→す'},
+{ji:'つく',jr:'つく',ta:'つける',tr:'つける',zh:'點亮／開啟',e1:'電気がつく',c1:'燈亮了',e2:'私が電気をつける',c2:'我開燈',rule:'く→ける'},
+{ji:'落ちる',jr:'おちる',ta:'落とす',tr:'おとす',zh:'掉落',e1:'鍵が落ちる',c1:'鑰匙掉了',e2:'私が鍵を落とす',c2:'我弄掉鑰匙',rule:'特殊'},
+{ji:'始まる',jr:'はじまる',ta:'始める',tr:'はじめる',zh:'開始',e1:'会議が始まる',c1:'會議開始了',e2:'先生が会議を始める',c2:'老師開始會議',rule:'まる→める'},
+{ji:'止まる',jr:'とまる',ta:'止める',tr:'とめる',zh:'停止',e1:'バスが止まる',c1:'公車停了',e2:'運転手がバスを止める',c2:'司機停車',rule:'まる→める'},
+{ji:'壊れる',jr:'こわれる',ta:'壊す',tr:'こわす',zh:'損壞',e1:'機械が壊れる',c1:'機器壞了',e2:'彼が機械を壊す',c2:'他弄壞機器',rule:'れる→す'},
+{ji:'集まる',jr:'あつまる',ta:'集める',tr:'あつめる',zh:'聚集',e1:'人が集まる',c1:'人聚集了',e2:'生徒を集める',c2:'集合學生',rule:'まる→める'},
+{ji:'決まる',jr:'きまる',ta:'決める',tr:'きめる',zh:'決定',e1:'日程が決まる',c1:'日程決定了',e2:'自分で決める',c2:'自己決定',rule:'まる→める'},
+{ji:'変わる',jr:'かわる',ta:'変える',tr:'かえる',zh:'改變',e1:'計画が変わる',c1:'計畫改變了',e2:'計画を変える',c2:'改變計畫',rule:'特殊'},
+{ji:'続く',jr:'つづく',ta:'続ける',tr:'つづける',zh:'繼續',e1:'雨が続く',c1:'雨繼續下',e2:'練習を続ける',c2:'繼續練習',rule:'く→ける'},
+{ji:'増える',jr:'ふえる',ta:'増やす',tr:'ふやす',zh:'增加',e1:'人口が増える',c1:'人口增加',e2:'収入を増やす',c2:'增加收入',rule:'える→やす'},
+{ji:'減る',jr:'へる',ta:'減らす',tr:'へらす',zh:'減少',e1:'体重が減る',c1:'體重減少',e2:'食事を減らす',c2:'減少飲食',rule:'特殊'},
+{ji:'育つ',jr:'そだつ',ta:'育てる',tr:'そだてる',zh:'成長／培養',e1:'子供が育つ',c1:'孩子成長',e2:'子供を育てる',c2:'養育孩子',rule:'特殊'},
+{ji:'焼ける',jr:'やける',ta:'焼く',tr:'やく',zh:'燒烤',e1:'パンが焼ける',c1:'麵包烤好了',e2:'パンを焼く',c2:'烤麵包',rule:'特殊'},
+{ji:'溶ける',jr:'とける',ta:'溶かす',tr:'とかす',zh:'溶解',e1:'砂糖が溶ける',c1:'糖溶了',e2:'砂糖を溶かす',c2:'使糖溶解',rule:'特殊'},
+{ji:'乾く',jr:'かわく',ta:'乾かす',tr:'かわかす',zh:'乾燥',e1:'洗濯物が乾く',c1:'衣服乾了',e2:'洗濯物を乾かす',c2:'弄乾衣服',rule:'く→かす'},
+{ji:'汚れる',jr:'よごれる',ta:'汚す',tr:'よごす',zh:'弄髒',e1:'服が汚れる',c1:'衣服髒了',e2:'服を汚す',c2:'弄髒衣服',rule:'れる→す'},
+{ji:'割れる',jr:'われる',ta:'割る',tr:'わる',zh:'破裂',e1:'コップが割れる',c1:'杯子破了',e2:'コップを割る',c2:'打破杯子',rule:'れる→る'},
+{ji:'切れる',jr:'きれる',ta:'切る',tr:'きる',zh:'切斷',e1:'糸が切れる',c1:'線斷了',e2:'糸を切る',c2:'剪線',rule:'れる→る'},
+{ji:'混ざる',jr:'まざる',ta:'混ぜる',tr:'まぜる',zh:'混合',e1:'色が混ざる',c1:'顏色混合了',e2:'色を混ぜる',c2:'混合顏色',rule:'ざる→ぜる'},
+{ji:'並ぶ',jr:'ならぶ',ta:'並べる',tr:'ならべる',zh:'排列',e1:'商品が並ぶ',c1:'商品排列好了',e2:'商品を並べる',c2:'排列商品',rule:'ぶ→べる'},
+{ji:'動く',jr:'うごく',ta:'動かす',tr:'うごかす',zh:'移動／運轉',e1:'機械が動く',c1:'機器運轉',e2:'機械を動かす',c2:'使機器運轉',rule:'く→かす'},
+{ji:'育てる',jr:'そだてる',ta:'育つ',tr:'そだつ',zh:'培養（他→自回顧）',e1:'植物が育つ',c1:'植物成長',e2:'植物を育てる',c2:'培育植物',rule:'特殊'},
+];
+let fi=0,fflip=false,qsc=0,qtot=0,qasked=[],qans=false;
+function sw(id,i){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.tab')[i].classList.add('on');if(id==='ls')renderList();if(id==='qz'&&qasked.length===0)nq();}
+function rfc(){const d=D[fi];fflip=false;document.getElementById('ff').style.display='block';document.getElementById('fb').style.display='none';document.getElementById('fv').textContent=d.ji;document.getElementById('fd').textContent=d.jr;document.getElementById('fm').textContent=d.zh;document.getElementById('fr').textContent=d.rule;document.getElementById('bjv').textContent=d.ji;document.getElementById('bjr').textContent=d.jr;document.getElementById('btv').textContent=d.ta;document.getElementById('btr').textContent=d.tr;document.getElementById('ej1').textContent=d.e1;document.getElementById('ec1').textContent=d.c1;document.getElementById('ej2').textContent=d.e2;document.getElementById('ec2').textContent=d.c2;document.getElementById('fc_cnt').textContent=(fi+1)+' / '+D.length;document.getElementById('fp').style.width=Math.round((fi+1)/D.length*100)+'%';}
+function flip(){fflip=!fflip;document.getElementById('ff').style.display=fflip?'none':'block';document.getElementById('fb').style.display=fflip?'block':'none';}
+function mv(d){fi=(fi+d+D.length)%D.length;rfc();}
+function nq(){qans=false;document.getElementById('qrs').textContent='';document.getElementById('qrs').className='qres';document.getElementById('qnx').style.display='none';if(qasked.length>=D.length)qasked=[];let pool=D.filter((_,i)=>!qasked.includes(i));let idx=D.indexOf(pool[Math.floor(Math.random()*pool.length)]);qasked.push(idx);const d=D[idx];const jtt=Math.random()>.5;document.getElementById('qpr').textContent=jtt?'這個自動詞的他動詞是？':'這個他動詞的自動詞是？';document.getElementById('qv').textContent=jtt?d.ji:d.ta;document.getElementById('qrd').textContent=jtt?d.jr:d.tr;const cv=jtt?{v:d.ta,r:d.tr}:{v:d.ji,r:d.jr};let ws=D.filter((_,i)=>i!==idx).sort(()=>Math.random()-.5).slice(0,3).map(x=>jtt?{v:x.ta,r:x.tr}:{v:x.ji,r:x.jr});let opts=[cv,...ws].sort(()=>Math.random()-.5);const c=document.getElementById('qo');c.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='ob';b.innerHTML='<div>'+o.v+'</div><div class="or">'+o.r+'</div>';b.onclick=function(){ansQ(b,o.v===cv.v,cv.v)};c.appendChild(b);});document.getElementById('qpg').style.width=Math.round(qasked.length/D.length*100)+'%';}
+function ansQ(btn,correct,cv){if(qans)return;qans=true;qtot++;if(correct){qsc++;btn.classList.add('oc');document.getElementById('qrs').textContent='正確！';document.getElementById('qrs').className='qres rc';}else{btn.classList.add('ow');document.querySelectorAll('.ob').forEach(b=>{if(b.children[0].textContent===cv)b.classList.add('oc');});document.getElementById('qrs').textContent='答錯了，正確答案是「'+cv+'」';document.getElementById('qrs').className='qres rw';}document.getElementById('qs').textContent=qsc+' / '+qtot;document.getElementById('qnx').style.display='block';}
+function rq(){qsc=0;qtot=0;qasked=[];document.getElementById('qs').textContent='0 / 0';document.getElementById('qpg').style.width='0%';nq();}
+function renderList(){const b=document.getElementById('lb');b.innerHTML=D.map(d=>'<div class="lr"><div><strong>'+d.ji+'</strong><div style="font-size:11px;color:#aaa">'+d.jr+'</div></div><div><strong>'+d.ta+'</strong><div style="font-size:11px;color:#aaa">'+d.tr+'</div></div><div><span class="pill pr" style="font-size:11px">'+d.rule+'</span></div><div style="color:#888;font-size:13px">'+d.zh+'</div></div>').join('');}
+
+// ── 語音播放 ──
+function speak(text, btn, evt){
+  if(evt){ evt.stopPropagation(); evt.preventDefault(); }
+  try{
+    if(!('speechSynthesis' in window)){return;}
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP';
+    u.rate = 0.95;
+    document.querySelectorAll('.spk-btn').forEach(b=>b.classList.remove('playing'));
+    if(btn) btn.classList.add('playing');
+    u.onend = function(){ if(btn) btn.classList.remove('playing'); };
+    u.onerror = function(){ if(btn) btn.classList.remove('playing'); };
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+// ── 日夜模式（單一循環按鈕：日間 → 夜間 → 灰階）──
+const ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"></path></svg>';
+const ICON_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>';
+const ICON_HALF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path></svg>';
+const THEMES = ['light','dark','gray'];
+let themeIdx = 0;
+function applyTheme(t){
+  document.body.classList.toggle('dark', t==='dark');
+  document.body.classList.toggle('grayscale', t==='gray');
+  const btn = document.getElementById('th-btn');
+  btn.innerHTML = t==='light' ? ICON_SUN : (t==='dark' ? ICON_MOON : ICON_HALF);
+  btn.title = t==='light' ? '日間模式（點擊切換夜間）' : (t==='dark' ? '夜間模式（點擊切換灰階）' : '灰階模式（點擊切換日間）');
+  try{localStorage.setItem('jitadoushi-theme', t);}catch(e){}
+}
+function cycleTheme(){
+  themeIdx = (themeIdx + 1) % THEMES.length;
+  applyTheme(THEMES[themeIdx]);
+}
+(function(){
+  try{
+    const saved = localStorage.getItem('jitadoushi-theme');
+    if(saved && THEMES.includes(saved)){ themeIdx = THEMES.indexOf(saved); }
+  }catch(e){}
+  applyTheme(THEMES[themeIdx]);
+})();
+rfc();
+</script>
+</body>
+</html>

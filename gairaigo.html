@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日文外來語練習</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card-bg: #1a1d27;
+    --card-bg2: #20232f;
+    --border: #2c2f3a;
+    --text: #e8e9ed;
+    --text-dim: #9094a3;
+    --text-faint: #5c5f6b;
+    --accent: #5b8cff;
+    --accent-dim: #2a3a5e;
+    --success: #3ecf8e;
+    --success-dim: #1e3a30;
+    --danger: #ff5c7a;
+    --danger-dim: #3a1e28;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  [data-theme="light"] {
+    --bg: #f5f6f8;
+    --card-bg: #ffffff;
+    --card-bg2: #eef0f4;
+    --border: #dde1e8;
+    --text: #1c1e24;
+    --text-dim: #5c6170;
+    --text-faint: #9498a4;
+    --accent: #3a6cf0;
+    --accent-dim: #e2eaff;
+    --success: #1ea872;
+    --success-dim: #e1f6ec;
+    --danger: #e0405f;
+    --danger-dim: #fde6ea;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Hiragino Sans", "Noto Sans TC", "PingFang TC", sans-serif;
+    line-height: 1.6;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  header.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .title-group { display: flex; align-items: center; gap: 8px; }
+  .title-group .icon { font-size: 20px; }
+  .title-group h1 { font-size: 18px; font-weight: 600; margin: 0; }
+  .stats { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+  .stat-pill {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--card-bg2);
+    border: 1px solid var(--border);
+  }
+  .stat-pill.ok { color: var(--success); }
+  .stat-pill.no { color: var(--danger); }
+  .stat-pill.total { color: var(--text-dim); }
+
+  .theme-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card-bg2);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .theme-toggle-btn:hover { border-color: var(--accent); color: var(--text); }
+  .theme-toggle-btn svg { width: 16px; height: 16px; }
+
+  .tab-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tab-label { font-size: 12px; color: var(--text-faint); margin-right: 4px; align-self: center; }
+  .tab-btn {
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text-dim);
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { border-color: #3a3e4d; }
+  .tab-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .progress-bar-track {
+    width: 100%;
+    height: 6px;
+    background: var(--card-bg2);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 14px 0 4px;
+    position: relative;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.25s ease;
+  }
+  .progress-text {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-bottom: 16px;
+  }
+
+  .main-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 24px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+  }
+  .main-card .eyebrow { font-size: 13px; color: var(--text-faint); margin-bottom: 18px; }
+  .main-card .kana-big { font-size: 38px; font-weight: 600; margin: 0 0 10px; letter-spacing: 0.5px; }
+  .main-card .romaji { font-size: 14px; color: var(--text-dim); margin: 0 0 4px; }
+  .main-card .zh-answer { font-size: 26px; font-weight: 600; margin: 0 0 8px; color: var(--success); }
+  .main-card .source-badge {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--accent-dim);
+    color: #aac2ff;
+    font-size: 13px;
+  }
+  .example-box {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--card-bg2);
+    border: 1px solid var(--border);
+    font-size: 14px;
+    text-align: left;
+    width: 100%;
+    max-width: 420px;
+    line-height: 1.7;
+  }
+  .example-box .example-jp {
+    color: var(--text);
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .example-box .example-jp .example-jp-text { flex: 1; }
+  .example-box .example-zh { color: var(--text-dim); margin: 0; font-size: 13px; }
+  .example-box .example-label {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .speak-btn {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .speak-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .speak-btn:active { transform: scale(0.92); }
+  .speak-btn.speaking { border-color: var(--accent); color: var(--accent); }
+  .speak-btn svg { width: 13px; height: 13px; }
+  .main-card .hint-footer {
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .card-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+  }
+  .nav-btn {
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .nav-btn:hover { border-color: #3a3e4d; }
+  .nav-btn:disabled { opacity: 0.4; cursor: default; }
+  .nav-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* fill-in-blank mode */
+  .fill-input-row { display: flex; gap: 8px; margin-top: 20px; width: 100%; max-width: 320px; }
+  .fill-input-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+  }
+  .fill-input-row input:focus { outline: none; border-color: var(--accent); }
+  .fill-input-row button {
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .feedback-banner {
+    margin-top: 16px;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .feedback-banner.correct { background: var(--success-dim); color: var(--success); }
+  .feedback-banner.wrong { background: var(--danger-dim); color: var(--danger); }
+
+  /* matching mode */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+  }
+  .match-col { display: flex; flex-direction: column; gap: 8px; }
+  .match-item {
+    padding: 14px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--card-bg2);
+    font-size: 15px;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+  }
+  .match-item.selected { border-color: var(--accent); background: var(--accent-dim); }
+  .match-item.matched { border-color: var(--success); background: var(--success-dim); color: var(--success); cursor: default; }
+  .match-item.wrong-flash { border-color: var(--danger); background: var(--danger-dim); }
+
+  /* source-judge mode */
+  .source-options { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 24px; width: 100%; }
+  .source-opt-btn {
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--card-bg2);
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 110px;
+  }
+  .source-opt-btn:hover { border-color: var(--accent); }
+  .source-opt-btn.correct-pick { background: var(--success-dim); border-color: var(--success); color: var(--success); }
+  .source-opt-btn.wrong-pick { background: var(--danger-dim); border-color: var(--danger); color: var(--danger); }
+  .source-opt-btn:disabled { cursor: default; }
+
+  /* wago-comparison mode */
+  .wago-direction-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--card-bg2);
+    color: var(--text-dim);
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .wago-nuance-box {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--card-bg2);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: left;
+    max-width: 420px;
+    line-height: 1.7;
+  }
+  .wago-nuance-box .nuance-row { margin-bottom: 6px; }
+  .wago-nuance-box .nuance-row:last-child { margin-bottom: 0; }
+  .wago-nuance-box .nuance-label {
+    color: var(--accent);
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  /* reference table mode */
+  .ref-table-wrap { width: 100%; }
+  .ref-search {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--card-bg2);
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .ref-search:focus { outline: none; border-color: var(--accent); }
+  table.ref-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.ref-table th {
+    text-align: left;
+    padding: 10px 8px;
+    color: var(--text-faint);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  table.ref-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.ref-table tr:hover td { background: var(--card-bg2); }
+  .ref-kana { font-weight: 600; font-size: 15px; }
+  .ref-cat-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-dim);
+    color: #aac2ff;
+    font-size: 11px;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--text-faint);
+    padding: 60px 20px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    .main-card .kana-big { font-size: 28px; }
+    .main-card { padding: 28px 16px; }
+    .match-grid { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app-header">
+    <div class="title-group">
+      <h1>日文外來語練習</h1>
+    </div>
+    <div class="stats">
+      <span class="stat-pill ok">✓ <span id="statOk">0</span></span>
+      <span class="stat-pill no">✗ <span id="statNo">0</span></span>
+      <span class="stat-pill total">共 <span id="statTotal">0</span> 題</span>
+      <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切換日夜模式" title="切換日夜模式"></button>
+    </div>
+  </header>
+
+  <div class="tab-row" id="modeTabs">
+    <span class="tab-label">模式</span>
+    <button class="tab-btn" data-mode="flashcard">單字卡</button>
+    <button class="tab-btn" data-mode="fill">填空</button>
+    <button class="tab-btn" data-mode="match">配對選擇</button>
+    <button class="tab-btn" data-mode="wago">外來語/和語</button>
+    <button class="tab-btn" data-mode="reference">參考表</button>
+  </div>
+
+  <div class="tab-row" id="categoryTabs">
+    <span class="tab-label">範圍</span>
+    <button class="tab-btn" data-cat="all">全部混合</button>
+  </div>
+
+  <div class="progress-bar-track" id="progressTrack">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+  <div class="progress-text" id="progressText">0 / 0</div>
+
+  <div id="mainArea"></div>
+
+</div>
+
+<script>
+const DATA = {
+  daily:    { label: "日常用品", words: [
+    {kana:"コップ", romaji:"koppu", source:"荷蘭語 kop", zh:"杯子", example:"コップに水を入れてください。", exampleZh:"請把水倒進杯子裡。"},
+    {kana:"テーブル", romaji:"te-buru", source:"英語 table", zh:"桌子", example:"テーブルの上に花を置きました。", exampleZh:"我把花放在桌子上了。"},
+    {kana:"ノート", romaji:"no-to", source:"英語 note", zh:"筆記本", example:"授業の内容をノートに書きます。", exampleZh:"把上課的內容寫在筆記本上。"},
+    {kana:"ペン", romaji:"pen", source:"英語 pen", zh:"筆", example:"そのペンを貸してください。", exampleZh:"請借我那支筆。"},
+    {kana:"タオル", romaji:"taoru", source:"英語 towel", zh:"毛巾", example:"タオルで手を拭きます。", exampleZh:"用毛巾擦手。"},
+    {kana:"カレンダー", romaji:"karenda-", source:"英語 calendar", zh:"日曆", example:"カレンダーに予定を書き込みます。", exampleZh:"把行程寫在日曆上。"},
+    {kana:"ハンカチ", romaji:"hankachi", source:"英語 handkerchief", zh:"手帕", example:"ハンカチをポケットに入れました。", exampleZh:"把手帕放進口袋裡了。"},
+    {kana:"ナイフ", romaji:"naifu", source:"英語 knife", zh:"刀子", example:"ナイフでパンを切ります。", exampleZh:"用刀子切麵包。"}
+  ]},
+  food:     { label: "食物飲料", words: [
+    {kana:"パン", romaji:"pan", source:"葡萄牙語 pão", zh:"麵包", example:"朝ごはんにパンを食べます。", exampleZh:"早餐吃麵包。"},
+    {kana:"コーヒー", romaji:"ko-hi-", source:"英語 coffee", zh:"咖啡", example:"毎朝コーヒーを飲みます。", exampleZh:"每天早上喝咖啡。"},
+    {kana:"ジュース", romaji:"ju-su", source:"英語 juice", zh:"果汁", example:"冷たいジュースが飲みたいです。", exampleZh:"我想喝冰的果汁。"},
+    {kana:"ケーキ", romaji:"ke-ki", source:"英語 cake", zh:"蛋糕", example:"誕生日にケーキを買いました。", exampleZh:"生日的時候買了蛋糕。"},
+    {kana:"カステラ", romaji:"kasutera", source:"葡萄牙語 castela", zh:"長崎蛋糕", example:"長崎のカステラは有名です。", exampleZh:"長崎的蜂蜜蛋糕很有名。"},
+    {kana:"テンプラ", romaji:"tenpura", source:"葡萄牙語 tempero", zh:"天婦羅", example:"エビのテンプラが好きです。", exampleZh:"我喜歡蝦子天婦羅。"},
+    {kana:"ビール", romaji:"bi-ru", source:"荷蘭語 bier", zh:"啤酒", example:"仕事の後にビールを飲みます。", exampleZh:"工作結束後喝啤酒。"},
+    {kana:"ミルク", romaji:"miruku", source:"英語 milk", zh:"牛奶", example:"コーヒーにミルクを入れます。", exampleZh:"在咖啡裡加牛奶。"}
+  ]},
+  tech:     { label: "科技生活", words: [
+    {kana:"コンピューター", romaji:"konpyu-ta-", source:"英語 computer", zh:"電腦", example:"コンピューターで仕事をします。", exampleZh:"用電腦工作。"},
+    {kana:"テレビ", romaji:"terebi", source:"英語 television略", zh:"電視", example:"夜はテレビを見ます。", exampleZh:"晚上看電視。"},
+    {kana:"スマホ", romaji:"sumaho", source:"英語 smartphone略", zh:"智慧型手機", example:"スマホで写真を撮ります。", exampleZh:"用智慧型手機拍照。"},
+    {kana:"インターネット", romaji:"inta-netto", source:"英語 internet", zh:"網路", example:"インターネットで調べます。", exampleZh:"用網路查資料。"},
+    {kana:"パソコン", romaji:"pasokon", source:"英語 personal computer略", zh:"個人電腦", example:"パソコンが壊れました。", exampleZh:"電腦壞掉了。"},
+    {kana:"アプリ", romaji:"apuri", source:"英語 application略", zh:"應用程式", example:"新しいアプリをダウンロードしました。", exampleZh:"下載了新的應用程式。"},
+    {kana:"カメラ", romaji:"kamera", source:"英語 camera", zh:"相機", example:"カメラで景色を撮ります。", exampleZh:"用相機拍風景。"},
+    {kana:"リモコン", romaji:"rimokon", source:"英語 remote control略", zh:"遙控器", example:"リモコンでテレビをつけます。", exampleZh:"用遙控器打開電視。"}
+  ]},
+  place:    { label: "場所建築", words: [
+    {kana:"ホテル", romaji:"hoteru", source:"英語 hotel", zh:"飯店", example:"駅の近くのホテルに泊まります。", exampleZh:"住在車站附近的飯店。"},
+    {kana:"レストラン", romaji:"resutoran", source:"法語 restaurant", zh:"餐廳", example:"そのレストランは予約が必要です。", exampleZh:"那家餐廳需要預約。"},
+    {kana:"スーパー", romaji:"su-pa-", source:"英語 supermarket略", zh:"超市", example:"スーパーで野菜を買います。", exampleZh:"在超市買蔬菜。"},
+    {kana:"デパート", romaji:"depa-to", source:"英語 department store略", zh:"百貨公司", example:"デパートで靴を見ました。", exampleZh:"在百貨公司看了鞋子。"},
+    {kana:"アパート", romaji:"apa-to", source:"英語 apartment", zh:"公寓", example:"駅前のアパートに住んでいます。", exampleZh:"住在車站前的公寓。"},
+    {kana:"ベランダ", romaji:"beranda", source:"英語 veranda", zh:"陽台", example:"ベランダで植物を育てています。", exampleZh:"在陽台種植物。"},
+    {kana:"トイレ", romaji:"toire", source:"英語 toilet", zh:"廁所", example:"トイレはどこですか。", exampleZh:"廁所在哪裡？"},
+    {kana:"エレベーター", romaji:"erebe-ta-", source:"英語 elevator", zh:"電梯", example:"エレベーターで五階に行きます。", exampleZh:"坐電梯到五樓。"}
+  ]},
+  fashion:  { label: "時尚穿搭", words: [
+    {kana:"ファッション", romaji:"fasshon", source:"英語 fashion", zh:"時尚", example:"彼女はファッションに興味があります。", exampleZh:"她對時尚很感興趣。"},
+    {kana:"シャツ", romaji:"shatsu", source:"英語 shirt", zh:"襯衫", example:"白いシャツを買いました。", exampleZh:"買了白色襯衫。"},
+    {kana:"スカート", romaji:"suka-to", source:"英語 skirt", zh:"裙子", example:"今日は赤いスカートを着ています。", exampleZh:"今天穿著紅色的裙子。"},
+    {kana:"アクセサリー", romaji:"akusesari-", source:"英語 accessory", zh:"飾品", example:"アクセサリーを選ぶのが好きです。", exampleZh:"我喜歡挑選飾品。"},
+    {kana:"ブランド", romaji:"burando", source:"英語 brand", zh:"品牌", example:"このブランドは人気があります。", exampleZh:"這個品牌很受歡迎。"},
+    {kana:"サイズ", romaji:"saizu", source:"英語 size", zh:"尺寸", example:"このサイズは少し小さいです。", exampleZh:"這個尺寸有點小。"},
+    {kana:"デザイン", romaji:"dezain", source:"英語 design", zh:"設計", example:"このデザインが気に入りました。", exampleZh:"我很喜歡這個設計。"},
+    {kana:"ボタン", romaji:"botan", source:"葡萄牙語 botão", zh:"鈕扣", example:"シャツのボタンが取れました。", exampleZh:"襯衫的鈕扣掉了。"}
+  ]},
+  abstract: { label: "抽象概念", words: [
+    {kana:"ストレス", romaji:"sutoresu", source:"英語 stress", zh:"壓力", example:"最近、ストレスを感じています。", exampleZh:"最近感到有壓力。"},
+    {kana:"リサイクル", romaji:"risaikuru", source:"英語 recycle", zh:"回收", example:"ペットボトルをリサイクルします。", exampleZh:"回收寶特瓶。"},
+    {kana:"ボランティア", romaji:"borantia", source:"英語 volunteer", zh:"志工", example:"週末はボランティアをしています。", exampleZh:"週末在做志工。"},
+    {kana:"イメージ", romaji:"ime-ji", source:"英語 image", zh:"印象、形象", example:"この会社はいいイメージがあります。", exampleZh:"這家公司給人很好的印象。"},
+    {kana:"システム", romaji:"shisutemu", source:"英語 system", zh:"系統", example:"新しいシステムを導入しました。", exampleZh:"引進了新的系統。"},
+    {kana:"プラン", romaji:"puran", source:"英語 plan", zh:"計畫", example:"旅行のプランを立てています。", exampleZh:"正在規劃旅行的計畫。"},
+    {kana:"チャンス", romaji:"chansu", source:"英語 chance", zh:"機會", example:"これはいいチャンスです。", exampleZh:"這是個好機會。"},
+    {kana:"レベル", romaji:"reberu", source:"英語 level", zh:"等級、水準", example:"日本語のレベルが上がりました。", exampleZh:"日語的水準提升了。"}
+  ]}
+};
+
+const CAT_KEYS = Object.keys(DATA);
+
+const WAGO_PAIRS = [
+  {gairaigo:"ミルク", wago:"牛乳", zh:"牛奶", nuance:"牛乳較正式、常用於學校教育或商品標示（牛乳パック）；ミルク較生活化，常見於咖啡牛奶、奶粉、嬰兒奶粉等情境。", exampleG:"コーヒーにミルクを入れます。", exampleGZh:"在咖啡裡加牛奶。", exampleW:"毎朝牛乳を一杯飲みます。", exampleWZh:"每天早上喝一杯牛奶。"},
+  {gairaigo:"ホテル", wago:"旅館", zh:"住宿設施", nuance:"兩者所指的住宿型態不同：旅館指日式傳統住宿（含榻榻米、溫泉等），ホテル專指西式飯店。", exampleG:"出張でホテルに泊まります。", exampleGZh:"出差時住飯店。", exampleW:"温泉旅館でゆっくりしました。", exampleWZh:"在溫泉旅館好好放鬆了。"},
+  {gairaigo:"ショッピング", wago:"買い物", zh:"購物", nuance:"買い物泛指一般購物行為；ショッピング語感較時髦、休閒，常用於「ショッピングモール」等複合詞或描述逛街的樂趣。", exampleG:"週末はショッピングを楽しみます。", exampleGZh:"週末享受逛街購物的樂趣。", exampleW:"夕飯の買い物に行きます。", exampleWZh:"去買晚餐的食材。"},
+  {gairaigo:"ウォッチ", wago:"時計", zh:"鐘錶/手錶", nuance:"時計泛指所有鐘錶；ウォッチ特指手錶，尤其強調款式與品牌時使用，如「スマートウォッチ」。", exampleG:"新しいスマートウォッチを買いました。", exampleGZh:"買了新的智慧手錶。", exampleW:"壁に時計をかけました。", exampleWZh:"把時鐘掛在牆上了。"},
+  {gairaigo:"トイレ", wago:"便所", zh:"廁所", nuance:"便所是較傳統、直接的說法，現今使用頻率降低；トイレ是現代日常生活中最常用、較委婉的說法。", exampleG:"トイレはどこですか。", exampleGZh:"廁所在哪裡？", exampleW:"昔の家には外に便所がありました。", exampleWZh:"以前的房子廁所是在外面的。"},
+  {gairaigo:"アパート", wago:"借家", zh:"租賃住宅", nuance:"借家泛指租賃的房屋（含獨棟）；アパート特指西式公寓型態的出租住宅，是現代年輕人租屋時最常用的詞。", exampleG:"駅前のアパートに住んでいます。", exampleGZh:"住在車站前的公寓。", exampleW:"古い借家を改装しました。", exampleWZh:"改裝了老舊的租賃房屋。"},
+  {gairaigo:"レストラン", wago:"食堂", zh:"用餐場所", nuance:"食堂語感較家常、平價，常見於學校、公司內部餐廳；レストラン則指較正式、西式或高級的餐廳。", exampleG:"記念日にレストランへ行きます。", exampleGZh:"紀念日要去餐廳吃飯。", exampleW:"会社の食堂で昼ご飯を食べます。", exampleWZh:"在公司的食堂吃午餐。"},
+  {gairaigo:"ニュース", wago:"知らせ", zh:"消息/新聞", nuance:"知らせ泛指通知、消息（個人或私下性質）；ニュース特指新聞報導，多用於電視、報紙等媒體情境。", exampleG:"朝のニュースを見ます。", exampleGZh:"看早晨的新聞。", exampleW:"友達から嬉しい知らせが届きました。", exampleWZh:"收到朋友傳來的好消息。"},
+  {gairaigo:"パーティー", wago:"宴会", zh:"宴會/派對", nuance:"宴会偏向正式、傳統的日式宴席（如公司聚餐、婚宴）；パーティー語感較西式、輕鬆，如生日派對。", exampleG:"誕生日パーティーを開きます。", exampleGZh:"舉辦生日派對。", exampleW:"会社の忘年会の宴会に参加しました。", exampleWZh:"參加了公司的尾牙宴會。"},
+  {gairaigo:"タイム", wago:"時間", zh:"時間", nuance:"時間是最通用的說法；タイム多用於特定情境，如運動計時（ベストタイム最佳時間）或「タイムアップ」時間到。", exampleG:"彼はベストタイムを更新しました。", exampleGZh:"他更新了最佳時間紀錄。", exampleW:"集合時間に遅れないでください。", exampleWZh:"請不要遲到集合時間。"},
+  {gairaigo:"カラー", wago:"色", zh:"顏色", nuance:"色是最基本日常用語；カラー常用於商品、設計、印刷等專業情境，如「カラー写真」彩色照片。", exampleG:"このカラーが気に入りました。", exampleGZh:"我很喜歡這個顏色（商品色系）。", exampleW:"好きな色は青です。", exampleWZh:"喜歡的顏色是藍色。"},
+  {gairaigo:"スタイル", wago:"姿", zh:"姿態/風格", nuance:"姿較文學、書面，指身姿或樣態；スタイル現代日常更常用，指穿搭風格或身材曲線。", exampleG:"彼女はスタイルがいいです。", exampleGZh:"她的身材很好。", exampleW:"美しい姿で立っていました。", exampleWZh:"以優美的姿態站著。"},
+  {gairaigo:"チャンス", wago:"機会", zh:"機會", nuance:"機会是正式、書面常用詞；チャンス語感較輕鬆口語，常用於日常對話或運動賽事情境（決勝機會）。", exampleG:"これはいいチャンスです。", exampleGZh:"這是個好機會。", exampleW:"留学する機会がありました。", exampleWZh:"有過留學的機會。"},
+  {gairaigo:"レベル", wago:"水準", zh:"水準/等級", nuance:"水準較正式、常用於書面或評鑑場合；レベル是日常口語中更常見的說法，如「レベルが高い」水準很高。", exampleG:"このクラスはレベルが高いです。", exampleGZh:"這個班的水準很高。", exampleW:"生活水準が向上しました。", exampleWZh:"生活水準提高了。"},
+  {gairaigo:"イメージ", wago:"印象", zh:"印象/形象", nuance:"印象是書面常用詞，指對某事物的感受；イメージ更廣泛，也可指企業形象、商品意象等行銷情境。", exampleG:"この会社はいいイメージがあります。", exampleGZh:"這家公司給人很好的形象。", exampleW:"第一印象が大切です。", exampleWZh:"第一印象很重要。"}
+];
+
+
+// flatten with cat key attached
+function flattenAll() {
+  let arr = [];
+  CAT_KEYS.forEach(key => {
+    DATA[key].words.forEach(w => arr.push({...w, catKey: key, catLabel: DATA[key].label}));
+  });
+  return arr;
+}
+const ALL_WORDS = flattenAll();
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ---- global state ----
+let state = {
+  mode: "flashcard",
+  cat: "all",
+  pool: [],        // current word list for the active mode (depends on cat)
+  index: 0,
+  flipped: false,
+  correctCount: 0,
+  wrongCount: 0,
+  fillAnswered: false,
+  fillCorrect: null,
+  matchSelectedKana: null,
+  matchSelectedZh: null,
+  matchPairs: [],      // [{kana, zh, matched:false}]
+  matchLeftOrder: [],
+  matchRightOrder: [],
+  refSearch: "",
+  wagoPool: [],
+  wagoIndex: 0,
+  wagoAnswered: false,
+  wagoCorrectPick: null,
+  wagoDirection: "g2w"  // g2w = gairaigo to wago, w2g = wago to gairaigo
+};
+
+function getPoolForCat(catKey) {
+  if (catKey === "all") return shuffle(ALL_WORDS);
+  return shuffle(DATA[catKey].words.map(w => ({...w, catKey, catLabel: DATA[catKey].label})));
+}
+
+function buildCategoryTabs() {
+  const wrap = document.getElementById("categoryTabs");
+  wrap.innerHTML = '<span class="tab-label">範圍</span>';
+  const allBtn = document.createElement("button");
+  allBtn.className = "tab-btn" + (state.cat === "all" ? " active" : "");
+  allBtn.textContent = "全部混合";
+  allBtn.onclick = () => switchCategory("all");
+  wrap.appendChild(allBtn);
+
+  CAT_KEYS.forEach(key => {
+    const btn = document.createElement("button");
+    btn.className = "tab-btn" + (state.cat === key ? " active" : "");
+    btn.textContent = DATA[key].label;
+    btn.onclick = () => switchCategory(key);
+    wrap.appendChild(btn);
+  });
+}
+
+function buildModeTabs() {
+  document.querySelectorAll("#modeTabs .tab-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.mode === state.mode);
+    btn.onclick = () => switchMode(btn.dataset.mode);
+  });
+}
+
+function switchMode(mode) {
+  state.mode = mode;
+  state.index = 0;
+  state.flipped = false;
+  state.fillAnswered = false;
+  resetMatchState();
+  state.wagoAnswered = false;
+  state.wagoIndex = 0;
+  buildModeTabs();
+  const hideCategoryFor = (mode === "reference" || mode === "wago");
+  document.getElementById("categoryTabs").style.display = hideCategoryFor ? "none" : "flex";
+  document.getElementById("progressTrack").style.display = (mode === "reference") ? "none" : "block";
+  document.getElementById("progressText").style.display = (mode === "reference") ? "none" : "block";
+  if (mode === "wago") setupWagoRound();
+  loadPool();
+  render();
+}
+
+function switchCategory(catKey) {
+  state.cat = catKey;
+  state.index = 0;
+  state.flipped = false;
+  state.fillAnswered = false;
+  resetMatchState();
+  buildCategoryTabs();
+  loadPool();
+  render();
+}
+
+function resetMatchState() {
+  state.matchSelectedKana = null;
+  state.matchSelectedZh = null;
+  state.matchPairs = [];
+  state.matchLeftOrder = [];
+  state.matchRightOrder = [];
+}
+
+function loadPool() {
+  state.pool = getPoolForCat(state.cat);
+  if (state.mode === "match") {
+    setupMatchRound();
+  }
+}
+
+function updateStatsDisplay() {
+  document.getElementById("statOk").textContent = state.correctCount;
+  document.getElementById("statNo").textContent = state.wrongCount;
+  document.getElementById("statTotal").textContent = state.correctCount + state.wrongCount;
+}
+
+function updateProgress(current, total) {
+  const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressText").textContent = current + " / " + total;
+}
+
+// ---------------- FLASHCARD MODE ----------------
+function renderFlashcard() {
+  const area = document.getElementById("mainArea");
+  if (state.pool.length === 0) {
+    area.innerHTML = '<div class="empty-state">沒有題目</div>';
+    return;
+  }
+  const w = state.pool[state.index];
+  updateProgress(state.index + 1, state.pool.length);
+
+  area.innerHTML = `
+    <div class="main-card" id="flashcardEl">
+      <div class="eyebrow">${w.catLabel}　請說出中文意思</div>
+      ${state.flipped ? `
+        <p class="zh-answer">${w.zh}</p>
+        <div class="source-badge">${w.source}</div>
+        <div class="example-box">
+          <span class="example-label">例句</span>
+          <p class="example-jp"><span class="example-jp-text">${w.example}</span>${speakButtonHtml(w.example)}</p>
+          <p class="example-zh">${w.exampleZh}</p>
+        </div>
+      ` : `
+        <p class="kana-big">${w.kana}</p>
+        <p class="romaji">${w.romaji}</p>
+      `}
+      <div class="hint-footer">點擊卡片顯示${state.flipped ? '單字' : '答案'}</div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn" id="prevBtn" ${state.index === 0 ? "disabled" : ""}>← 上一個</button>
+      <button class="nav-btn primary" id="nextBtn">下一個 →</button>
+    </div>
+  `;
+  document.getElementById("flashcardEl").onclick = () => {
+    state.flipped = !state.flipped;
+    renderFlashcard();
+  };
+  document.getElementById("prevBtn").onclick = () => {
+    if (state.index > 0) { state.index--; state.flipped = false; renderFlashcard(); }
+  };
+  document.getElementById("nextBtn").onclick = () => {
+    state.index = (state.index + 1) % state.pool.length;
+    state.flipped = false;
+    renderFlashcard();
+  };
+}
+
+// ---------------- FILL-IN-BLANK MODE ----------------
+function renderFill() {
+  const area = document.getElementById("mainArea");
+  if (state.pool.length === 0) {
+    area.innerHTML = '<div class="empty-state">沒有題目</div>';
+    return;
+  }
+  const w = state.pool[state.index];
+  updateProgress(state.index + 1, state.pool.length);
+
+  area.innerHTML = `
+    <div class="main-card">
+      <div class="eyebrow">${w.catLabel}　請輸入對應的片假名（也可輸入羅馬音）</div>
+      <p class="zh-answer" style="color:var(--text);">${w.zh}</p>
+      <div class="fill-input-row">
+        <input type="text" id="fillInput" placeholder="輸入片假名或羅馬音..." ${state.fillAnswered ? "disabled" : ""} autocomplete="off">
+        ${state.fillAnswered
+          ? `<button id="fillNextBtn">下一個</button>`
+          : `<button id="fillSubmitBtn">送出</button>`}
+      </div>
+      ${state.fillAnswered ? `
+        <div class="feedback-banner ${state.fillCorrect ? 'correct' : 'wrong'}">
+          ${state.fillCorrect ? '✓ 正確！' : '✗ 答案：' + w.kana + '（' + w.romaji + '）'}　來源：${w.source}
+        </div>
+        <div class="example-box">
+          <span class="example-label">例句</span>
+          <p class="example-jp"><span class="example-jp-text">${w.example}</span>${speakButtonHtml(w.example)}</p>
+          <p class="example-zh">${w.exampleZh}</p>
+        </div>
+      ` : ""}
+    </div>
+  `;
+
+  const input = document.getElementById("fillInput");
+  input.focus();
+
+  function normalize(s) {
+    return s.trim().toLowerCase().replace(/[ｰー\-]/g, "");
+  }
+
+  function submitAnswer() {
+    if (state.fillAnswered) return;
+    const val = input.value.trim();
+    const normVal = normalize(val);
+    const correct = val === w.kana || normVal === normalize(w.romaji);
+    state.fillAnswered = true;
+    state.fillCorrect = correct && val.length > 0;
+    if (state.fillCorrect) state.correctCount++; else state.wrongCount++;
+    updateStatsDisplay();
+    renderFill();
+  }
+
+  if (!state.fillAnswered) {
+    document.getElementById("fillSubmitBtn").onclick = submitAnswer;
+    input.onkeydown = (e) => { if (e.key === "Enter") submitAnswer(); };
+  } else {
+    document.getElementById("fillNextBtn").onclick = () => {
+      state.index = (state.index + 1) % state.pool.length;
+      state.fillAnswered = false;
+      renderFill();
+    };
+  }
+}
+
+// ---------------- MATCH MODE ----------------
+function setupMatchRound() {
+  const roundSize = Math.min(5, state.pool.length);
+  const picked = state.pool.slice(0, roundSize);
+  state.matchPairs = picked.map(w => ({kana: w.kana, zh: w.zh, source: w.source, matched: false}));
+  state.matchLeftOrder = shuffle(state.matchPairs.map(p => p.kana));
+  state.matchRightOrder = shuffle(state.matchPairs.map(p => p.zh));
+  state.matchSelectedKana = null;
+  state.matchSelectedZh = null;
+}
+
+function renderMatch() {
+  const area = document.getElementById("mainArea");
+  if (state.matchPairs.length === 0) {
+    area.innerHTML = '<div class="empty-state">沒有題目</div>';
+    return;
+  }
+  const matchedCount = state.matchPairs.filter(p => p.matched).length;
+  updateProgress(matchedCount, state.matchPairs.length);
+
+  const leftHtml = state.matchLeftOrder.map(kana => {
+    const pair = state.matchPairs.find(p => p.kana === kana);
+    let cls = "match-item";
+    if (pair.matched) cls += " matched";
+    else if (state.matchSelectedKana === kana) cls += " selected";
+    return `<div class="${cls}" data-kana="${kana}">${kana}</div>`;
+  }).join("");
+
+  const rightHtml = state.matchRightOrder.map(zh => {
+    const pair = state.matchPairs.find(p => p.zh === zh);
+    let cls = "match-item";
+    if (pair.matched) cls += " matched";
+    else if (state.matchSelectedZh === zh) cls += " selected";
+    return `<div class="${cls}" data-zh="${zh}">${zh}</div>`;
+  }).join("");
+
+  area.innerHTML = `
+    <div class="main-card" style="padding:24px 20px;">
+      <div class="eyebrow">點選左右配對的片假名與中文意思</div>
+      <div class="match-grid">
+        <div class="match-col" id="matchLeftCol">${leftHtml}</div>
+        <div class="match-col" id="matchRightCol">${rightHtml}</div>
+      </div>
+      ${matchedCount === state.matchPairs.length ? `
+        <div class="feedback-banner correct" style="margin-top:20px;">全部配對完成！</div>
+        <button class="nav-btn primary" id="matchNextRoundBtn" style="margin-top:12px;">下一輪</button>
+      ` : ""}
+    </div>
+  `;
+
+  document.querySelectorAll("#matchLeftCol .match-item:not(.matched)").forEach(el => {
+    el.onclick = () => {
+      state.matchSelectedKana = el.dataset.kana;
+      checkMatch();
+      renderMatch();
+    };
+  });
+  document.querySelectorAll("#matchRightCol .match-item:not(.matched)").forEach(el => {
+    el.onclick = () => {
+      state.matchSelectedZh = el.dataset.zh;
+      checkMatch();
+      renderMatch();
+    };
+  });
+
+  const nextRoundBtn = document.getElementById("matchNextRoundBtn");
+  if (nextRoundBtn) {
+    nextRoundBtn.onclick = () => {
+      // rotate pool so next 5 are used
+      state.pool = [...state.pool.slice(5), ...state.pool.slice(0, 5)];
+      if (state.pool.length < 2) state.pool = getPoolForCat(state.cat);
+      setupMatchRound();
+      renderMatch();
+    };
+  }
+}
+
+function checkMatch() {
+  if (state.matchSelectedKana && state.matchSelectedZh) {
+    const pair = state.matchPairs.find(p => p.kana === state.matchSelectedKana);
+    if (pair && pair.zh === state.matchSelectedZh) {
+      pair.matched = true;
+      state.correctCount++;
+    } else {
+      state.wrongCount++;
+    }
+    updateStatsDisplay();
+    state.matchSelectedKana = null;
+    state.matchSelectedZh = null;
+  }
+}
+
+// ---------------- REFERENCE TABLE MODE ----------------
+function renderReference() {
+  const area = document.getElementById("mainArea");
+  const search = state.refSearch.trim().toLowerCase();
+  let rows = ALL_WORDS;
+  if (search) {
+    rows = rows.filter(w =>
+      w.kana.toLowerCase().includes(search) ||
+      w.romaji.toLowerCase().includes(search) ||
+      w.zh.toLowerCase().includes(search) ||
+      w.source.toLowerCase().includes(search) ||
+      w.catLabel.toLowerCase().includes(search)
+    );
+  }
+
+  area.innerHTML = `
+    <div class="ref-table-wrap">
+      <input type="text" class="ref-search" id="refSearchInput" placeholder="搜尋片假名、羅馬音、中文意思或語源..." value="${state.refSearch}">
+      <table class="ref-table">
+        <thead>
+          <tr><th>分類</th><th>片假名</th><th>羅馬音</th><th>中文意思</th><th>語源</th></tr>
+        </thead>
+        <tbody>
+          ${rows.length === 0 ? '<tr><td colspan="5" style="text-align:center; color:var(--text-faint); padding:30px 0;">找不到符合的結果</td></tr>' : rows.map(w => `
+            <tr>
+              <td><span class="ref-cat-tag">${w.catLabel}</span></td>
+              <td class="ref-kana">${w.kana}</td>
+              <td>${w.romaji}</td>
+              <td>${w.zh}</td>
+              <td>${w.source}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  const input = document.getElementById("refSearchInput");
+  input.oninput = () => {
+    state.refSearch = input.value;
+    renderReference();
+    document.getElementById("refSearchInput").focus();
+    document.getElementById("refSearchInput").value = state.refSearch;
+    document.getElementById("refSearchInput").setSelectionRange(state.refSearch.length, state.refSearch.length);
+  };
+}
+
+// ---------------- WAGO COMPARISON MODE ----------------
+function setupWagoRound() {
+  state.wagoPool = shuffle(WAGO_PAIRS);
+  state.wagoIndex = 0;
+  state.wagoAnswered = false;
+}
+
+function makeWagoOptions(correctAnswer, isWagoAnswer) {
+  const pool = isWagoAnswer ? WAGO_PAIRS.map(p => p.wago) : WAGO_PAIRS.map(p => p.gairaigo);
+  let wrong = pool.filter(v => v !== correctAnswer);
+  wrong = shuffle(wrong).slice(0, 3);
+  return shuffle([correctAnswer, ...wrong]);
+}
+
+let wagoCurrentOptions = [];
+let wagoCurrentOptionsIdx = -1;
+
+function renderWago() {
+  const area = document.getElementById("mainArea");
+  if (state.wagoPool.length === 0) {
+    area.innerHTML = '<div class="empty-state">沒有題目</div>';
+    return;
+  }
+  const pair = state.wagoPool[state.wagoIndex];
+  // decide direction per question, stable across re-render via index check
+  if (wagoCurrentOptionsIdx !== state.wagoIndex) {
+    state.wagoDirection = Math.random() < 0.5 ? "g2w" : "w2g";
+    wagoCurrentOptionsIdx = state.wagoIndex;
+    if (state.wagoDirection === "g2w") {
+      wagoCurrentOptions = makeWagoOptions(pair.wago, true);
+    } else {
+      wagoCurrentOptions = makeWagoOptions(pair.gairaigo, false);
+    }
+  }
+
+  const isG2W = state.wagoDirection === "g2w";
+  const promptWord = isG2W ? pair.gairaigo : pair.wago;
+  const correctAnswer = isG2W ? pair.wago : pair.gairaigo;
+  const directionLabel = isG2W ? "外來語 → 和語" : "和語 → 外來語";
+
+  document.getElementById("progressFill").style.width = Math.round(((state.wagoIndex + 1) / state.wagoPool.length) * 100) + "%";
+  document.getElementById("progressText").textContent = (state.wagoIndex + 1) + " / " + state.wagoPool.length;
+
+  area.innerHTML = `
+    <div class="main-card">
+      <div class="wago-direction-tag">${directionLabel}</div>
+      <p class="kana-big">${promptWord}</p>
+      <p class="romaji">請選出對應的${isG2W ? "和語" : "外來語"}（意思：${pair.zh}）</p>
+      <div class="source-options" id="wagoOptionsEl">
+        ${wagoCurrentOptions.map(opt => `<button class="source-opt-btn" data-opt="${opt}">${opt}</button>`).join("")}
+      </div>
+      ${state.wagoAnswered ? `
+        <div class="wago-nuance-box">
+          <div class="nuance-row"><span class="nuance-label">語感差異：</span>${pair.nuance}</div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">外來語例句</span>
+          <p class="example-jp"><span class="example-jp-text">${pair.exampleG}</span>${speakButtonHtml(pair.exampleG)}</p>
+          <p class="example-zh">${pair.exampleGZh}</p>
+        </div>
+        <div class="example-box">
+          <span class="example-label">和語例句</span>
+          <p class="example-jp"><span class="example-jp-text">${pair.exampleW}</span>${speakButtonHtml(pair.exampleW)}</p>
+          <p class="example-zh">${pair.exampleWZh}</p>
+        </div>
+        <button class="nav-btn primary" id="wagoNextBtn" style="margin-top:14px;">下一個</button>
+      ` : ""}
+    </div>
+  `;
+
+  document.querySelectorAll("#wagoOptionsEl .source-opt-btn").forEach(btn => {
+    btn.onclick = () => {
+      if (state.wagoAnswered) return;
+      const picked = btn.dataset.opt;
+      state.wagoAnswered = true;
+      state.wagoCorrectPick = (picked === correctAnswer);
+      if (state.wagoCorrectPick) state.correctCount++; else state.wrongCount++;
+      updateStatsDisplay();
+      renderWago();
+      document.querySelectorAll("#wagoOptionsEl .source-opt-btn").forEach(b2 => {
+        b2.disabled = true;
+        if (b2.dataset.opt === correctAnswer) b2.classList.add("correct-pick");
+        else if (b2.dataset.opt === picked) b2.classList.add("wrong-pick");
+      });
+    };
+  });
+
+  const nextBtn = document.getElementById("wagoNextBtn");
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      state.wagoIndex = (state.wagoIndex + 1) % state.wagoPool.length;
+      state.wagoAnswered = false;
+      renderWago();
+    };
+  }
+}
+
+// ---------------- MASTER RENDER ----------------
+function render() {
+  updateStatsDisplay();
+  if (state.mode === "flashcard") renderFlashcard();
+  else if (state.mode === "fill") renderFill();
+  else if (state.mode === "match") renderMatch();
+  else if (state.mode === "wago") renderWago();
+  else if (state.mode === "reference") renderReference();
+}
+
+// ---------------- TEXT-TO-SPEECH ----------------
+let currentUtterance = null;
+
+function speakJapanese(text, btnEl) {
+  if (!('speechSynthesis' in window)) {
+    alert("您的瀏覽器不支援語音播放功能");
+    return;
+  }
+  // stop any ongoing speech
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.speak-btn.speaking').forEach(b => b.classList.remove('speaking'));
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "ja-JP";
+  utter.rate = 0.9;
+  currentUtterance = utter;
+
+  if (btnEl) btnEl.classList.add('speaking');
+  utter.onend = () => { if (btnEl) btnEl.classList.remove('speaking'); };
+  utter.onerror = () => { if (btnEl) btnEl.classList.remove('speaking'); };
+
+  window.speechSynthesis.speak(utter);
+}
+
+const SPEAKER_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>';
+
+function speakButtonHtml(text) {
+  const safe = text.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  return `<button class="speak-btn" onclick="event.stopPropagation(); window.__speak('${safe.replace(/'/g, "\\'")}', this)" aria-label="播放例句" title="播放例句">${SPEAKER_SVG}</button>`;
+}
+
+window.__speak = function(text, btnEl) {
+  speakJapanese(text, btnEl);
+};
+
+// ---------------- THEME TOGGLE ----------------
+const SUN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="22"></line><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"></line><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"></line><line x1="2" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="22" y2="12"></line><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"></line><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"></line></svg>';
+const MOON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+let currentTheme = "dark";
+
+function applyTheme(theme) {
+  currentTheme = theme;
+  if (theme === "light") {
+    document.documentElement.setAttribute("data-theme", "light");
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+  }
+  const btn = document.getElementById("themeToggleBtn");
+  // show icon for the mode you'd switch TO
+  btn.innerHTML = theme === "light" ? MOON_SVG : SUN_SVG;
+}
+
+document.getElementById("themeToggleBtn").onclick = () => {
+  applyTheme(currentTheme === "light" ? "dark" : "light");
+};
+
+// ---- init ----
+applyTheme("dark");
+buildModeTabs();
+buildCategoryTabs();
+loadPool();
+render();
+</script>
+</body>
+</html>

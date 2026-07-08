@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>複合動詞 記憶工具</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f2;--surface:#fff;--surface2:#f0efe9;
+  --border:#e2e0d8;--border2:#c8c6bc;
+  --text:#1a1916;--text2:#6b6960;--text3:#9b9990;
+  --purple:#534AB7;--purple-light:#EEEDFE;--purple-mid:#AFA9EC;
+  --teal:#0F6E56;--teal-light:#E1F5EE;
+  --coral:#993C1D;--coral-light:#FAECE7;
+  --green:#1D9E75;--red:#D85A30;
+  --radius:10px;--radius-lg:14px;
+}
+body.dark{
+  --bg:#111110;--surface:#1c1c1a;--surface2:#252523;
+  --border:#2e2e2b;--border2:#3a3a37;
+  --text:#f0efe9;--text2:#a8a69e;--text3:#6b6960;
+  --purple:#7F77DD;--purple-light:#2a2848;--purple-mid:#534AB7;
+  --teal:#2DC896;--teal-light:#0d2e22;
+  --coral:#F07050;--coral-light:#2e1a12;
+  --green:#2DC896;--red:#F07050;
+}
+html,body{height:100%;font-family:'Noto Sans JP','Noto Sans TC',sans-serif;color:var(--text);background:var(--bg)}
+
+/* ── Desktop layout ── */
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{
+  width:250px;flex-shrink:0;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;height:100vh;overflow:hidden;
+  transition:width .25s ease;
+}
+.sidebar.collapsed{width:48px}
+.sidebar.collapsed .sidebar-header p,
+.sidebar.collapsed .stats-row,
+.sidebar.collapsed .chapter-list,
+.sidebar.collapsed .sidebar-actions,
+.sidebar.collapsed .ci-wrap,
+.sidebar.collapsed .ci-count{display:none}
+.sidebar.collapsed .sidebar-header{padding:10px 8px;display:flex;align-items:center;justify-content:center}
+.sidebar.collapsed .sidebar-header h1{display:none}
+.sidebar-toggle{
+  background:none;border:none;cursor:pointer;
+  padding:4px 6px;border-radius:6px;color:var(--text3);
+  font-size:16px;line-height:1;flex-shrink:0;
+  transition:background .12s;
+}
+.sidebar-toggle:hover{background:var(--surface2);color:var(--text)}
+.main{flex:1;overflow-y:auto;padding:2rem;max-width:780px}
+
+/* Sidebar */
+.sidebar-header{padding:1.25rem 1rem 0.75rem;border-bottom:1px solid var(--border)}
+.sidebar-header h1{font-size:14px;font-weight:700;color:var(--text)}
+.sidebar-header p{font-size:11px;color:var(--text3);margin-top:2px}
+.stats-row{display:flex;gap:4px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.stat-pill{flex:1;background:var(--surface2);border-radius:7px;padding:5px 4px;text-align:center}
+.stat-pill .n{font-size:16px;font-weight:700;color:var(--purple)}
+.stat-pill .l{font-size:10px;color:var(--text3)}
+.chapter-list{flex:1;overflow-y:auto;padding:4px 0}
+.chapter-item{
+  padding:7px 10px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  border-left:3px solid transparent;transition:background .1s;
+}
+.chapter-item:hover{background:var(--surface2)}
+.chapter-item.active{background:var(--purple-light);border-left-color:var(--purple)}
+.chapter-item.active .ci-name{color:var(--purple)}
+.ci-wrap{flex:1;min-width:0}
+.ci-name{font-size:13px;font-weight:500;color:var(--text)}
+.ci-prog{height:2px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden}
+.ci-prog-bar{height:100%;background:var(--purple);border-radius:2px}
+.ci-count{font-size:10px;color:var(--text3);white-space:nowrap}
+.sidebar-actions{padding:8px 10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+.sa-btn{
+  width:100%;padding:7px 10px;font-size:12px;border-radius:7px;
+  border:1px solid var(--border2);background:transparent;cursor:pointer;
+  color:var(--text);text-align:left;font-family:inherit;transition:background .1s;
+}
+.sa-btn:hover{background:var(--surface2)}
+.sa-btn.purple{background:var(--purple-light);border-color:var(--purple-mid);color:var(--purple)}
+.sa-btn.purple:hover{background:#CECBF6}
+.sa-btn.red{background:var(--coral-light);border-color:#F5C4B3;color:var(--coral)}
+.sa-btn.red:hover{background:#F5C4B3}
+
+/* ── Mobile top-bar (hidden on desktop) ── */
+.mobile-topbar{
+  display:none;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:10px 14px;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.mobile-topbar h1{font-size:14px;font-weight:700;color:var(--text)}
+.mobile-menu-btn{
+  border:none;background:none;cursor:pointer;font-size:20px;
+  color:var(--text2);padding:4px;line-height:1;
+}
+/* Theme & top-right toolbar */
+.toolbar{
+  position:fixed;top:12px;right:16px;z-index:300;
+  display:flex;gap:6px;
+}
+.tool-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border2);
+  cursor:pointer;font-size:16px;display:flex;align-items:center;
+  justify-content:center;color:var(--text2);
+  box-shadow:0 1px 4px rgba(0,0,0,.12);
+  transition:background .12s,color .12s;
+}
+.tool-btn:hover{background:var(--surface2);color:var(--text)}
+@media(max-width:680px){
+  .toolbar{top:8px;right:52px}
+}
+/* Mobile drawer overlay */
+.drawer-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;
+}
+.drawer-overlay.open{display:block}
+.drawer{
+  position:fixed;left:0;top:0;bottom:0;width:280px;
+  background:var(--surface);display:flex;flex-direction:column;
+  z-index:201;transform:translateX(-100%);transition:transform .25s;
+  box-shadow:4px 0 20px rgba(0,0,0,.15);
+}
+.drawer.open{transform:translateX(0)}
+.drawer-close{
+  position:absolute;top:12px;right:12px;border:none;background:none;
+  cursor:pointer;font-size:20px;color:var(--text3);
+}
+.drawer .sidebar-header{padding-top:1rem}
+.drawer .chapter-list{flex:1;overflow-y:auto;padding:4px 0}
+
+/* Main content */
+.main{flex:1;overflow-y:auto;padding:2rem}
+.page-header{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
+.back-btn{
+  border:none;background:none;cursor:pointer;color:var(--text3);
+  font-size:13px;padding:4px 8px;border-radius:6px;font-family:inherit;
+}
+.back-btn:hover{background:var(--surface2);color:var(--text)}
+.page-title{font-size:20px;font-weight:700;color:var(--text)}
+.page-sub{font-size:13px;color:var(--text3);font-weight:400}
+
+/* Mode tabs */
+.mode-tabs{
+  display:flex;gap:3px;margin-bottom:1.25rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:3px;width:fit-content;
+}
+.mode-tab{
+  padding:7px 16px;font-size:13px;font-weight:500;
+  border:none;background:transparent;border-radius:7px;
+  cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s;
+}
+.mode-tab.active{background:var(--purple);color:#fff}
+.mode-tab:not(.active):hover{background:var(--surface2);color:var(--text)}
+
+/* Flashcard */
+.fc-progress{height:4px;background:var(--border);border-radius:2px;margin-bottom:1rem;overflow:hidden}
+.fc-progress-bar{height:100%;background:var(--purple);border-radius:2px;transition:width .3s}
+.flashcard{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:2rem 1.75rem;
+  cursor:pointer;user-select:none;min-height:240px;
+  display:flex;flex-direction:column;justify-content:center;
+  transition:border-color .15s;position:relative;
+}
+.flashcard:hover{border-color:var(--border2)}
+.fc-chapter-tag{
+  position:absolute;top:12px;right:14px;
+  font-size:11px;background:var(--surface2);border-radius:20px;
+  padding:2px 9px;color:var(--text3);
+}
+.fc-front{text-align:center}
+.fc-verb{font-size:48px;font-weight:700;color:var(--text);margin-bottom:6px}
+.fc-kana{font-size:17px;color:var(--text3);letter-spacing:.1em}
+.fc-hint{font-size:12px;color:var(--text3);margin-top:1.5rem}
+.fc-back{display:none}
+.flashcard.flipped .fc-front{display:none}
+.flashcard.flipped .fc-back{display:block}
+.fc-meaning{font-size:24px;font-weight:700;color:var(--text);margin-bottom:8px}
+.badge{display:inline-block;font-size:12px;padding:3px 12px;border-radius:20px;font-weight:500;margin-bottom:10px}
+.badge-ta{background:var(--purple-light);color:var(--purple)}
+.badge-ji{background:var(--teal-light);color:var(--teal)}
+.fc-example{
+  font-size:14px;color:var(--text2);line-height:1.8;
+  background:var(--surface2);border-radius:8px;
+  padding:11px 14px;margin-bottom:8px;
+}
+.fc-particle{font-size:13px;color:var(--text3)}
+.fc-particle b{color:var(--text);font-weight:500}
+.fc-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:12px;flex-wrap:wrap;gap:8px;
+}
+.fc-counter{font-size:13px;color:var(--text3)}
+.fc-btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{
+  padding:7px 14px;font-size:13px;border-radius:8px;
+  border:1px solid var(--border2);background:transparent;
+  cursor:pointer;color:var(--text);font-family:inherit;
+  transition:background .12s;font-weight:500;
+}
+.btn:hover{background:var(--surface2)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn-know{color:var(--teal);border-color:#9FE1CB}
+.btn-know:hover{background:var(--teal-light)}
+.btn-dunno{color:var(--coral);border-color:#F5C4B3}
+.btn-dunno:hover{background:var(--coral-light)}
+
+/* Quiz */
+.quiz-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem}
+.quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+.quiz-q{font-size:13px;color:var(--text3)}
+.quiz-score-badge{font-size:12px;background:var(--surface2);border-radius:20px;padding:3px 10px;color:var(--text2)}
+.quiz-verb{font-size:42px;font-weight:700;color:var(--text);margin-bottom:4px}
+.quiz-kana{font-size:15px;color:var(--text3);letter-spacing:.08em;margin-bottom:1.25rem}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.quiz-opt{
+  padding:12px 12px;font-size:14px;line-height:1.5;
+  border:1px solid var(--border2);border-radius:8px;
+  background:transparent;cursor:pointer;text-align:left;
+  color:var(--text);font-family:inherit;transition:all .12s;font-weight:500;
+}
+.quiz-opt:hover:not(:disabled){background:var(--surface2)}
+.quiz-opt.correct{background:var(--teal-light)!important;border-color:var(--green)!important;color:var(--teal)!important}
+.quiz-opt.wrong{background:var(--coral-light)!important;border-color:var(--red)!important;color:var(--coral)!important}
+.quiz-opt:disabled{cursor:default}
+.quiz-feedback{font-size:14px;padding:11px 14px;border-radius:8px;margin-bottom:10px;display:none;line-height:1.7}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:var(--teal-light);color:var(--teal)}
+.quiz-feedback.ng{background:var(--coral-light);color:var(--coral)}
+.quiz-next{
+  width:100%;padding:10px;font-size:14px;font-weight:500;
+  border-radius:8px;border:1px solid var(--border2);
+  background:transparent;cursor:pointer;color:var(--text);
+  font-family:inherit;display:none;transition:background .12s;
+}
+.quiz-next.show{display:block}
+.quiz-next:hover{background:var(--surface2)}
+
+/* Result */
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;text-align:center}
+.result-score{font-size:60px;font-weight:700;color:var(--purple);line-height:1}
+.result-label{font-size:14px;color:var(--text3);margin-top:6px;margin-bottom:1.5rem}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem}
+.rs{background:var(--surface2);border-radius:8px;padding:12px 6px}
+.rs .n{font-size:24px;font-weight:700;color:var(--text)}
+.rs .l{font-size:11px;color:var(--text3);margin-top:3px}
+.result-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.result-actions .btn{padding:9px 18px;font-size:14px}
+.btn-primary{background:var(--purple);border-color:var(--purple);color:#fff!important}
+.btn-primary:hover{background:#3C3489!important;border-color:#3C3489!important}
+.btn-danger{color:var(--coral)!important;border-color:#F5C4B3!important}
+.btn-danger:hover{background:var(--coral-light)!important}
+
+/* List */
+.list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.list-search{
+  padding:8px 11px;font-size:14px;border:1px solid var(--border2);
+  border-radius:8px;background:var(--surface);color:var(--text);
+  font-family:inherit;flex:1;min-width:0;
+}
+.list-search:focus{outline:none;border-color:var(--purple)}
+.list-item{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.li-verb-wrap{min-width:100px}
+.li-verb{font-size:19px;font-weight:700;color:var(--text)}
+.li-kana{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:.05em}
+.li-body{flex:1;min-width:0}
+.li-meaning{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.li-ex{font-size:12px;color:var(--text2);line-height:1.7;word-break:break-all}
+.li-meta{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.li-badge{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.li-ta{background:var(--purple-light);color:var(--purple)}
+.li-ji{background:var(--teal-light);color:var(--teal)}
+.li-p{background:var(--surface2);color:var(--text3)}
+.li-check{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;margin-top:2px;
+  border:1px solid var(--border2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;transition:all .12s;font-size:13px;
+}
+.li-check:hover{background:var(--surface2)}
+.li-check.known{background:var(--teal-light);border-color:var(--green);color:var(--teal)}
+
+/* Home overview */
+.overview-summary{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:1.25rem 1.5rem;
+  margin-bottom:1.5rem;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;
+}
+.ov-n{font-size:36px;font-weight:700;color:var(--purple)}
+.ov-l{font-size:12px;color:var(--text3);margin-top:1px}
+.ov-divider{width:1px;height:36px;background:var(--border);flex-shrink:0}
+.ov-actions{display:flex;gap:7px;flex-wrap:wrap;margin-left:auto}
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px}
+.ch-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:.9rem 1rem;
+  cursor:pointer;transition:all .15s;
+}
+.ch-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.ch-card .cc-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:1px}
+.ch-card .cc-sub{font-size:11px;color:var(--text3)}
+.ch-card .cc-prog{height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.ch-card .cc-bar{height:100%;background:var(--purple);border-radius:2px}
+.ch-card .cc-pct{font-size:12px;color:var(--text3);margin-top:4px}
+.section-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;margin-top:1.5rem}
+.card-area{min-height:280px}
+.empty{text-align:center;padding:3rem;color:var(--text3);font-size:14px}
+
+/* ── Mobile ── */
+@media(max-width:680px){
+  .shell{flex-direction:column;height:auto;overflow:visible}
+  .sidebar{display:none} /* hidden – use drawer instead */
+  .mobile-topbar{display:flex}
+  .main{overflow-y:visible;padding:14px}
+  .fc-verb{font-size:34px}
+  .quiz-verb{font-size:30px}
+  .quiz-opts{grid-template-columns:1fr}
+  .result-grid{grid-template-columns:1fr 1fr}
+  .result-score{font-size:48px}
+  .overview-summary{gap:1rem;padding:1rem}
+  .ov-actions{margin-left:0;width:100%}
+  .ov-actions .btn{flex:1;text-align:center;justify-content:center;font-size:13px}
+  .overview-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .fc-btns{width:100%;justify-content:space-between}
+  .fc-btns .btn{flex:1;text-align:center;font-size:12px;padding:7px 6px}
+  .li-verb-wrap{min-width:80px}
+  .mode-tabs{width:100%}
+  .mode-tab{flex:1;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile top bar -->
+<div class="mobile-topbar">
+  <h1>複合動詞 記憶工具</h1>
+  <button class="mobile-menu-btn" onclick="openDrawer()">☰</button>
+</div>
+
+<!-- Mobile drawer overlay + panel -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  <div class="sidebar-header">
+    <h1>複合動詞 記憶工具</h1>
+    <p>183 個動詞・31 章節・N2 程度</p>
+  </div>
+  <div class="stats-row">
+    <div class="stat-pill"><div class="n" id="ds-known">0</div><div class="l">已記住</div></div>
+    <div class="stat-pill"><div class="n" id="ds-pct">0%</div><div class="l">總進度</div></div>
+    <div class="stat-pill"><div class="n" id="ds-wrong">0</div><div class="l">錯題數</div></div>
+  </div>
+  <div class="chapter-list" id="drawer-chapter-list"></div>
+  <div class="sidebar-actions">
+    <button class="sa-btn purple" onclick="closeDrawer();startAll('flash')">▶ 全部閃卡</button>
+    <button class="sa-btn" onclick="closeDrawer();startAll('quiz')">✎ 全部測驗</button>
+    <button class="sa-btn red" onclick="closeDrawer();reviewWeak()">↩ 複習錯題</button>
+  </div>
+</div>
+
+<div class="shell">
+  <!-- Desktop sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header" style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+      <div>
+        <h1>複合動詞 記憶工具</h1>
+        <p>183 個動詞・31 章節・N2 程度</p>
+      </div>
+      <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="收合側欄">◀</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-pill"><div class="n" id="s-known">0</div><div class="l">已記住</div></div>
+      <div class="stat-pill"><div class="n" id="s-pct">0%</div><div class="l">總進度</div></div>
+      <div class="stat-pill"><div class="n" id="s-wrong">0</div><div class="l">錯題數</div></div>
+    </div>
+    <div class="chapter-list" id="chapter-list"></div>
+    <div class="sidebar-actions">
+      <button class="sa-btn purple" onclick="startAll('flash')">▶ 全部閃卡</button>
+      <button class="sa-btn" onclick="startAll('quiz')">✎ 全部測驗</button>
+      <button class="sa-btn red" onclick="reviewWeak()">↩ 複習錯題</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main" id="main">
+    <div id="home-area">
+      <div style="margin-bottom:1.25rem">
+        <div style="font-size:22px;font-weight:700;color:var(--text);margin-bottom:3px">選擇章節開始學習</div>
+        <div style="font-size:13px;color:var(--text3)">點擊章節卡片，或使用下方快速入口</div>
+      </div>
+      <div class="overview-summary">
+        <div><div class="ov-n" id="ov-known">0</div><div class="ov-l">已記住單字</div></div>
+        <div class="ov-divider"></div>
+        <div><div class="ov-n" style="color:var(--text)">183</div><div class="ov-l">總單字數</div></div>
+        <div class="ov-divider"></div>
+        <div><div class="ov-n" style="color:var(--text)">31</div><div class="ov-l">章節數</div></div>
+        <div class="ov-actions">
+          <button class="btn btn-primary" onclick="startAll('flash')">全部閃卡</button>
+          <button class="btn" onclick="startAll('quiz')">全部測驗</button>
+          <button class="btn btn-danger" onclick="reviewWeak()">複習錯題</button>
+        </div>
+      </div>
+      <div class="section-label">所有章節</div>
+      <div class="overview-grid" id="ov-grid"></div>
+    </div>
+
+    <div id="study-area" style="display:none">
+      <div class="page-header">
+        <button class="back-btn" onclick="backToHome()">← 首頁</button>
+        <span class="page-title" id="study-title"></span>
+        <span class="page-sub" id="study-sub"></span>
+      </div>
+      <div class="mode-tabs">
+        <button class="mode-tab active" onclick="setMode('flash')">閃卡</button>
+        <button class="mode-tab" onclick="setMode('quiz')">意思測驗</button>
+        <button class="mode-tab" onclick="setMode('kana')">假名測驗</button>
+        <button class="mode-tab" onclick="setMode('list')">列表</button>
+      </div>
+      <div class="card-area" id="card-area"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const DATA = {"書き〜":[{"name":"書き込む","kana":"かきこむ","meaning":"填寫・寫入・刻入","type":"他動詞","example":"用紙に必要事項を書き込んでください。","particle":"に"},{"name":"書き上げる","kana":"かきあげる","meaning":"寫完・完成","type":"他動詞","example":"三年かけてやっと小説を書き上げた。","particle":"を"},{"name":"書き直す","kana":"かきなおす","meaning":"重寫・修改","type":"他動詞","example":"先生に指摘されて作文を書き直した。","particle":"を"},{"name":"書き出す","kana":"かきだす","meaning":"開始書寫・摘錄・輸出","type":"他動詞","example":"思いついたアイデアをどんどん書き出した。","particle":"を"},{"name":"書き続ける","kana":"かきつづける","meaning":"繼續寫","type":"他動詞","example":"彼女は毎晩日記を書き続けている。","particle":"を"},{"name":"書き取る","kana":"かきとる","meaning":"抄寫・聽寫・記錄","type":"他動詞","example":"先生の説明をノートに書き取った。","particle":"を"},{"name":"書き換える","kana":"かきかえる","meaning":"改寫・重新填寫","type":"他動詞","example":"契約書の内容を書き換えた。","particle":"を"},{"name":"書き留める","kana":"かきとめる","meaning":"記錄・寫下來","type":"他動詞","example":"大切なことはすぐにメモに書き留めた。","particle":"を"},{"name":"書き加える","kana":"かきくわえる","meaning":"加寫・補充","type":"他動詞","example":"文章に説明を書き加えた。","particle":"を・に"},{"name":"書き連ねる","kana":"かきつらねる","meaning":"接連書下・羅列","type":"他動詞","example":"不満を書き連ねたメールを送った。","particle":"を"}],"読み〜":[{"name":"読み込む","kana":"よみこむ","meaning":"讀入・熟讀・載入","type":"他動詞","example":"データをシステムに読み込んだ。","particle":"を・に"},{"name":"読み上げる","kana":"よみあげる","meaning":"朗讀・讀完","type":"他動詞","example":"司会者が受賞者の名前を読み上げた。","particle":"を"},{"name":"読み直す","kana":"よみなおす","meaning":"重讀・再次閱讀","type":"他動詞","example":"気になる箇所をもう一度読み直した。","particle":"を"},{"name":"読み返す","kana":"よみかえす","meaning":"反覆閱讀・重讀","type":"他動詞","example":"お気に入りの本を何度も読み返している。","particle":"を"},{"name":"読み取る","kana":"よみとる","meaning":"讀取・領會・理解","type":"他動詞","example":"彼の言葉の裏にある意図を読み取った。","particle":"を・から"},{"name":"読み続ける","kana":"よみつづける","meaning":"繼續讀","type":"他動詞","example":"徹夜で本を読み続けた。","particle":"を"},{"name":"読み飛ばす","kana":"よみとばす","meaning":"跳過・略讀","type":"他動詞","example":"難しい部分を読み飛ばしてしまった。","particle":"を"},{"name":"読み聞かせる","kana":"よみきかせる","meaning":"朗讀給人聽・讀故事","type":"他動詞","example":"毎晩子どもに絵本を読み聞かせる。","particle":"を・に"}],"話し〜":[{"name":"話し込む","kana":"はなしこむ","meaning":"聊入神・深談","type":"自動詞","example":"旧友と思い出話に話し込んでしまった。","particle":"と・に"},{"name":"話し合う","kana":"はなしあう","meaning":"商量・討論","type":"自動詞","example":"チームで解決策について話し合った。","particle":"と・について"},{"name":"話し出す","kana":"はなしだす","meaning":"開口・開始說話","type":"自動詞","example":"急に彼女は泣きながら話し出した。","particle":"（なし）"},{"name":"話し続ける","kana":"はなしつづける","meaning":"繼續說","type":"自動詞","example":"彼は一時間も休まず話し続けた。","particle":"（なし）"},{"name":"話しかける","kana":"はなしかける","meaning":"向…搭話・開口說","type":"他動詞","example":"見知らぬ人に道を尋ねて話しかけた。","particle":"に"},{"name":"話し合わせる","kana":"はなしあわせる","meaning":"使互相商量・協調","type":"他動詞","example":"両者を話し合わせて解決を図った。","particle":"を"}],"聞き〜":[{"name":"聞き込む","kana":"ききこむ","meaning":"多方探聽・調查","type":"他動詞","example":"刑事は近所で情報を聞き込んだ。","particle":"を"},{"name":"聞き取る","kana":"ききとる","meaning":"聽懂・辨聽","type":"他動詞","example":"雑音で相手の声をうまく聞き取れなかった。","particle":"を"},{"name":"聞き直す","kana":"ききなおす","meaning":"重聽・再問","type":"他動詞","example":"聞き取れなかったのでもう一度聞き直した。","particle":"を"},{"name":"聞き出す","kana":"ききだす","meaning":"套出・問出","type":"他動詞","example":"うまく話を誘導して秘密を聞き出した。","particle":"を・から"},{"name":"聞き流す","kana":"ききながす","meaning":"充耳不聞・忽視","type":"他動詞","example":"小言はいつも聞き流している。","particle":"を"},{"name":"聞き入れる","kana":"ききいれる","meaning":"採納・聽從","type":"他動詞","example":"部下の意見をなかなか聞き入れてもらえない。","particle":"を"},{"name":"聞き惚れる","kana":"ききほれる","meaning":"聽得入迷・陶醉於聆聽","type":"自動詞","example":"彼女のピアノの演奏に聞き惚れた。","particle":"に"}],"見〜":[{"name":"見込む","kana":"みこむ","meaning":"預期・看準・計算在內","type":"他動詞","example":"彼女の才能を見込んで抜擢した。","particle":"を"},{"name":"見上げる","kana":"みあげる","meaning":"仰望・崇拜","type":"他動詞","example":"夜空の星を見上げながら歩いた。","particle":"を"},{"name":"見下ろす","kana":"みおろす","meaning":"俯瞰・俯視","type":"他動詞","example":"展望台から街全体を見下ろした。","particle":"を・から"},{"name":"見直す","kana":"みなおす","meaning":"重新看待・審視","type":"他動詞","example":"失敗をきっかけに自分のやり方を見直した。","particle":"を"},{"name":"見出す","kana":"みいだす","meaning":"發現・找出","type":"他動詞","example":"混乱の中に秩序を見出した。","particle":"を・に"},{"name":"見送る","kana":"みおくる","meaning":"目送・送行・放棄","type":"他動詞","example":"プラットホームで出発する列車を見送った。","particle":"を"},{"name":"見守る","kana":"みまもる","meaning":"守護・注視","type":"他動詞","example":"親は子どもの成長を温かく見守る。","particle":"を"},{"name":"見習う","kana":"みならう","meaning":"學習・效仿","type":"他動詞","example":"先輩の仕事ぶりを見習いたい。","particle":"を"},{"name":"見かける","kana":"みかける","meaning":"偶爾看到・撞見","type":"他動詞","example":"駅のホームで知り合いを見かけた。","particle":"を"},{"name":"見渡す","kana":"みわたす","meaning":"眺望・環視","type":"他動詞","example":"丘の上から広大な田園を見渡した。","particle":"を"},{"name":"見落とす","kana":"みおとす","meaning":"看漏・忽視","type":"他動詞","example":"大事なポイントを見落としていた。","particle":"を"},{"name":"見かねる","kana":"みかねる","meaning":"看不下去・見不得","type":"他動詞","example":"見かねた先生が助けに入った。","particle":"を"},{"name":"見つめる","kana":"みつめる","meaning":"凝視・注目","type":"他動詞","example":"彼女はじっと遠くを見つめていた。","particle":"を"}],"飛び〜":[{"name":"飛び込む","kana":"とびこむ","meaning":"跳入・衝進・投身","type":"自動詞","example":"雨を避けて近くの店に飛び込んだ。","particle":"に"},{"name":"飛び出す","kana":"とびだす","meaning":"跳出・衝出・突然出現","type":"自動詞","example":"路地から突然子供が飛び出してきた。","particle":"（なし）"},{"name":"飛び越える","kana":"とびこえる","meaning":"跳越・超越","type":"他動詞","example":"障害を一つ一つ飛び越えてきた。","particle":"を"},{"name":"飛び上がる","kana":"とびあがる","meaning":"跳起來・喜躍","type":"自動詞","example":"嬉しい知らせに飛び上がるほど喜んだ。","particle":"（なし）"},{"name":"飛びつく","kana":"とびつく","meaning":"撲上・立刻答應","type":"自動詞","example":"お得な話に飛びついてしまった。","particle":"に"},{"name":"飛び回る","kana":"とびまわる","meaning":"飛來飛去・到處奔走","type":"自動詞","example":"蝶が花の間を飛び回っている。","particle":"を"},{"name":"飛び交う","kana":"とびかう","meaning":"來回飛翔・交錯飛舞","type":"自動詞","example":"会場でさまざまな情報が飛び交った。","particle":"（なし）"}],"走り〜":[{"name":"走り込む","kana":"はしりこむ","meaning":"跑進・練習跑步","type":"自動詞","example":"試合前に毎日走り込みをした。","particle":"に"},{"name":"走り出す","kana":"はしりだす","meaning":"開始跑・跑出去","type":"自動詞","example":"スタートの合図で一斉に走り出した。","particle":"（なし）"},{"name":"走り回る","kana":"はしりまわる","meaning":"到處跑・奔走","type":"自動詞","example":"子どもたちが庭を走り回っている。","particle":"を"}],"引き〜":[{"name":"引き込む","kana":"ひきこむ","meaning":"拉進・吸引・帶入","type":"他動詞","example":"その映画は最初から観客を引き込む力があった。","particle":"を・に"},{"name":"引き出す","kana":"ひきだす","meaning":"拉出・取出・引導出","type":"他動詞","example":"銀行のATMでお金を引き出した。","particle":"を・から"},{"name":"引き受ける","kana":"ひきうける","meaning":"承擔・接受","type":"他動詞","example":"難しい仕事を引き受けることになった。","particle":"を"},{"name":"引き返す","kana":"ひきかえす","meaning":"折返・回頭","type":"自動詞","example":"嵐が来そうだったので山から引き返した。","particle":"（なし）"},{"name":"引き上げる","kana":"ひきあげる","meaning":"拉高・提升・撤退","type":"他動詞","example":"最低賃金を引き上げる議論が進んでいる。","particle":"を"},{"name":"引き下げる","kana":"ひきさげる","meaning":"拉低・降低","type":"他動詞","example":"交渉の結果、価格を引き下げることができた。","particle":"を"},{"name":"引き渡す","kana":"ひきわたす","meaning":"移交・交付","type":"他動詞","example":"逮捕した容疑者を警察に引き渡した。","particle":"を・に"},{"name":"引き継ぐ","kana":"ひきつぐ","meaning":"繼承・接手","type":"他動詞","example":"前任者から業務を引き継いだ。","particle":"を・から"},{"name":"引き止める","kana":"ひきとめる","meaning":"留住・挽留","type":"他動詞","example":"帰ろうとする友人を引き止めた。","particle":"を"},{"name":"引き付ける","kana":"ひきつける","meaning":"吸引・吸住","type":"他動詞","example":"その歌声は多くの人を引き付けた。","particle":"を"}],"押し〜":[{"name":"押し込む","kana":"おしこむ","meaning":"塞入・強行推擠","type":"他動詞","example":"多すぎる荷物を無理やりカバンに押し込んだ。","particle":"を・に"},{"name":"押し出す","kana":"おしだす","meaning":"推出・擠出","type":"他動詞","example":"人混みの中から押し出されてしまった。","particle":"を・から"},{"name":"押し付ける","kana":"おしつける","meaning":"強迫・硬塞","type":"他動詞","example":"自分の価値観を他人に押し付けるのはよくない。","particle":"を・に"},{"name":"押し進める","kana":"おしすすめる","meaning":"強力推進・推動","type":"他動詞","example":"反対意見を無視して計画を押し進めた。","particle":"を"},{"name":"押しつぶす","kana":"おしつぶす","meaning":"壓扁・壓垮","type":"他動詞","example":"重い荷物で段ボールが押しつぶされた。","particle":"を"}],"持ち〜":[{"name":"持ち込む","kana":"もちこむ","meaning":"帶入・攜入","type":"他動詞","example":"試験会場に携帯電話を持ち込んではいけない。","particle":"を・に"},{"name":"持ち出す","kana":"もちだす","meaning":"帶出・拿出・提出話題","type":"他動詞","example":"会社の書類を無断で持ち出した。","particle":"を"},{"name":"持ち上げる","kana":"もちあげる","meaning":"舉起・抬高・奉承","type":"他動詞","example":"重い引越し荷物を二人で持ち上げた。","particle":"を"},{"name":"持ち帰る","kana":"もちかえる","meaning":"帶回・外帶","type":"他動詞","example":"残った料理を持ち帰り用に包んでもらった。","particle":"を"},{"name":"持ち歩く","kana":"もちあるく","meaning":"隨身攜帶","type":"他動詞","example":"いつも本を持ち歩いている。","particle":"を"}],"切り〜":[{"name":"切り込む","kana":"きりこむ","meaning":"切入・深入核心","type":"他動詞","example":"記者は問題の核心に切り込んだ質問をした。","particle":"に"},{"name":"切り出す","kana":"きりだす","meaning":"切出・開口提起","type":"他動詞","example":"なかなか本題を切り出せずにいた。","particle":"を"},{"name":"切り替える","kana":"きりかえる","meaning":"切換・轉換","type":"他動詞","example":"失敗したが気持ちを切り替えて頑張った。","particle":"を"},{"name":"切り離す","kana":"きりはなす","meaning":"分離・切斷關係","type":"他動詞","example":"感情と仕事を切り離して考えた。","particle":"を"},{"name":"切り上げる","kana":"きりあげる","meaning":"提早結束・進位","type":"他動詞","example":"残業を切り上げて早めに帰宅した。","particle":"を"},{"name":"切り捨てる","kana":"きりすてる","meaning":"捨棄・捨去不要之物","type":"他動詞","example":"古い慣習をばっさりと切り捨てた。","particle":"を"},{"name":"切り抜ける","kana":"きりぬける","meaning":"突破・渡過難關","type":"他動詞","example":"なんとか危機を切り抜けた。","particle":"を"},{"name":"切り開く","kana":"きりひらく","meaning":"開拓・開創","type":"他動詞","example":"先人たちが荒野を切り開いた。","particle":"を"}],"乗り〜":[{"name":"乗り込む","kana":"のりこむ","meaning":"搭上・乘進・闖入","type":"自動詞","example":"満員のバスに無理やり乗り込んだ。","particle":"に"},{"name":"乗り出す","kana":"のりだす","meaning":"探身前傾・積極投入","type":"自動詞","example":"新しい分野に乗り出すことを決めた。","particle":"に"},{"name":"乗り越える","kana":"のりこえる","meaning":"跨越・克服","type":"他動詞","example":"数々の試練を乗り越えて成長した。","particle":"を"},{"name":"乗り換える","kana":"のりかえる","meaning":"轉乘・換乘","type":"他動詞","example":"新宿で中央線に乗り換えた。","particle":"を・で"},{"name":"乗り切る","kana":"のりきる","meaning":"渡過・撐過","type":"他動詞","example":"チームの力で難局を乗り切った。","particle":"を"},{"name":"乗り遅れる","kana":"のりおくれる","meaning":"趕不上・錯失","type":"自動詞","example":"寝坊して電車に乗り遅れた。","particle":"に"},{"name":"乗り合わせる","kana":"のりあわせる","meaning":"同乘・碰巧搭乘","type":"自動詞","example":"偶然同じ飛行機に乗り合わせた。","particle":"（なし）"}],"打ち〜":[{"name":"打ち込む","kana":"うちこむ","meaning":"打入・全心投入","type":"自動詞","example":"彼は研究に打ち込んでいる。","particle":"に"},{"name":"打ち明ける","kana":"うちあける","meaning":"坦白・吐露","type":"他動詞","example":"長年抱えていた悩みを友人に打ち明けた。","particle":"を・に"},{"name":"打ち合わせる","kana":"うちあわせる","meaning":"事先協商","type":"他動詞","example":"打ち合わせを終えてから作業を始めた。","particle":"を"},{"name":"打ち切る","kana":"うちきる","meaning":"中斷・停止","type":"他動詞","example":"視聴率が低いためドラマが打ち切られた。","particle":"を"},{"name":"打ち解ける","kana":"うちとける","meaning":"打開心扉・變親密","type":"自動詞","example":"最初は緊張していたがすぐに打ち解けた。","particle":"（なし）"},{"name":"打ち勝つ","kana":"うちかつ","meaning":"戰勝・克服","type":"自動詞","example":"誘惑に打ち勝って目標を達成した。","particle":"に"}],"立ち〜":[{"name":"立ち込める","kana":"たちこめる","meaning":"瀰漫・籠罩","type":"自動詞","example":"朝霧が谷間に立ち込めていた。","particle":"（なし）"},{"name":"立ち上がる","kana":"たちあがる","meaning":"站起來・崛起・起動","type":"自動詞","example":"転んでも立ち上がる力が大切だ。","particle":"（なし）"},{"name":"立ち止まる","kana":"たちどまる","meaning":"停下腳步","type":"自動詞","example":"美しい景色に思わず立ち止まった。","particle":"（なし）"},{"name":"立ち向かう","kana":"たちむかう","meaning":"面對・迎戰","type":"自動詞","example":"困難に正面から立ち向かった。","particle":"に"},{"name":"立ち去る","kana":"たちさる","meaning":"離去・離開","type":"自動詞","example":"何も言わずにその場を立ち去った。","particle":"（なし）"},{"name":"立ち寄る","kana":"たちよる","meaning":"順路拜訪・繞道","type":"自動詞","example":"帰り道にスーパーに立ち寄った。","particle":"に"},{"name":"立ち入る","kana":"たちいる","meaning":"進入・涉入","type":"自動詞","example":"関係者以外立ち入り禁止の区域だ。","particle":"（なし）"},{"name":"立ち直る","kana":"たちなおる","meaning":"恢復・振作","type":"自動詞","example":"失恋から立ち直るのに時間がかかった。","particle":"（なし）・から"}],"取り〜":[{"name":"取り込む","kana":"とりこむ","meaning":"收進・吸收・接管","type":"他動詞","example":"洗濯物を急いで取り込んだ。","particle":"を"},{"name":"取り出す","kana":"とりだす","meaning":"取出・拿出","type":"他動詞","example":"鞄から財布を取り出して支払いをした。","particle":"を・から"},{"name":"取り上げる","kana":"とりあげる","meaning":"拿起・採用・剝奪","type":"他動詞","example":"子どものスマホを親が取り上げた。","particle":"を"},{"name":"取り除く","kana":"とりのぞく","meaning":"去除・排除","type":"他動詞","example":"邪魔な障害物を取り除いた。","particle":"を"},{"name":"取り消す","kana":"とりけす","meaning":"取消・撤銷","type":"他動詞","example":"間違えて注文を取り消してしまった。","particle":"を"},{"name":"取り戻す","kana":"とりもどす","meaning":"奪回・恢復","type":"他動詞","example":"失った信頼を少しずつ取り戻した。","particle":"を"},{"name":"取り組む","kana":"とりくむ","meaning":"認真應對・致力於","type":"自動詞","example":"地球温暖化の問題に真剣に取り組む必要がある。","particle":"に"},{"name":"取り替える","kana":"とりかえる","meaning":"替換・交換","type":"他動詞","example":"壊れた部品を新しいものに取り替えた。","particle":"を"},{"name":"取り扱う","kana":"とりあつかう","meaning":"處理・對待・操作","type":"他動詞","example":"個人情報は慎重に取り扱うべきだ。","particle":"を"},{"name":"取り締まる","kana":"とりしまる","meaning":"取締・管理","type":"他動詞","example":"警察が違法駐車を取り締まっている。","particle":"を"},{"name":"取り巻く","kana":"とりまく","meaning":"包圍・環繞","type":"他動詞","example":"多くのファンが選手を取り巻いた。","particle":"を"},{"name":"取り持つ","kana":"とりもつ","meaning":"居中撮合・維繫","type":"他動詞","example":"二人の仲を取り持つ役割を担った。","particle":"を"}],"思い〜":[{"name":"思い込む","kana":"おもいこむ","meaning":"深信・固執認為","type":"他動詞","example":"自分は不運だと思い込んでいた。","particle":"と・（なし）"},{"name":"思い出す","kana":"おもいだす","meaning":"想起・回想","type":"他動詞","example":"懐かしい歌を聴いて昔のことを思い出した。","particle":"を"},{"name":"思い切る","kana":"おもいきる","meaning":"下定決心・死心","type":"他動詞","example":"思い切って会社を辞めることにした。","particle":"（なし）"},{"name":"思いつく","kana":"おもいつく","meaning":"想到・想出","type":"他動詞","example":"よいアイデアをふと思いついた。","particle":"を"},{"name":"思い知る","kana":"おもいしる","meaning":"深切體會・領悟","type":"他動詞","example":"失敗して初めて努力の大切さを思い知った。","particle":"を"},{"name":"思い悩む","kana":"おもいなやむ","meaning":"煩惱・苦思","type":"自動詞","example":"進路について思い悩んでいる。","particle":"（なし）・について"},{"name":"思いやる","kana":"おもいやる","meaning":"體貼・著想","type":"他動詞","example":"相手の気持ちを思いやることが大切だ。","particle":"を"}],"追い〜":[{"name":"追い込む","kana":"おいこむ","meaning":"追進・逼入・逼迫","type":"他動詞","example":"相手を窮地に追い込んだ。","particle":"を・に"},{"name":"追い越す","kana":"おいこす","meaning":"超越・追過","type":"他動詞","example":"最終コーナーでライバルを追い越した。","particle":"を"},{"name":"追い出す","kana":"おいだす","meaning":"趕出・驅逐","type":"他動詞","example":"家から追い出されてしまった。","particle":"を・から"},{"name":"追い付く","kana":"おいつく","meaning":"趕上・追上","type":"自動詞","example":"先に行った友人にやっと追い付いた。","particle":"に"},{"name":"追い求める","kana":"おいもとめる","meaning":"追求・追尋","type":"他動詞","example":"夢を追い求めて生きる。","particle":"を"},{"name":"追い払う","kana":"おいはらう","meaning":"趕走・驅逐","type":"他動詞","example":"庭に入ってきた野良猫を追い払った。","particle":"を"}],"振り〜":[{"name":"振り込む","kana":"ふりこむ","meaning":"匯款・轉帳","type":"他動詞","example":"家賃を口座に振り込んだ。","particle":"を・に"},{"name":"振り返る","kana":"ふりかえる","meaning":"回頭看・回顧","type":"他動詞","example":"声をかけられて振り返った。","particle":"（なし）"},{"name":"振り向く","kana":"ふりむく","meaning":"回頭・回望","type":"自動詞","example":"名前を呼ばれて振り向いた。","particle":"（なし）"},{"name":"振り出す","kana":"ふりだす","meaning":"開始下（雨）・回到起點","type":"他動詞","example":"また振り出しに戻ってしまった。","particle":"（なし）"},{"name":"振り切る","kana":"ふりきる","meaning":"甩開・擺脫・堅決","type":"他動詞","example":"追っ手を振り切って逃げた。","particle":"を"}],"呼び〜":[{"name":"呼び込む","kana":"よびこむ","meaning":"招攬・招進","type":"他動詞","example":"店員が通行人を呼び込んでいる。","particle":"を・に"},{"name":"呼び出す","kana":"よびだす","meaning":"叫出來・傳喚","type":"他動詞","example":"授業中に先生に呼び出された。","particle":"を"},{"name":"呼び止める","kana":"よびとめる","meaning":"叫住・喊停","type":"他動詞","example":"去ろうとする彼を呼び止めた。","particle":"を"},{"name":"呼び掛ける","kana":"よびかける","meaning":"呼籲・招呼","type":"他動詞","example":"地域の安全のために協力を呼び掛けた。","particle":"に・を"},{"name":"呼び戻す","kana":"よびもどす","meaning":"叫回來・召回","type":"他動詞","example":"離れた子どもを呼び戻した。","particle":"を"}],"語り〜":[{"name":"語り合う","kana":"かたりあう","meaning":"互相談論・共談","type":"自動詞","example":"夢について友人と語り合った夜を忘れない。","particle":"と・について"},{"name":"語り継ぐ","kana":"かたりつぐ","meaning":"代代相傳・口傳","type":"他動詞","example":"戦争の記憶を後世に語り継ぐことが大切だ。","particle":"を・に"},{"name":"語り掛ける","kana":"かたりかける","meaning":"訴說・向人說話","type":"他動詞","example":"彼女は優しく子どもに語り掛けた。","particle":"に"},{"name":"語り明かす","kana":"かたりあかす","meaning":"徹夜暢談","type":"他動詞","example":"旧友と昔話をして一晩語り明かした。","particle":"を"}],"送り〜":[{"name":"送り込む","kana":"おくりこむ","meaning":"派遣・送入","type":"他動詞","example":"スパイを敵の組織に送り込んだ。","particle":"を・に"},{"name":"送り出す","kana":"おくりだす","meaning":"送出・送行・培養","type":"他動詞","example":"多くの優秀な人材を社会に送り出してきた。","particle":"を・に"},{"name":"送り返す","kana":"おくりかえす","meaning":"寄回・退還","type":"他動詞","example":"間違って届いた荷物を送り返した。","particle":"を"}],"投げ〜":[{"name":"投げ込む","kana":"なげこむ","meaning":"投入・扔進","type":"他動詞","example":"ゴミ箱にボールを投げ込んだ。","particle":"を・に"},{"name":"投げ出す","kana":"なげだす","meaning":"扔出・放棄・攤出","type":"他動詞","example":"途中で仕事を投げ出してしまった。","particle":"を"},{"name":"投げ捨てる","kana":"なげすてる","meaning":"扔棄・丟棄","type":"他動詞","example":"ポイ捨ては絶対にしてはいけない。","particle":"を"}],"踏み〜":[{"name":"踏み込む","kana":"ふみこむ","meaning":"踏入・深入","type":"自動詞","example":"敵の領域に踏み込んだ。","particle":"に"},{"name":"踏み出す","kana":"ふみだす","meaning":"踏出（第一步）・出發","type":"自動詞","example":"新しい人生の第一歩を踏み出した。","particle":"（なし）"},{"name":"踏み越える","kana":"ふみこえる","meaning":"踩過・超越","type":"他動詞","example":"限界を踏み越えた挑戦だった。","particle":"を"},{"name":"踏みつける","kana":"ふみつける","meaning":"踩踏・踐踏","type":"他動詞","example":"芝生を踏みつけないでください。","particle":"を"}],"落ち〜":[{"name":"落ち込む","kana":"おちこむ","meaning":"掉入・沮喪・下滑","type":"自動詞","example":"失敗してひどく落ち込んだ。","particle":"（なし）"},{"name":"落ち着く","kana":"おちつく","meaning":"冷靜・安定・定居","type":"自動詞","example":"深呼吸して落ち着いてから話した。","particle":"（なし）"},{"name":"落ち合う","kana":"おちあう","meaning":"會合・碰頭","type":"自動詞","example":"駅前で落ち合うことにした。","particle":"（なし）"}],"流れ〜":[{"name":"流れ込む","kana":"ながれこむ","meaning":"流入・湧入","type":"自動詞","example":"冷たい空気が部屋に流れ込んだ。","particle":"に"},{"name":"流れ出す","kana":"ながれだす","meaning":"開始流・流出","type":"自動詞","example":"傷口から血が流れ出した。","particle":"（なし）"},{"name":"流れ着く","kana":"ながれつく","meaning":"漂流到・飄到","type":"自動詞","example":"ボトルメールが遠い浜辺に流れ着いた。","particle":"（なし）"}],"噛み〜":[{"name":"噛み合う","kana":"かみあう","meaning":"咬合・配合・吻合","type":"自動詞","example":"議論が噛み合わず平行線をたどった。","particle":"（なし）"},{"name":"噛みつく","kana":"かみつく","meaning":"咬住・嚴詞反駁","type":"自動詞","example":"犬が突然噛みついてきた。","particle":"に"},{"name":"噛み砕く","kana":"かみくだく","meaning":"嚼碎・用淺顯語言說明","type":"他動詞","example":"難しい内容をかみ砕いて説明してくれた。","particle":"を"}],"抜け〜":[{"name":"抜け出す","kana":"ぬけだす","meaning":"逃出・脫身","type":"自動詞","example":"会議の途中でこっそり抜け出した。","particle":"（なし）・から"},{"name":"抜け落ちる","kana":"ぬけおちる","meaning":"脫落・遺漏","type":"自動詞","example":"大事な情報が報告書から抜け落ちていた。","particle":"（なし）・から"}],"組み〜":[{"name":"組み合わせる","kana":"くみあわせる","meaning":"組合・搭配","type":"他動詞","example":"色を組み合わせてデザインを作った。","particle":"を"},{"name":"組み込む","kana":"くみこむ","meaning":"納入・組入・嵌入","type":"他動詞","example":"新機能をシステムに組み込んだ。","particle":"を・に"},{"name":"組み立てる","kana":"くみたてる","meaning":"組裝・組合","type":"他動詞","example":"説明書を見ながら棚を組み立てた。","particle":"を"}],"抱き〜":[{"name":"抱き込む","kana":"だきこむ","meaning":"拉攏・收買","type":"他動詞","example":"相手方の人物を抱き込んで情報を得た。","particle":"を"},{"name":"抱きつく","kana":"だきつく","meaning":"抱住・摟住","type":"自動詞","example":"子どもが母親に抱きついた。","particle":"に"},{"name":"抱き合う","kana":"だきあう","meaning":"互相擁抱","type":"自動詞","example":"久しぶりに再会した二人は抱き合った。","particle":"（なし）"}],"その他":[{"name":"歩き回る","kana":"あるきまわる","meaning":"到處走・四處徘徊","type":"自動詞","example":"迷子になって街中を歩き回った。","particle":"を"},{"name":"歩き出す","kana":"あるきだす","meaning":"開始走路","type":"自動詞","example":"赤ちゃんがよちよち歩き出した。","particle":"（なし）"},{"name":"入り込む","kana":"はいりこむ","meaning":"進入・潛入・陷入","type":"自動詞","example":"猫がどこからか家に入り込んでいた。","particle":"に"},{"name":"入り混じる","kana":"いりまじる","meaning":"混雜・摻雜","type":"自動詞","example":"悲しみと安堵が入り混じった複雑な気持ちだった。","particle":"（なし）"},{"name":"怒鳴り込む","kana":"どなりこむ","meaning":"闖入並怒罵","type":"自動詞","example":"苦情を言いに店に怒鳴り込んだ。","particle":"に"},{"name":"怒鳴り散らす","kana":"どなりちらす","meaning":"到處怒罵・大聲吼叫","type":"他動詞","example":"上司が部下に怒鳴り散らした。","particle":"を"},{"name":"込み上げる","kana":"こみあげる","meaning":"（感情）湧上來・噁心","type":"自動詞","example":"感謝の気持ちが込み上げてきた。","particle":"（なし）"},{"name":"集まり合う","kana":"あつまりあう","meaning":"互相聚集","type":"自動詞","example":"同窓生が集まり合って旧交を温めた。","particle":"（なし）"},{"name":"仕上げる","kana":"しあげる","meaning":"完成・做完","type":"他動詞","example":"締め切りまでに仕事を仕上げた。","particle":"を"},{"name":"仕込む","kana":"しこむ","meaning":"培訓・醃漬・灌輸","type":"他動詞","example":"職人が弟子に技術を仕込む。","particle":"を・に"}]};
+
+const chapters = Object.keys(DATA);
+const allCards = chapters.flatMap(ch => DATA[ch].map(w => ({...w, chapter:ch})));
+
+let known = JSON.parse(localStorage.getItem('vv_known')||'{}');
+let wrong  = JSON.parse(localStorage.getItem('vv_wrong') ||'{}');
+let curChapter = null, curMode = 'flash', curCards = [], curIdx = 0;
+let quizScore = 0, quizTotal = 0;
+// Map: quiz option index → word name (avoids textContent comparison bug)
+let quizOptNames = [];
+
+function save() {
+  localStorage.setItem('vv_known', JSON.stringify(known));
+  localStorage.setItem('vv_wrong',  JSON.stringify(wrong));
+}
+
+function totalKnown() { return allCards.filter(w => known[w.name]).length; }
+function totalWrong() { return allCards.filter(w => wrong[w.name]).length; }
+
+function updateStats() {
+  const tk = totalKnown(), tw = totalWrong(), total = allCards.length;
+  const pct = Math.round(tk/total*100)+'%';
+  ['s-known','ds-known'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=tk; });
+  ['s-pct','ds-pct'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=pct; });
+  ['s-wrong','ds-wrong'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=tw; });
+  const ovk = document.getElementById('ov-known'); if(ovk) ovk.textContent=tk;
+}
+
+function chapterProgress(ch) {
+  const words = DATA[ch], total = words.length;
+  const k = words.filter(w => known[w.name]).length;
+  return {k, total, pct: Math.round(k/total*100)};
+}
+
+function chapterItemHTML(ch, i, activeClass) {
+  const {k, total, pct} = chapterProgress(ch);
+  return '<div class="chapter-item' + activeClass + '" onclick="selectChapterByIndex(' + i + ')">'
+    + '<div class="ci-wrap">'
+    + '<div class="ci-name">' + ch + '</div>'
+    + '<div class="ci-prog"><div class="ci-prog-bar" style="width:' + pct + '%"></div></div>'
+    + '</div>'
+    + '<div class="ci-count">' + k + '/' + total + '</div>'
+    + '</div>';
+}
+
+function renderSidebar() {
+  const html = chapters.map((ch,i) => chapterItemHTML(ch, i, curChapter===ch?' active':'')).join('');
+  const el1 = document.getElementById('chapter-list');      if(el1) el1.innerHTML = html;
+  const el2 = document.getElementById('drawer-chapter-list'); if(el2) el2.innerHTML = html;
+}
+
+function renderOverview() {
+  const grid = document.getElementById('ov-grid');
+  if(!grid) return;
+  grid.innerHTML = chapters.map((ch, i) => {
+    const {k, total, pct} = chapterProgress(ch);
+    return '<div class="ch-card" onclick="selectChapterByIndex(' + i + ')">'
+      + '<div class="cc-title">' + ch + '</div>'
+      + '<div class="cc-sub">' + total + ' 個動詞</div>'
+      + '<div class="cc-prog"><div class="cc-bar" style="width:' + pct + '%"></div></div>'
+      + '<div class="cc-pct">' + k + ' / ' + total + ' 已記住</div>'
+      + '</div>';
+  }).join('');
+}
+
+
+function openDrawer()  { document.getElementById('drawer').classList.add('open'); document.getElementById('drawer-overlay').classList.add('open'); }
+function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer-overlay').classList.remove('open'); }
+
+function goStudy(title, sub, cards) {
+  document.getElementById('home-area').style.display  = 'none';
+  document.getElementById('study-area').style.display = 'block';
+  document.getElementById('study-title').textContent  = title;
+  document.getElementById('study-sub').textContent    = sub;
+  curCards = cards;
+  setMode('flash');
+  renderSidebar();
+  updateStats();
+  window.scrollTo(0,0);
+}
+
+function selectChapterByIndex(i) { selectChapter(chapters[i]); }
+function selectChapter(ch) {
+  curChapter = ch;
+  closeDrawer();
+  goStudy(ch, DATA[ch].length+' 個', DATA[ch].map(w=>({...w,chapter:ch})));
+}
+
+function startAll(mode) {
+  curChapter = 'all';
+  goStudy('全部單字', allCards.length+' 個', [...allCards]);
+  setMode(mode);
+}
+
+function reviewWeak() {
+  const weak = allCards.filter(w => wrong[w.name]);
+  if (!weak.length) { alert('目前沒有錯題記錄！先完成測驗再來複習。'); return; }
+  curChapter = 'review';
+  closeDrawer();
+  goStudy('複習錯題', weak.length+' 個', weak);
+}
+
+function backToHome() {
+  document.getElementById('home-area').style.display  = 'block';
+  document.getElementById('study-area').style.display = 'none';
+  curChapter = null;
+  renderSidebar(); renderOverview(); updateStats();
+}
+
+function setMode(mode) {
+  curMode = mode; curIdx = 0; quizScore = 0; quizTotal = 0;
+  document.querySelectorAll('.mode-tab').forEach((t,i) => {
+    t.classList.toggle('active', ['flash','quiz','kana','list'][i] === mode);
+  });
+  if      (mode==='flash') renderFlash();
+  else if (mode==='quiz')  renderQuiz('meaning');
+  else if (mode==='kana')  renderQuiz('kana');
+  else                     renderList();
+}
+
+/* ── Flashcard ── */
+function renderFlash() {
+  const area = document.getElementById('card-area');
+  if (!curCards.length) { area.innerHTML='<div class="empty">沒有單字</div>'; return; }
+  const card = curCards[curIdx];
+  const pct  = Math.round((curIdx+1)/curCards.length*100);
+  area.innerHTML = `
+    <div class="fc-progress"><div class="fc-progress-bar" style="width:${pct}%"></div></div>
+    <div class="flashcard" id="fc" onclick="flipCard()">
+      <div class="fc-chapter-tag">${card.chapter}</div>
+      <div class="fc-front">
+        <div class="fc-verb">${card.name}</div>
+        <div class="fc-kana">${card.kana}</div>
+        <div class="fc-hint">點擊翻面查看意思</div>
+      </div>
+      <div class="fc-back">
+        <div class="fc-meaning">${card.meaning}</div>
+        <span class="badge ${card.type==='他動詞'?'badge-ta':'badge-ji'}">${card.type}</span>
+        <div class="fc-example">${card.example}</div>
+        <div class="fc-particle">接續助詞：<b>${card.particle}</b></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <span class="fc-counter">${curIdx+1} / ${curCards.length}</span>
+      <div class="fc-btns">
+        <button class="btn" onclick="fcNav(-1)" ${curIdx===0?'disabled':''}>← 上一張</button>
+        <button class="btn btn-dunno" onclick="markWrong()">不熟 ✗</button>
+        <button class="btn btn-know"  onclick="markKnown()">記住了 ✓</button>
+        <button class="btn" onclick="fcNav(1)"  ${curIdx===curCards.length-1?'disabled':''}>下一張 →</button>
+      </div>
+    </div>`;
+}
+
+function flipCard() { document.getElementById('fc').classList.toggle('flipped'); }
+function fcNav(dir) {
+  curIdx = Math.max(0, Math.min(curCards.length-1, curIdx+dir));
+  renderFlash();
+}
+function markKnown() { known[curCards[curIdx].name]=true;  delete wrong[curCards[curIdx].name]; save(); fcNav(1); }
+function markWrong() { wrong[curCards[curIdx].name]=true;  known[curCards[curIdx].name]=false;  save(); fcNav(1); }
+
+/* ── Quiz ── */
+function shuffle(arr) { return [...arr].sort(()=>Math.random()-.5); }
+let curQuizType = 'meaning'; // 'meaning' or 'kana'
+
+function renderQuiz(type) {
+  if (type) curQuizType = type;
+  if (curIdx >= curCards.length) { renderResult(); return; }
+  const card   = curCards[curIdx];
+  const others = allCards.filter(w => w.name !== card.name);
+  const pool   = shuffle([card, ...shuffle(others).slice(0,3)]);
+  quizOptNames = pool.map(o => o.name);
+
+  const isMeaning = curQuizType === 'meaning';
+  const qLabel  = isMeaning ? '這個複合動詞的中文意思是？' : '這個複合動詞的平假名讀音是？';
+  const optText = (o) => isMeaning ? o.meaning : o.kana;
+
+  const area = document.getElementById('card-area');
+  area.innerHTML =
+    '<div class="quiz-card">'
+    + '<div class="quiz-top">'
+    + '<span class="quiz-q">' + qLabel + '</span>'
+    + '<span class="quiz-score-badge">得分 ' + quizScore + '/' + quizTotal + '</span>'
+    + '</div>'
+    + '<div class="quiz-verb">' + card.name + '</div>'
+    + (isMeaning ? '<div class="quiz-kana">' + card.kana + '</div>' : '')
+    + '<div class="quiz-opts">'
+    + pool.map((o,i) => '<button class="quiz-opt" id="qo' + i + '" onclick="checkQuiz(' + i + ')">' + optText(o) + '</button>').join('')
+    + '</div>'
+    + '<div class="quiz-feedback" id="qfb"></div>'
+    + '<button class="quiz-next" id="qnext" onclick="nextQuiz()">下一題 →</button>'
+    + '</div>';
+}
+
+function checkQuiz(chosenIdx) {
+  const card        = curCards[curIdx];
+  const correctName = card.name;
+  const correctIdx  = quizOptNames.indexOf(correctName);
+  document.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+  if (correctIdx >= 0) document.getElementById('qo'+correctIdx).classList.add('correct');
+
+  const isCorrect = quizOptNames[chosenIdx] === correctName;
+  const fb = document.getElementById('qfb');
+
+  if (isCorrect) {
+    quizScore++;
+    fb.className = 'quiz-feedback show ok';
+    fb.innerHTML = '✓ 正確！<br>例句：' + card.example;
+    known[correctName] = true; delete wrong[correctName];
+    // Auto-advance after 0.8s
+    setTimeout(function() { curIdx++; renderQuiz(); }, 800);
+  } else {
+    document.getElementById('qo'+chosenIdx).classList.add('wrong');
+    fb.className = 'quiz-feedback show ng';
+    fb.innerHTML = '✗ 正確答案是「'
+      + (curQuizType === 'meaning' ? card.meaning : card.kana)
+      + '」<br>例句：' + card.example;
+    wrong[correctName] = true; known[correctName] = false;
+    document.getElementById('qnext').classList.add('show');
+  }
+  quizTotal++; save();
+}
+
+function nextQuiz() { curIdx++; renderQuiz(); }
+
+function renderResult() {
+  const pct = quizTotal ? Math.round(quizScore/quizTotal*100) : 0;
+  document.getElementById('card-area').innerHTML = `
+    <div class="result-card">
+      <div class="result-score">${pct}%</div>
+      <div class="result-label">本次測驗結果</div>
+      <div class="result-grid">
+        <div class="rs"><div class="n">${quizScore}</div><div class="l">答對</div></div>
+        <div class="rs"><div class="n">${quizTotal-quizScore}</div><div class="l">答錯</div></div>
+        <div class="rs"><div class="n">${quizTotal}</div><div class="l">總題數</div></div>
+        <div class="rs"><div class="n">${totalKnown()}</div><div class="l">累計已記</div></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-primary" onclick="setMode('quiz')">再測一次</button>
+        <button class="btn" onclick="setMode('flash')">閃卡複習</button>
+        <button class="btn btn-danger"  onclick="reviewWeak()">複習錯題</button>
+      </div>
+    </div>`;
+  updateStats(); renderSidebar();
+}
+
+/* ── List ── */
+function renderList() {
+  const area = document.getElementById('card-area');
+  area.innerHTML = `
+    <div class="list-header">
+      <div style="font-size:13px;color:var(--text3);white-space:nowrap">${curCards.length} 個單字</div>
+      <input class="list-search" placeholder="搜尋…" oninput="filterList(this.value)">
+    </div>
+    <div id="list-body">${buildListItems(curCards)}</div>`;
+}
+
+function buildListItems(cards) {
+  if (!cards.length) return '<div class="empty">沒有符合的單字</div>';
+  return cards.map(card => `
+    <div class="list-item">
+      <div class="li-verb-wrap">
+        <div class="li-verb">${card.name}</div>
+        <div class="li-kana">${card.kana}</div>
+      </div>
+      <div class="li-body">
+        <div class="li-meaning">${card.meaning}</div>
+        <div class="li-ex">${card.example}</div>
+        <div class="li-meta">
+          <span class="li-badge ${card.type==='他動詞'?'li-ta':'li-ji'}">${card.type}</span>
+          <span class="li-badge li-p">助詞：${card.particle}</span>
+          <span class="li-badge li-p">${card.chapter}</span>
+        </div>
+      </div>
+      <div class="li-check ${known[card.name]?'known':''}" onclick="toggleKnown('${card.name}')">✓</div>
+    </div>`).join('');
+}
+
+function filterList(q) {
+  const lower = q.toLowerCase();
+  const filtered = curCards.filter(c =>
+    c.name.includes(q) || c.kana.includes(q) ||
+    c.meaning.includes(q) || c.example.includes(q)
+  );
+  document.getElementById('list-body').innerHTML = buildListItems(filtered);
+}
+
+function toggleKnown(name) {
+  known[name] = !known[name];
+  if (known[name]) delete wrong[name];
+  save(); renderList(); updateStats(); renderSidebar();
+}
+
+/* ── Sidebar collapse ── */
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const btn = document.getElementById('sidebar-toggle');
+  const collapsed = sb.classList.toggle('collapsed');
+  btn.textContent = collapsed ? '▶' : '◀';
+  btn.title = collapsed ? '展開側欄' : '收合側欄';
+  localStorage.setItem('vv_sidebar', collapsed ? '1' : '0');
+}
+
+/* ── Dark / light mode ── */
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('vv_dark', isDark ? '1' : '0');
+}
+
+/* Init */
+function init() {
+  // Restore theme
+  if (localStorage.getItem('vv_dark') === '1') {
+    document.body.classList.add('dark');
+    const btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = '☀️';
+  }
+  // Restore sidebar state
+  if (localStorage.getItem('vv_sidebar') === '1') {
+    const sb = document.getElementById('sidebar');
+    const tbtn = document.getElementById('sidebar-toggle');
+    if (sb) { sb.classList.add('collapsed'); }
+    if (tbtn) { tbtn.textContent = '▶'; tbtn.title = '展開側欄'; }
+  }
+  renderSidebar();
+  renderOverview();
+  updateStats();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+<div class="toolbar">
+  <button class="tool-btn" id="theme-btn" onclick="toggleTheme()" title="黑白模式">🌙</button>
+</div>
+</body>
+</html>

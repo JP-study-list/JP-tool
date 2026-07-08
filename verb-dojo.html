@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>動詞道場 どうしどうじょう</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#c0392b; --green:#1a6b3a; --blue:#1a4f7a;
+    --ink:#1a1814; --ink2:#4a4540; --ink3:#8a857e;
+    --paper:#faf8f4; --paper2:#f2ede4; --paper3:#e8e0d0;
+    --card:#ffffff; --border:#e8e0d0; --headerBg:#ffffff;
+    --wrongBg:#3a1a1a; --correctBg:#1a3a28; --hintBg:#1a2a3a;
+  }
+  [data-theme="dark"]{
+    --red:#e07070; --green:#5dbf8a; --blue:#7aaddd;
+    --ink:#f0ede8; --ink2:#c0b8b0; --ink3:#807870;
+    --paper:#1a1814; --paper2:#252018; --paper3:#332e28;
+    --card:#221f1a; --border:#3a342c; --headerBg:#131110;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Noto Sans JP',sans-serif;background:var(--paper);color:var(--ink);}
+  .wrap{min-height:100vh;padding-bottom:20px;max-width:640px;margin:0 auto;}
+  .header{background:var(--headerBg);color:var(--ink);padding:14px 14px 0;border-bottom:1px solid var(--paper3);position:sticky;top:0;z-index:10;}
+  .title{font-size:16px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .title-sub{font-size:11px;color:var(--ink3);font-weight:400;}
+  .header-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+  .dark-toggle{width:28px;height:28px;padding:0;border-radius:50%;border:1px solid var(--paper3);background:var(--card);color:var(--ink3);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+  .dark-toggle:hover{border-color:var(--ink3);color:var(--ink);}
+  .dark-toggle svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .learned-count{font-size:11px;color:var(--green);font-weight:400;}
+  .tabs{display:flex;overflow-x:auto;}
+  .tab{flex:1;padding:9px 4px 8px;border:none;background:none;color:var(--ink3);font-size:11px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .2s;white-space:nowrap;}
+  .tab.active{color:var(--ink);border-bottom-color:var(--red);}
+  .main{padding:12px 12px 0;}
+  .row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .lbl{font-size:12px;color:var(--ink3);white-space:nowrap;}
+  .sel{flex:1;min-width:130px;font-size:13px;padding:6px 8px;border:1px solid var(--paper3);border-radius:8px;background:var(--paper2);color:var(--ink);font-family:inherit;}
+  .pills{display:flex;gap:6px;flex-wrap:wrap;}
+  .pill{font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid var(--paper3);background:var(--card);color:var(--ink3);cursor:pointer;font-family:inherit;transition:all .15s;}
+  .pill.active{border-color:var(--ink);background:var(--ink);color:var(--paper);}
+  .score-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+  .score-card{background:var(--card);border:1px solid var(--paper3);border-radius:10px;padding:9px 6px;text-align:center;}
+  .score-val{font-size:22px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .score-val.green{color:var(--green);}
+  .score-val.red{color:var(--red);}
+  .score-lbl{font-size:10px;color:var(--ink3);margin-top:2px;}
+  .q-card{background:var(--card);border:1px solid var(--paper3);border-radius:14px;padding:18px 16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);}
+  .q-meta{font-size:11px;color:var(--ink3);margin-bottom:8px;}
+  .q-verb{font-family:'Noto Serif JP',serif;font-size:36px;font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:4px;}
+  .q-kana{font-size:13px;color:var(--ink3);margin-bottom:12px;}
+  .q-task{background:var(--paper2);color:var(--ink);border-radius:8px;padding:7px 11px;display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;border:1px solid var(--paper3);}
+  .q-task-num{font-size:11px;color:var(--ink3);}
+  .q-task-name{font-size:14px;font-weight:700;color:var(--ink);}
+  .rule-toggle{font-size:11px;padding:5px 10px;border-radius:20px;border:1px solid var(--paper3);background:var(--card);color:var(--ink3);cursor:pointer;font-family:inherit;}
+  .rule-box{margin-top:10px;border:1px solid var(--paper3);border-radius:10px;overflow:hidden;background:var(--card);}
+  .rule-header{padding:7px 12px;background:var(--paper2);font-size:11px;color:var(--ink3);font-weight:500;}
+  .rule-row{display:grid;grid-template-columns:70px 1fr 1fr;padding:7px 12px;border-top:1px solid var(--paper3);align-items:center;gap:8px;}
+  .rule-row:first-of-type{border-top:none;}
+  .rule-lbl{font-size:10px;color:var(--ink3);white-space:nowrap;}
+  .rule-suffix{font-size:10px;color:var(--red);font-family:'DM Mono',monospace;}
+  .rule-kanji{font-family:'Noto Serif JP',serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .rule-kanji.dict{color:var(--red);}
+  .rule-kana{font-size:12px;color:var(--ink3);}
+  .answer-input{width:100%;font-size:22px;padding:12px 14px;border:2px solid var(--paper3);border-radius:12px;background:var(--card);color:var(--ink);font-family:inherit;outline:none;margin-bottom:8px;box-sizing:border-box;transition:border-color .2s,background .2s;}
+  .answer-input.correct{border-color:var(--green);background:var(--correctBg);}
+  .answer-input.wrong{border-color:var(--red);background:var(--wrongBg);}
+  .fb{min-height:36px;border-radius:10px;padding:9px 12px;font-size:13px;display:flex;align-items:center;gap:6px;margin-bottom:10px;background:transparent;color:transparent;}
+  .fb.correct{background:var(--correctBg);color:var(--green);}
+  .fb.wrong{background:var(--wrongBg);color:var(--red);}
+  .fb.hint{background:var(--hintBg);color:var(--blue);}
+  .fb-ans{font-family:'Noto Serif JP',serif;font-size:16px;font-weight:700;}
+  .fb-detail{display:flex;flex-direction:column;gap:6px;width:100%;}
+  .fb-hintbox{font-size:12px;background:#fff8e8;border:1px solid #f0d080;border-radius:7px;padding:6px 10px;color:#7a5800;}
+  .fb-nomatch{font-size:12px;background:var(--paper2);border:1px solid var(--paper3);border-radius:7px;padding:6px 10px;color:var(--ink3);}
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+  .btn{font-family:inherit;font-size:13px;font-weight:500;padding:12px;border:1.5px solid var(--paper3);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer;transition:all .15s;}
+  .btn.primary{border-color:var(--ink);background:var(--ink);color:var(--paper);}
+  .btn.next{border-color:var(--ink);background:var(--ink);color:var(--paper);grid-column:1/-1;}
+  .btn.hint{color:var(--ink3);}
+  .btn.learned{border-color:var(--green);background:var(--paper2);color:var(--green);}
+  .btn.full{width:100%;grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+  .ch-card{background:var(--card);border:1.5px solid var(--paper3);border-radius:12px;padding:12px 10px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:3px;font-family:inherit;}
+  .ch-card.active{border-color:var(--red);background:var(--paper2);}
+  .ch-icon{font-size:20px;margin-bottom:2px;}
+  .ch-title{font-size:12px;font-weight:500;color:var(--ink);}
+  .ch-count{font-size:11px;color:var(--ink3);}
+  .v-list{display:flex;flex-direction:column;gap:7px;}
+  .v-item{background:var(--card);border:1px solid var(--paper3);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 8px;transition:all .2s;}
+  .v-item.learned{background:var(--paper2);border-color:var(--green);}
+  .v-kanji{font-family:'Noto Serif JP',serif;font-size:17px;font-weight:700;}
+  .v-kana{font-size:11px;color:var(--ink3);}
+  .v-zh{font-size:13px;color:var(--ink2);}
+  .v-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;grid-row:1/span 2;}
+  .tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--paper2);color:var(--ink3);}
+  .tag.t1{background:#3a2800;color:#e0a040;}
+  [data-theme="light"] .tag.t1, :root:not([data-theme="dark"]) .tag.t1{background:#3a2800;color:#e0a040;}
+  .tag.t2{background:#0a2a18;color:var(--green);}
+  .tag.t3{background:#0a1a30;color:var(--blue);}
+  .remove-btn{font-size:10px;padding:2px 7px;border:1px solid var(--paper3);border-radius:20px;background:var(--card);color:var(--ink3);cursor:pointer;font-family:inherit;}
+  .mark-btn{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--card);color:var(--ink3);cursor:pointer;font-family:inherit;border:1px solid var(--paper3);}
+  .mark-btn.on{border-color:var(--green);background:var(--paper2);color:var(--green);}
+  .f-row{background:var(--card);border:1px solid var(--paper3);border-radius:8px;padding:9px 12px;display:grid;grid-template-columns:28px 1fr auto;gap:4px 8px;align-items:center;margin-bottom:6px;}
+  .f-num{font-size:11px;color:var(--ink3);}
+  .f-name{font-size:13px;font-weight:500;color:var(--ink);}
+  .f-ex{font-size:11px;color:var(--ink3);}
+  .empty-state{text-align:center;padding:48px 20px;color:var(--ink3);}
+  .empty-icon{font-size:32px;margin-bottom:12px;}
+  .empty-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:6px;}
+  .filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .filter-row .pills{gap:6px;}
+  .filter-pill{font-size:10px;padding:3px 8px;border-radius:20px;border:1px solid var(--paper3);background:var(--card);color:var(--ink3);cursor:pointer;font-family:inherit;}
+  .filter-pill.active{border-color:var(--ink);background:var(--ink);color:var(--paper);}
+  .prog-item{margin-bottom:8px;}
+  .prog-top{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:3px;}
+  .prog-top span:last-child{font-variant-numeric:tabular-nums;}
+  .prog-bar{height:4px;background:var(--paper3);border-radius:2px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:2px;transition:width .4s;}
+  .quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+  .opt-btn{font-family:'Noto Serif JP',serif;font-size:18px;font-weight:700;padding:14px 10px;border:1.5px solid var(--paper3);border-radius:12px;background:var(--card);color:var(--ink);cursor:pointer;text-align:center;transition:all .15s;line-height:1.3;}
+  .opt-btn .kana-sub{font-size:11px;font-family:'Noto Sans JP',sans-serif;font-weight:400;color:inherit;opacity:.7;margin-top:3px;}
+  .opt-btn.correct{border-color:var(--green);background:var(--paper2);color:var(--green);}
+  .opt-btn.wrong{border-color:var(--red);background:var(--paper2);color:var(--red);}
+  .opt-btn.dim{color:var(--ink3);}
+  .loading{padding:40px;text-align:center;color:var(--ink3);}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+// ══════════ 資料 ══════════
+const CHAPTERS = [
+  {id:0,title:"起始與移動",icon:"🔀",verbs:[0,1,2,3,4,5,6,7,8,19,20,21,22,23,24,27,28,29,30,31]},
+  {id:1,title:"給予與接收",icon:"🎁",verbs:[9,10,11,12,13,14,15,16,17,18]},
+  {id:2,title:"身體動作",icon:"🏃",verbs:[32,33,34,39,40,41,42,43,44,45,46,47,48,49,50]},
+  {id:3,title:"溝通與感知",icon:"💬",verbs:[51,52,53,54,55,56,57,58,59,60,61,62]},
+  {id:4,title:"思考與決定",icon:"🧠",verbs:[63,64,65,66,67,68,69]},
+  {id:5,title:"存在與變化",icon:"✨",verbs:[70,71,72,73,74,75,76,77,78]},
+  {id:6,title:"操作與行動",icon:"🔧",verbs:[79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99]},
+];
+
+const VERBS = [
+  {zh:"開始（自）",kanji:"始まる",kana:"はじまる",type:"第一類",p:"が"},
+  {zh:"使……開始",kanji:"始める",kana:"はじめる",type:"第二類",p:"を"},
+  {zh:"結束",kanji:"終わる",kana:"おわる",type:"第一類",p:"を"},
+  {zh:"前進",kanji:"進む",kana:"すすむ",type:"第一類",p:"が・に"},
+  {zh:"超過",kanji:"過ぎる",kana:"すぎる",type:"第二類",p:"に"},
+  {zh:"持續（自）",kanji:"続く",kana:"つづく",type:"第一類",p:"が"},
+  {zh:"使……繼續",kanji:"続ける",kana:"つづける",type:"第二類",p:"を"},
+  {zh:"改變（自）",kanji:"変わる",kana:"かわる",type:"第一類",p:"が・に"},
+  {zh:"使……改變",kanji:"変える",kana:"かえる",type:"第二類",p:"を・に"},
+  {zh:"（我）給……",kanji:"あげる",kana:"あげる",type:"第二類",p:"を・に"},
+  {zh:"（他人）給……",kanji:"くれる",kana:"くれる",type:"第二類",p:"を・に"},
+  {zh:"（我）收到……",kanji:"もらう",kana:"もらう",type:"第一類",p:"を"},
+  {zh:"把……收下",kanji:"受ける",kana:"うける",type:"第二類",p:"を・に"},
+  {zh:"送出……",kanji:"送る",kana:"おくる",type:"第一類",p:"を・に"},
+  {zh:"賣……",kanji:"売る",kana:"うる",type:"第一類",p:"を・に"},
+  {zh:"買……",kanji:"買う",kana:"かう",type:"第一類",p:"を"},
+  {zh:"借（出）……",kanji:"貸す",kana:"かす",type:"第一類",p:"を・に"},
+  {zh:"借（入）……",kanji:"借りる",kana:"かりる",type:"第二類",p:"を・に"},
+  {zh:"歸還……",kanji:"返す",kana:"かえす",type:"第一類",p:"を・に"},
+  {zh:"出現・出來",kanji:"出る",kana:"でる",type:"第二類",p:"が・に"},
+  {zh:"交出……・提出……",kanji:"出す",kana:"だす",type:"第一類",p:"を・に"},
+  {zh:"進入・加入",kanji:"入る",kana:"はいる",type:"第一類",p:"に・が"},
+  {zh:"放入……",kanji:"入れる",kana:"いれる",type:"第二類",p:"に・を"},
+  {zh:"移動・活動",kanji:"動く",kana:"うごく",type:"第一類",p:"が・に"},
+  {zh:"朝向",kanji:"向く",kana:"むく",type:"第一類",p:"を・に"},
+  {zh:"會面・遇到",kanji:"会う",kana:"あう",type:"第一類",p:"に・と"},
+  {zh:"來・到來",kanji:"来る",kana:"くる",type:"第三類",p:"に・が"},
+  {zh:"去",kanji:"行く",kana:"いく",type:"第一類",p:"に・へ"},
+  {zh:"抵達",kanji:"着く",kana:"つく",type:"第一類",p:"に・が"},
+  {zh:"返回（地點）",kanji:"帰る",kana:"かえる",type:"第一類",p:"に・が"},
+  {zh:"返回・回復",kanji:"戻る",kana:"もどる",type:"第一類",p:"に・が"},
+  {zh:"乘上",kanji:"乗る",kana:"のる",type:"第一類",p:"に・が"},
+  {zh:"行走",kanji:"歩く",kana:"あるく",type:"第一類",p:"を・が"},
+  {zh:"奔跑",kanji:"走る",kana:"はしる",type:"第一類",p:"が"},
+  {zh:"飛",kanji:"飛ぶ",kana:"とぶ",type:"第一類",p:"が・に"},
+  {zh:"吃……",kanji:"食べる",kana:"たべる",type:"第二類",p:"を"},
+  {zh:"喝……",kanji:"飲む",kana:"のむ",type:"第一類",p:"を"},
+  {zh:"吸……",kanji:"吸う",kana:"すう",type:"第一類",p:"を"},
+  {zh:"居住",kanji:"住む",kana:"すむ",type:"第一類",p:"に・が"},
+  {zh:"站著",kanji:"立つ",kana:"たつ",type:"第一類",p:"に・が"},
+  {zh:"坐著",kanji:"座る",kana:"すわる",type:"第一類",p:"に・が"},
+  {zh:"等……",kanji:"待つ",kana:"まつ",type:"第一類",p:"を・が"},
+  {zh:"睡覺",kanji:"寝る",kana:"ねる",type:"第二類",p:"に・で"},
+  {zh:"起床・發生",kanji:"起きる",kana:"おきる",type:"第二類",p:"が"},
+  {zh:"發生（自）",kanji:"起こる",kana:"おこる",type:"第一類",p:"が"},
+  {zh:"脫掉……",kanji:"脱ぐ",kana:"ぬぐ",type:"第一類",p:"を"},
+  {zh:"穿……（上著）",kanji:"着る",kana:"きる",type:"第二類",p:"を"},
+  {zh:"穿……（下著/鞋）",kanji:"履く",kana:"はく",type:"第一類",p:"を"},
+  {zh:"哭",kanji:"泣く",kana:"なく",type:"第一類",p:"が"},
+  {zh:"笑著",kanji:"笑う",kana:"わらう",type:"第一類",p:"が"},
+  {zh:"遊玩",kanji:"遊ぶ",kana:"あそぶ",type:"第一類",p:"が"},
+  {zh:"工作・運作",kanji:"働く",kana:"はたらく",type:"第一類",p:"が"},
+  {zh:"說・稱作……",kanji:"言う",kana:"いう",type:"第一類",p:"と・に・を"},
+  {zh:"稱呼・叫住……",kanji:"呼ぶ",kana:"よぶ",type:"第一類",p:"と・を"},
+  {zh:"寫……",kanji:"書く",kana:"かく",type:"第一類",p:"を・と"},
+  {zh:"讀……",kanji:"読む",kana:"よむ",type:"第一類",p:"を"},
+  {zh:"看……",kanji:"見る",kana:"みる",type:"第二類",p:"を"},
+  {zh:"出示……",kanji:"見せる",kana:"みせる",type:"第二類",p:"を・に"},
+  {zh:"聽……・詢問……",kanji:"聞く",kana:"きく",type:"第一類",p:"を・に"},
+  {zh:"知道……",kanji:"知る",kana:"しる",type:"第一類",p:"を・が"},
+  {zh:"知曉",kanji:"分かる",kana:"わかる",type:"第一類",p:"が・に"},
+  {zh:"教授……・告知……",kanji:"教える",kana:"おしえる",type:"第二類",p:"を・に"},
+  {zh:"感到……",kanji:"感じる",kana:"かんじる",type:"第二類",p:"を・に"},
+  {zh:"記住……",kanji:"覚える",kana:"おぼえる",type:"第二類",p:"を"},
+  {zh:"忘記……",kanji:"忘れる",kana:"わすれる",type:"第二類",p:"を"},
+  {zh:"覺得／認為……",kanji:"思う",kana:"おもう",type:"第一類",p:"と・を"},
+  {zh:"思考……・認為……",kanji:"考える",kana:"かんがえる",type:"第二類",p:"を・と"},
+  {zh:"尋找……",kanji:"探す",kana:"さがす",type:"第一類",p:"を"},
+  {zh:"選擇……",kanji:"選ぶ",kana:"えらぶ",type:"第一類",p:"を"},
+  {zh:"決定……",kanji:"決める",kana:"きめる",type:"第二類",p:"を・に"},
+  {zh:"成為",kanji:"なる",kana:"なる",type:"第一類",p:"に・と"},
+  {zh:"做……",kanji:"する",kana:"する",type:"第三類",p:"を"},
+  {zh:"做……（口語）",kanji:"やる",kana:"やる",type:"第一類",p:"を"},
+  {zh:"會做・可以",kanji:"できる",kana:"できる",type:"第二類",p:"が"},
+  {zh:"有（非生物）",kanji:"ある",kana:"ある",type:"第一類",p:"が・に"},
+  {zh:"有（生物）",kanji:"いる",kana:"いる",type:"第二類",p:"が・に"},
+  {zh:"是需要的",kanji:"要る",kana:"いる",type:"第一類",p:"が"},
+  {zh:"增加",kanji:"増える",kana:"ふえる",type:"第二類",p:"が"},
+  {zh:"減少",kanji:"減る",kana:"へる",type:"第一類",p:"が"},
+  {zh:"下降・掉落",kanji:"落ちる",kana:"おちる",type:"第二類",p:"に・が"},
+  {zh:"剩下・殘留",kanji:"残る",kana:"のこる",type:"第一類",p:"に・が"},
+  {zh:"把……安置・放置",kanji:"置く",kana:"おく",type:"第一類",p:"に・を"},
+  {zh:"抱持……",kanji:"持つ",kana:"もつ",type:"第一類",p:"を"},
+  {zh:"採取……・取得……",kanji:"とる",kana:"とる",type:"第一類",p:"を"},
+  {zh:"拉……・吸引……",kanji:"引く",kana:"ひく",type:"第一類",p:"を・に"},
+  {zh:"敞開……（自他）",kanji:"開く",kana:"ひらく",type:"第一類",p:"を・が"},
+  {zh:"把……打開",kanji:"あける",kana:"あける",type:"第二類",p:"を"},
+  {zh:"碰觸……・摸……",kanji:"触る",kana:"さわる",type:"第一類",p:"に・を"},
+  {zh:"按壓……・推……",kanji:"押す",kana:"おす",type:"第一類",p:"を"},
+  {zh:"打……",kanji:"打つ",kana:"うつ",type:"第一類",p:"を・に"},
+  {zh:"折……",kanji:"折る",kana:"おる",type:"第一類",p:"を"},
+  {zh:"切斷……",kanji:"切る",kana:"きる",type:"第一類",p:"を"},
+  {zh:"刺……",kanji:"刺す",kana:"さす",type:"第一類",p:"を・に"},
+  {zh:"破壞……",kanji:"壊す",kana:"こわす",type:"第一類",p:"を"},
+  {zh:"架著・掛著（自）",kanji:"かかる",kana:"かかる",type:"第一類",p:"が・に"},
+  {zh:"把……掛上（他）",kanji:"かける",kana:"かける",type:"第二類",p:"を・に"},
+  {zh:"添上・附上（自）",kanji:"付く",kana:"つく",type:"第一類",p:"に・が"},
+  {zh:"使……附上（他）",kanji:"付ける",kana:"つける",type:"第二類",p:"を・に"},
+  {zh:"製作……",kanji:"作る",kana:"つくる",type:"第一類",p:"を"},
+  {zh:"使用……",kanji:"使う",kana:"つかう",type:"第一類",p:"を"},
+];
+
+const FORMS = [
+  {id:0, name:"現在肯定常體", ex:"〜る／〜う"},
+  {id:1, name:"現在肯定敬體", ex:"〜ます"},
+  {id:2, name:"現在否定常體", ex:"〜ない"},
+  {id:3, name:"現在否定敬體", ex:"〜ません"},
+  {id:4, name:"過去肯定常體", ex:"〜た"},
+  {id:5, name:"過去肯定敬體", ex:"〜ました"},
+  {id:6, name:"過去否定常體", ex:"〜なかった"},
+  {id:7, name:"過去否定敬體", ex:"〜ませんでした"},
+  {id:8, name:"意志邀約常體", ex:"〜よう／〜おう"},
+  {id:9, name:"意志邀約敬體", ex:"〜ましょう"},
+  {id:10, name:"推測未來肯定常體", ex:"〜だろう"},
+  {id:11, name:"推測未來肯定敬體", ex:"〜でしょう"},
+  {id:12, name:"推測未來否定常體", ex:"〜ないだろう"},
+  {id:13, name:"推測未來否定敬體", ex:"〜ないでしょう"},
+  {id:14, name:"推測過去肯定常體", ex:"〜ただろう"},
+  {id:15, name:"推測過去肯定敬體", ex:"〜たでしょう"},
+  {id:16, name:"推測過去否定常體", ex:"〜なかっただろう"},
+  {id:17, name:"推測過去否定敬體", ex:"〜なかったでしょう"},
+];
+
+const TENSE_GROUPS = [
+  {id:"present", label:"現在", forms:[0,1,2,3]},
+  {id:"past",    label:"過去", forms:[4,5,6,7]},
+  {id:"voli",    label:"意志", forms:[8,9]},
+  {id:"infer",   label:"推測", forms:[10,11,12,13,14,15,16,17]},
+];
+
+// ══════════ Storage ══════════
+const STORAGE_KEY = "verb-dojo-learned";
+function loadLearned(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  }catch{ return new Set(); }
+}
+function saveLearned(set){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify([...set])); }catch{}
+}
+
+// ══════════ 活用引擎 ══════════
+function conjugate(verb, formId) {
+  const k=verb.kanji,ka=verb.kana,t=verb.type;
+  const s1=(w)=>{const m={く:"か",ぐ:"が",す:"さ",つ:"た",ぬ:"な",ぶ:"ば",む:"ま",る:"ら",う:"わ"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1));};
+  const s2=(w)=>{const m={く:"き",ぐ:"ぎ",す:"し",つ:"ち",ぬ:"に",ぶ:"び",む:"み",る:"り",う:"い"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1));};
+  const p1=(w)=>{const l=w.slice(-1);if(["う","つ","る"].includes(l))return w.slice(0,-1)+"った";if(["ぬ","ぶ","む"].includes(l))return w.slice(0,-1)+"んだ";if(l==="く")return w.slice(0,-1)+"いた";if(l==="ぐ")return w.slice(0,-1)+"いだ";if(l==="す")return w.slice(0,-1)+"した";return w+"た";};
+  const v1=(w)=>{const m={く:"こ",ぐ:"ご",す:"そ",つ:"と",ぬ:"の",ぶ:"ぼ",む:"も",る:"ろ",う:"お"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1))+"う";};
+  if(t==="第一類"){
+    const iku=ka==="いく",aru=ka==="ある";
+    const n1k=s1(k)+"ない",n1ka=s1(ka)+"ない";
+    const pk=iku?k.slice(0,-1)+"った":p1(k),pka=iku?"いった":p1(ka);
+    const fk=[k,s2(k)+"ます",n1k,s2(k)+"ません",pk,s2(k)+"ました",n1k.slice(0,-1)+"かった",s2(k)+"ませんでした",v1(k),s2(k)+"ましょう",k+"だろう",k+"でしょう",n1k+"だろう",n1k+"でしょう",pk+"だろう",pk+"でしょう",n1k.slice(0,-1)+"かっただろう",n1k.slice(0,-1)+"かったでしょう"];
+    const fka=[ka,s2(ka)+"ます",n1ka,s2(ka)+"ません",pka,s2(ka)+"ました",n1ka.slice(0,-1)+"かった",s2(ka)+"ませんでした",v1(ka),s2(ka)+"ましょう",ka+"だろう",ka+"でしょう",n1ka+"だろう",n1ka+"でしょう",pka+"だろう",pka+"でしょう",n1ka.slice(0,-1)+"かっただろう",n1ka.slice(0,-1)+"かったでしょう"];
+    if(aru){fk[2]="ない";fka[2]="ない";fk[3]="ありません";fka[3]="ありません";fk[6]="なかった";fka[6]="なかった";fk[12]="ないだろう";fka[12]="ないだろう";fk[13]="ないでしょう";fka[13]="ないでしょう";fk[16]="なかっただろう";fka[16]="なかっただろう";fk[17]="なかったでしょう";fka[17]="なかったでしょう";}
+    return{kanji:fk[formId],kana:fka[formId]};
+  } else if(t==="第二類"){
+    const bk=k.slice(0,-1),bka=ka.slice(0,-1);
+    const n1k=bk+"ない",n1ka=bka+"ない",pk=bk+"た",pka=bka+"た";
+    const fk=[k,bk+"ます",n1k,bk+"ません",pk,bk+"ました",n1k.slice(0,-1)+"かった",bk+"ませんでした",bk+"よう",bk+"ましょう",k+"だろう",k+"でしょう",n1k+"だろう",n1k+"でしょう",pk+"だろう",pk+"でしょう",n1k.slice(0,-1)+"かっただろう",n1k.slice(0,-1)+"かったでしょう"];
+    const fka=[ka,bka+"ます",n1ka,bka+"ません",pka,bka+"ました",n1ka.slice(0,-1)+"かった",bka+"ませんでした",bka+"よう",bka+"ましょう",ka+"だろう",ka+"でしょう",n1ka+"だろう",n1ka+"でしょう",pka+"だろう",pka+"でしょう",n1ka.slice(0,-1)+"かっただろう",n1ka.slice(0,-1)+"かったでしょう"];
+    return{kanji:fk[formId],kana:fka[formId]};
+  } else if(ka==="くる"||k==="来る"){
+    const fk=["来る","来ます","来ない","来ません","来た","来ました","来なかった","来ませんでした","来よう","来ましょう","来るだろう","来るでしょう","来ないだろう","来ないでしょう","来ただろう","来たでしょう","来なかっただろう","来なかったでしょう"];
+    const fka=["くる","きます","こない","きません","きた","きました","こなかった","きませんでした","こよう","きましょう","くるだろう","くるでしょう","こないだろう","こないでしょう","きただろう","きたでしょう","こなかっただろう","こなかったでしょう"];
+    return{kanji:fk[formId],kana:fka[formId]};
+  } else {
+    const f=["する","します","しない","しません","した","しました","しなかった","しませんでした","しよう","しましょう","するだろう","するでしょう","しないだろう","しないでしょう","しただろう","したでしょう","しなかっただろう","しなかったでしょう"];
+    return{kanji:f[formId],kana:f[formId]};
+  }
+}
+
+function getFullForms(verb) {
+  const k=verb.kanji,ka=verb.kana,t=verb.type;
+  const s1=(w)=>{const m={く:"か",ぐ:"が",す:"さ",つ:"た",ぬ:"な",ぶ:"ば",む:"ま",る:"ら",う:"わ"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1));};
+  const s2=(w)=>{const m={く:"き",ぐ:"ぎ",す:"し",つ:"ち",ぬ:"に",ぶ:"び",む:"み",る:"り",う:"い"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1));};
+  const p1=(w)=>{const l=w.slice(-1);if(["う","つ","る"].includes(l))return w.slice(0,-1)+"った";if(["ぬ","ぶ","む"].includes(l))return w.slice(0,-1)+"んだ";if(l==="く")return w.slice(0,-1)+"いた";if(l==="ぐ")return w.slice(0,-1)+"いだ";if(l==="す")return w.slice(0,-1)+"した";return w+"た";};
+  const te=(w)=>{const l=w.slice(-1);if(["う","つ","る"].includes(l))return w.slice(0,-1)+"って";if(["ぬ","ぶ","む"].includes(l))return w.slice(0,-1)+"んで";if(l==="く")return w.slice(0,-1)+"いて";if(l==="ぐ")return w.slice(0,-1)+"いで";if(l==="す")return w.slice(0,-1)+"して";return w+"て";};
+  const v1=(w)=>{const m={く:"こ",ぐ:"ご",す:"そ",つ:"と",ぬ:"の",ぶ:"ぼ",む:"も",る:"ろ",う:"お"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1))+"う";};
+  const cb=(w)=>{const m={く:"け",ぐ:"げ",す:"せ",つ:"て",ぬ:"ね",ぶ:"べ",む:"め",る:"れ",う:"え"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1))+"ば";};
+  const imp=(w)=>{const m={く:"け",ぐ:"げ",す:"せ",つ:"て",ぬ:"ね",ぶ:"べ",む:"め",る:"れ",う:"え"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1));};
+  const pot=(w)=>{const m={く:"け",ぐ:"げ",す:"せ",つ:"て",ぬ:"ね",ぶ:"べ",む:"め",る:"れ",う:"え"};return w.slice(0,-1)+(m[w.slice(-1)]||w.slice(-1))+"る";};
+  if(t==="第一類"){
+    const iku=ka==="いく",aru=ka==="ある";
+    const teK=iku?k.slice(0,-1)+"って":te(k), teKa=iku?"いって":te(ka);
+    const pkK=iku?k.slice(0,-1)+"った":p1(k), pkKa=iku?"いった":p1(ka);
+    const naiK=aru?"ない":s1(k)+"ない", naiKa=aru?"ない":s1(ka)+"ない";
+    return [
+      {lbl:"辭書形",  suffix:"",           k, ka},
+      {lbl:"ます形",  suffix:"+ます",       k:s2(k)+"ます",  ka:s2(ka)+"ます"},
+      {lbl:"ない形",  suffix:"+ない",       k:naiK,          ka:naiKa},
+      {lbl:"て形",    suffix:"+て(で)",     k:teK,           ka:teKa},
+      {lbl:"た形",    suffix:"+た(だ)",     k:pkK,           ka:pkKa},
+      {lbl:"意志形",  suffix:"+う",         k:v1(k),         ka:v1(ka)},
+      {lbl:"ば形",    suffix:"+ば",         k:cb(k),         ka:cb(ka)},
+      {lbl:"命令形",  suffix:"",            k:imp(k),        ka:imp(ka)},
+      {lbl:"禁止形",  suffix:"+な",         k:k+"な",        ka:ka+"な"},
+      {lbl:"可能形",  suffix:"+る",         k:pot(k),        ka:pot(ka)},
+      {lbl:"受身形",  suffix:"+れる",       k:s1(k)+"れる",  ka:s1(ka)+"れる"},
+      {lbl:"使役形",  suffix:"+せる",       k:s1(k)+"せる",  ka:s1(ka)+"せる"},
+    ];
+  } else if(t==="第二類"){
+    const b=k.slice(0,-1),bka=ka.slice(0,-1);
+    return [
+      {lbl:"辭書形",  suffix:"",            k,                ka},
+      {lbl:"ます形",  suffix:"+ます",       k:b+"ます",       ka:bka+"ます"},
+      {lbl:"ない形",  suffix:"+ない",       k:b+"ない",       ka:bka+"ない"},
+      {lbl:"て形",    suffix:"+て(で)",     k:b+"て",         ka:bka+"て"},
+      {lbl:"た形",    suffix:"+た(だ)",     k:b+"た",         ka:bka+"た"},
+      {lbl:"意志形",  suffix:"+よう",       k:b+"よう",       ka:bka+"よう"},
+      {lbl:"ば形",    suffix:"+ば",         k:b+"れば",       ka:bka+"れば"},
+      {lbl:"命令形",  suffix:"+ろ/よ",      k:b+"ろ",         ka:bka+"ろ"},
+      {lbl:"禁止形",  suffix:"+な",         k:k+"な",         ka:ka+"な"},
+      {lbl:"可能形",  suffix:"+られる",     k:b+"られる",     ka:bka+"られる"},
+      {lbl:"受身形",  suffix:"+られる",     k:b+"られる",     ka:bka+"られる"},
+      {lbl:"使役形",  suffix:"+させる",     k:b+"させる",     ka:bka+"させる"},
+    ];
+  } else if(ka==="くる"||k==="来る"){
+    return [
+      {lbl:"辭書形",  suffix:"",            k:"来る",         ka:"くる"},
+      {lbl:"ます形",  suffix:"+ます",       k:"来ます",       ka:"きます"},
+      {lbl:"ない形",  suffix:"+ない",       k:"来ない",       ka:"こない"},
+      {lbl:"て形",    suffix:"+て",         k:"来て",         ka:"きて"},
+      {lbl:"た形",    suffix:"+た",         k:"来た",         ka:"きた"},
+      {lbl:"意志形",  suffix:"+よう",       k:"来よう",       ka:"こよう"},
+      {lbl:"ば形",    suffix:"+れば",       k:"来れば",       ka:"くれば"},
+      {lbl:"命令形",  suffix:"",            k:"来い",         ka:"こい"},
+      {lbl:"禁止形",  suffix:"+な",         k:"来るな",       ka:"くるな"},
+      {lbl:"可能形",  suffix:"+られる",     k:"来られる",     ka:"こられる"},
+      {lbl:"受身形",  suffix:"+られる",     k:"来られる",     ka:"こられる"},
+      {lbl:"使役形",  suffix:"+させる",     k:"来させる",     ka:"こさせる"},
+    ];
+  } else {
+    return [
+      {lbl:"辭書形",  suffix:"",            k:"する",         ka:"する"},
+      {lbl:"ます形",  suffix:"+ます",       k:"します",       ka:"します"},
+      {lbl:"ない形",  suffix:"+ない",       k:"しない",       ka:"しない"},
+      {lbl:"て形",    suffix:"+て",         k:"して",         ka:"して"},
+      {lbl:"た形",    suffix:"+た",         k:"した",         ka:"した"},
+      {lbl:"意志形",  suffix:"+よう",       k:"しよう",       ka:"しよう"},
+      {lbl:"ば形",    suffix:"+すれば",     k:"すれば",       ka:"すれば"},
+      {lbl:"命令形",  suffix:"",            k:"しろ/せよ",    ka:"しろ/せよ"},
+      {lbl:"禁止形",  suffix:"+な",         k:"するな",       ka:"するな"},
+      {lbl:"可能形",  suffix:"",            k:"できる",       ka:"できる"},
+      {lbl:"受身形",  suffix:"+れる",       k:"される",       ka:"される"},
+      {lbl:"使役形",  suffix:"+させる",     k:"させる",       ka:"させる"},
+    ];
+  }
+}
+
+function getRelevantForms(verb, formId) {
+  const all = getFullForms(verb);
+  const relevant = {
+    0: ["辭書形","ます形","禁止形","命令形"],
+    1: ["辭書形","ます形","禁止形"],
+    2: ["ない形","辭書形","禁止形"],
+    3: ["ない形","ます形","辭書形"],
+    4: ["た形","て形","辭書形"],
+    5: ["た形","ます形","辭書形"],
+    6: ["ない形","た形","辭書形"],
+    7: ["ない形","ます形","辭書形"],
+    8: ["意志形","辭書形","ば形"],
+    9: ["意志形","ます形","辭書形"],
+    10:["辭書形","可能形","禁止形"],
+    11:["辭書形","ます形"],
+    12:["ない形","辭書形"],
+    13:["ない形","ます形"],
+    14:["た形","て形","辭書形"],
+    15:["た形","ます形"],
+    16:["ない形","た形"],
+    17:["ない形","た形","ます形"],
+  };
+  const want = new Set(relevant[formId]||["辭書形"]);
+  return all.filter(r=>want.has(r.lbl));
+}
+
+function detectForm(input, verb) {
+  const results = [];
+  for(let fi=0; fi<18; fi++){
+    const c = conjugate(verb, fi);
+    if(input === c.kana || input === c.kanji){
+      results.push({fi, name: FORMS[fi].name});
+    }
+  }
+  return results;
+}
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildQueue(verbPool,activeTenses){
+  const forms=TENSE_GROUPS.filter(g=>activeTenses.has(g.id)).flatMap(g=>g.forms);
+  return shuffle(verbPool.flatMap(vi=>forms.map(fi=>({vi,fi}))));
+}
+function getPool(ch){ return ch==="all" ? VERBS.map((_,i)=>i) : CHAPTERS[parseInt(ch)].verbs; }
+function esc(str){ return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ══════════ 全域狀態 ══════════
+let learned = loadLearned();
+let dark = localStorage.getItem("verb-dojo-dark") === "1";
+let currentTab = "practice";
+
+const practice = {
+  chapter:"all",
+  activeTenses:new Set(["present","past","voli","infer"]),
+  queue:[], qIdx:0, inputState:"idle", feedback:null, answered:false,
+  score:{total:0,correct:0,wrong:0}, showKanji:true, showRule:false,
+};
+const quiz = {
+  chapter:"all",
+  activeTenses:new Set(["present","past","voli","infer"]),
+  queue:[], qIdx:0, options:[], chosen:null,
+  score:{total:0,correct:0,wrong:0}, showKanji:true,
+};
+const learnedTabState = { filter:"all" };
+const refTabState = { sel:null };
+
+function newPracticeQueue(){
+  practice.queue = buildQueue(getPool(practice.chapter), practice.activeTenses);
+  practice.qIdx = 0; practice.inputState="idle"; practice.feedback=null;
+  practice.answered=false; practice.showRule=false; practice.showKanji = Math.random()>0.5;
+}
+function makeOptions(q){
+  const correct = conjugate(VERBS[q.vi], q.fi);
+  const nearbyForms = {
+    0:[1,2,4,8],   1:[0,3,5,9],   2:[3,6,0,12],  3:[2,7,1,13],
+    4:[5,6,0,14],  5:[4,7,1,15],  6:[7,2,4,16],  7:[6,3,5,17],
+    8:[9,0,10,4],  9:[8,1,11,5],
+    10:[11,0,12,14], 11:[10,1,13,15], 12:[13,2,10,16], 13:[12,3,11,17],
+    14:[15,4,10,16], 15:[14,5,11,17], 16:[17,6,12,14], 17:[16,7,13,15],
+  };
+  const wrongPool=[];
+  const tryOrder=[...(nearbyForms[q.fi]||[]), ...[...Array(18).keys()].filter(i=>i!==q.fi && !(nearbyForms[q.fi]||[]).includes(i))];
+  for(const fi of tryOrder){
+    const c = conjugate(VERBS[q.vi], fi);
+    if(c.kana !== correct.kana && !wrongPool.find(w=>w.kana===c.kana)){
+      wrongPool.push({conj:c, formName:FORMS[fi].name, isCorrect:false});
+    }
+    if(wrongPool.length>=3) break;
+  }
+  return shuffle([{conj:correct, formName:FORMS[q.fi].name, isCorrect:true}, ...wrongPool.slice(0,3)]);
+}
+function newQuizQueue(){
+  quiz.queue = buildQueue(getPool(quiz.chapter), quiz.activeTenses);
+  quiz.qIdx = 0; quiz.chosen = null; quiz.showKanji = Math.random()>0.5;
+  quiz.options = quiz.queue.length ? makeOptions(quiz.queue[0]) : [];
+}
+
+function toggleLearned(vi){
+  learned.has(vi) ? learned.delete(vi) : learned.add(vi);
+  saveLearned(learned);
+  render();
+}
+function toggleTense(state, id){
+  if(state.activeTenses.has(id) && state.activeTenses.size===1) return;
+  state.activeTenses.has(id) ? state.activeTenses.delete(id) : state.activeTenses.add(id);
+}
+
+// ══════════ 事件處理 ══════════
+window.onPracticeChapterChange = function(v){ practice.chapter=v; newPracticeQueue(); render(); };
+window.onPracticeTenseToggle = function(id){ toggleTense(practice, id); newPracticeQueue(); render(); };
+window.onPracticeCheck = function(){
+  if(practice.answered) return;
+  const inputEl = document.getElementById("practiceInput");
+  const val = inputEl ? inputEl.value.trim() : "";
+  if(!val) return;
+  const q = practice.queue[practice.qIdx % Math.max(practice.queue.length,1)];
+  const verb = VERBS[q.vi];
+  const conj = conjugate(verb, q.fi);
+  const ok = val===conj.kana || val===conj.kanji;
+  practice.answered = true;
+  practice.inputState = ok ? "correct" : "wrong";
+  practice.score.total++; ok ? practice.score.correct++ : practice.score.wrong++;
+  if(ok){ practice.feedback = {type:"correct"}; }
+  else { practice.feedback = {type:"wrong", ans:conj, detected: detectForm(val, verb)}; }
+  render();
+};
+window.onPracticeNext = function(){
+  const ni = practice.qIdx+1;
+  if(ni>=practice.queue.length){ newPracticeQueue(); }
+  else {
+    practice.qIdx = ni; practice.inputState="idle"; practice.feedback=null;
+    practice.answered=false; practice.showRule=false; practice.showKanji=Math.random()>0.5;
+  }
+  render();
+  const inputEl = document.getElementById("practiceInput");
+  if(inputEl) setTimeout(()=>inputEl.focus(),50);
+};
+window.onPracticeHint = function(){
+  if(practice.answered) return;
+  const q = practice.queue[practice.qIdx % Math.max(practice.queue.length,1)];
+  const verb = VERBS[q.vi];
+  const conj = conjugate(verb, q.fi);
+  const kana = conj.kana, vkana = verb.kana;
+  let prefixLen=0;
+  for(let i=0;i<Math.min(vkana.length,kana.length);i++){ if(vkana[i]===kana[i]) prefixLen=i+1; else break; }
+  const prefix = kana.slice(0,prefixLen);
+  const suffix = kana.slice(prefixLen);
+  const hintSuffix = suffix.length<=1 ? suffix : "＿".repeat(suffix.length-1)+suffix.slice(-1);
+  practice.feedback = {type:"hint", msg:`提示：${prefix}【${hintSuffix}】`};
+  render();
+};
+window.onPracticeToggleRule = function(){ practice.showRule = !practice.showRule; render(); };
+window.onPracticeToggleLearned = function(vi){ toggleLearned(vi); };
+window.onPracticeInputKeydown = function(e){
+  if(e.key==="Enter"){ practice.answered ? window.onPracticeNext() : window.onPracticeCheck(); }
+};
+
+window.onQuizChapterChange = function(v){ quiz.chapter=v; newQuizQueue(); render(); };
+window.onQuizTenseToggle = function(id){ toggleTense(quiz, id); newQuizQueue(); render(); };
+window.onQuizAnswer = function(idx){
+  if(quiz.chosen!==null) return;
+  quiz.chosen = idx;
+  const ok = quiz.options[idx].isCorrect;
+  quiz.score.total++; ok ? quiz.score.correct++ : quiz.score.wrong++;
+  render();
+  if(ok){
+    setTimeout(()=>{
+      const ni = quiz.qIdx+1;
+      if(ni>=quiz.queue.length){ newQuizQueue(); }
+      else { quiz.qIdx=ni; quiz.chosen=null; quiz.showKanji=Math.random()>0.5; quiz.options=makeOptions(quiz.queue[ni]); }
+      render();
+    },700);
+  }
+};
+window.onQuizNext = function(){
+  const ni = quiz.qIdx+1;
+  if(ni>=quiz.queue.length){ newQuizQueue(); }
+  else { quiz.qIdx=ni; quiz.chosen=null; quiz.showKanji=Math.random()>0.5; quiz.options=makeOptions(quiz.queue[ni]); }
+  render();
+};
+window.onQuizToggleLearned = function(vi){ toggleLearned(vi); };
+
+window.onLearnedFilter = function(f){ learnedTabState.filter=f; render(); };
+window.onRefSelectChapter = function(id){ refTabState.sel = (refTabState.sel===id ? null : id); render(); };
+window.setTab = function(id){ currentTab = id; render(); };
+window.toggleDark = function(){ dark=!dark; localStorage.setItem("verb-dojo-dark", dark?"1":"0"); render(); };
+
+// ══════════ 渲染函式 ══════════
+function renderScoreRow(score){
+  return `<div class="score-row">
+    <div class="score-card"><div class="score-val">${score.total}</div><div class="score-lbl">已答題</div></div>
+    <div class="score-card"><div class="score-val green">${score.correct}</div><div class="score-lbl">答對</div></div>
+    <div class="score-card"><div class="score-val red">${score.wrong}</div><div class="score-lbl">答錯</div></div>
+  </div>`;
+}
+function renderChapterSelect(id, current, onchange){
+  let opts = `<option value="all" ${current==="all"?"selected":""}>全部（100個）</option>`;
+  CHAPTERS.forEach(c=>{ opts += `<option value="${c.id}" ${String(current)===String(c.id)?"selected":""}>${c.icon} ${c.title}</option>`; });
+  return `<div class="row"><span class="lbl">章節</span><select class="sel" id="${id}" onchange="${onchange}(this.value)">${opts}</select></div>`;
+}
+function renderTensePills(current, onclick){
+  return `<div class="row"><span class="lbl">時態</span><div class="pills">${TENSE_GROUPS.map(g=>
+    `<button class="pill ${current.has(g.id)?'active':''}" onclick="${onclick}('${g.id}')">${g.label}</button>`
+  ).join("")}</div></div>`;
+}
+
+function renderPracticeTab(){
+  if(practice.queue.length===0) newPracticeQueue();
+  const q = practice.queue[practice.qIdx % Math.max(practice.queue.length,1)];
+  const verb = VERBS[q.vi];
+  const form = FORMS[q.fi];
+  const conj = conjugate(verb, q.fi);
+  const isLearned = learned.has(q.vi);
+  const displayVerb = practice.showKanji ? verb.kanji : verb.kana;
+  const displaySub = practice.showKanji ? verb.kana : verb.kanji;
+
+  let html = "";
+  html += renderChapterSelect("practiceChapterSel", practice.chapter, "onPracticeChapterChange");
+  html += renderTensePills(practice.activeTenses, "onPracticeTenseToggle");
+  html += renderScoreRow(practice.score);
+
+  html += `<div class="q-card">
+    <div class="q-meta">${verb.type}　${verb.zh}</div>
+    <div class="q-verb">${esc(displayVerb)}</div>
+    <div class="q-kana">${esc(displaySub)}</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <div class="q-task"><span class="q-task-num">第${form.id+1}式</span><span class="q-task-name">${form.name}</span></div>
+      <button class="rule-toggle" onclick="onPracticeToggleRule()">${practice.showRule?"隱藏規則":"查看規則"}</button>
+      ${isLearned?'<span style="font-size:11px;color:var(--green);">✓ 已學會</span>':''}
+    </div>`;
+
+  if(practice.showRule){
+    const kf = getRelevantForms(verb, q.fi);
+    html += `<div class="rule-box"><div class="rule-header">相關活用形 · ${verb.type}</div>`;
+    kf.forEach(row=>{
+      html += `<div class="rule-row">
+        <div><div class="rule-lbl">${row.lbl}</div>${row.suffix?`<div class="rule-suffix">${row.suffix}</div>`:''}</div>
+        <span class="rule-kanji ${row.lbl==='辭書形'?'dict':''}">${row.k}</span>
+        <span class="rule-kana">${row.ka}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+
+  html += `<input id="practiceInput" class="answer-input ${practice.inputState!=='idle'?practice.inputState:''}"
+    placeholder="輸入平假名…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+    ${practice.answered?"disabled":""} onkeydown="onPracticeInputKeydown(event)">`;
+
+  html += `<div class="fb ${practice.feedback?practice.feedback.type:''}">`;
+  if(practice.feedback){
+    if(practice.feedback.type==="wrong"){
+      html += `<div class="fb-detail">
+        <div>✗ 正確答案：<span class="fb-ans">${practice.feedback.ans.kanji}</span>（${practice.feedback.ans.kana}）</div>`;
+      if(practice.feedback.detected && practice.feedback.detected.length>0){
+        html += `<div class="fb-hintbox">💡 你輸入的是${practice.feedback.detected.map((d,i)=>
+          `<strong> 第${d.fi+1}式（${d.name}）</strong>${i<practice.feedback.detected.length-1?'或':''}`).join("")}</div>`;
+      } else {
+        html += `<div class="fb-nomatch">💡 您的輸入不符合任何一式的變化</div>`;
+      }
+      html += `</div>`;
+    } else if(practice.feedback.type==="correct"){
+      html += "✓ 正確！";
+    } else if(practice.feedback.type==="hint"){
+      html += esc(practice.feedback.msg);
+    }
+  }
+  html += `</div>`;
+
+  html += `<div class="btn-row">`;
+  if(!practice.answered){
+    html += `<button class="btn hint" onclick="onPracticeHint()">提示</button>`;
+    html += `<button class="btn" onclick="onPracticeCheck()">確認</button>`;
+  } else {
+    html += `<button class="btn next" onclick="onPracticeNext()">下一題 →</button>`;
+  }
+  html += `</div>`;
+
+  html += `<button class="btn full ${isLearned?'learned':''}" onclick="onPracticeToggleLearned(${q.vi})">
+    ${isLearned?'★ 從學習記錄移除':'☆ 標記為已學會'}</button>`;
+
+  return html;
+}
+
+function renderQuizTab(){
+  if(quiz.queue.length===0) newQuizQueue();
+  const q = quiz.queue[quiz.qIdx % Math.max(quiz.queue.length,1)];
+  const verb = VERBS[q.vi];
+  const form = FORMS[q.fi];
+  const isLearned = learned.has(q.vi);
+  const displayVerb = quiz.showKanji ? verb.kanji : verb.kana;
+  const displaySub = quiz.showKanji ? verb.kana : verb.kanji;
+
+  let html = "";
+  html += renderChapterSelect("quizChapterSel", quiz.chapter, "onQuizChapterChange");
+  html += renderTensePills(quiz.activeTenses, "onQuizTenseToggle");
+  html += renderScoreRow(quiz.score);
+
+  html += `<div class="q-card">
+    <div class="q-meta">${verb.type}　${verb.zh}${isLearned?'<span style="color:var(--green);margin-left:8px;">✓ 已學會</span>':''}</div>
+    <div class="q-verb">${esc(displayVerb)}</div>
+    <div class="q-kana">${esc(displaySub)}</div>
+    <div class="q-task"><span class="q-task-num">第${form.id+1}式</span><span class="q-task-name">${form.name}</span><span style="font-size:11px;color:var(--ink3);">${form.ex}</span></div>
+  </div>`;
+
+  html += `<div class="quiz-options">`;
+  quiz.options.forEach((opt,idx)=>{
+    let cls = "opt-btn";
+    if(quiz.chosen!==null){
+      if(opt.isCorrect) cls += " correct";
+      else if(idx===quiz.chosen) cls += " wrong";
+      else cls += " dim";
+    }
+    html += `<button class="${cls}" onclick="onQuizAnswer(${idx})" ${quiz.chosen!==null?"disabled":""}>
+      <div>${opt.conj.kanji}</div><div class="kana-sub">${opt.conj.kana}</div></button>`;
+  });
+  html += `</div>`;
+
+  if(quiz.chosen!==null){
+    const isOk = quiz.options[quiz.chosen].isCorrect;
+    html += `<div class="fb ${isOk?'correct':'wrong'}" style="margin-bottom:10px;">`;
+    html += isOk ? "✓ 正確！" : `✗ 正確答案：<span class="fb-ans">${quiz.options.find(o=>o.isCorrect).conj.kanji}</span>（${quiz.options.find(o=>o.isCorrect).conj.kana}）`;
+    html += `</div>`;
+    html += `<div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn next" style="width:100%;" onclick="onQuizNext()">下一題 →</button>
+      <button class="btn full ${isLearned?'learned':''}" onclick="onQuizToggleLearned(${q.vi})">
+        ${isLearned?'★ 從學習記錄移除':'☆ 標記為已學會'}</button>
+    </div>`;
+  }
+  return html;
+}
+
+function renderLearnedTab(){
+  if(learned.size===0){
+    return `<div class="empty-state"><div class="empty-icon">📚</div>
+      <div class="empty-title">還沒有學習記錄</div>
+      <div style="font-size:13px;">在「練習」頁面答題後<br>按「標記為已學會」就會存在這裡</div></div>`;
+  }
+  const filter = learnedTabState.filter;
+  const learnedList = [...learned].map(i=>({i,v:VERBS[i]}));
+  const filtered = filter==="all" ? learnedList : learnedList.filter(({v})=>v.type===filter);
+
+  let html = `<div class="filter-row">
+    <span style="font-size:13px;font-weight:500;">已學會 <span style="color:var(--green);font-weight:700;">${learned.size}</span> 個動詞</span>
+    <div class="pills">`;
+  ["all","第一類","第二類","第三類"].forEach(f=>{
+    html += `<button class="filter-pill ${filter===f?'active':''}" onclick="onLearnedFilter('${f}')">${f==="all"?"全部":f.slice(0,3)}</button>`;
+  });
+  html += `</div></div>`;
+
+  html += `<div style="margin-bottom:14px;">`;
+  CHAPTERS.forEach(ch=>{
+    const total = ch.verbs.length;
+    const done = ch.verbs.filter(i=>learned.has(i)).length;
+    const pct = Math.round(done/total*100);
+    html += `<div class="prog-item">
+      <div class="prog-top"><span>${ch.icon} ${ch.title}</span><span>${done}/${total}</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--green)':'var(--red)'};"></div></div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="v-list">`;
+  filtered.forEach(({i,v})=>{
+    const tc = v.type==="第一類"?"t1":v.type==="第二類"?"t2":"t3";
+    html += `<div class="v-item learned">
+      <div><div class="v-kanji">${v.kanji}</div><div class="v-kana">${v.kana}</div></div>
+      <div class="v-meta"><span class="tag ${tc}">${v.type}</span><button class="remove-btn" onclick="toggleLearned(${i})">移除</button></div>
+      <div class="v-zh">${v.zh}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function renderRefTab(){
+  let html = `<div class="ch-grid">`;
+  CHAPTERS.forEach(ch=>{
+    const done = ch.verbs.filter(i=>learned.has(i)).length;
+    html += `<button class="ch-card ${refTabState.sel===ch.id?'active':''}" onclick="onRefSelectChapter(${ch.id})">
+      <div class="ch-icon">${ch.icon}</div><div class="ch-title">${ch.title}</div>
+      <div class="ch-count">${done>0?`<span style="color:var(--green);">✓${done}/</span>`:''}${ch.verbs.length} 個</div>
+    </button>`;
+  });
+  html += `</div>`;
+
+  if(refTabState.sel!==null){
+    html += `<div class="v-list">`;
+    CHAPTERS[refTabState.sel].verbs.forEach(i=>{
+      const v = VERBS[i];
+      const tc = v.type==="第一類"?"t1":v.type==="第二類"?"t2":"t3";
+      const isL = learned.has(i);
+      html += `<div class="v-item ${isL?'learned':''}">
+        <div><div class="v-kanji">${v.kanji}</div><div class="v-kana">${v.kana}</div></div>
+        <div class="v-meta"><span class="tag ${tc}">${v.type}</span>
+          <button class="mark-btn ${isL?'on':''}" onclick="toggleLearned(${i})">${isL?'✓已學':'標記'}</button></div>
+        <div class="v-zh">${v.zh}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  return html;
+}
+
+function renderFormsTab(){
+  let html = `<div style="font-size:12px;color:var(--ink3);margin-bottom:10px;">18式變化速查表</div>`;
+  FORMS.forEach(f=>{
+    html += `<div class="f-row"><span class="f-num">${String(f.id+1).padStart(2,"0")}</span>
+      <span class="f-name">${f.name}</span><span class="f-ex">${f.ex}</span></div>`;
+  });
+  return html;
+}
+
+const TABS = [
+  {id:"practice",label:"練習",icon:"✏️"},
+  {id:"quiz",label:"選擇題",icon:"🔘"},
+  {id:"learned",label:"學習記錄",icon:"⭐"},
+  {id:"ref",label:"單字表",icon:"📖"},
+  {id:"forms",label:"18式表",icon:"📋"},
+];
+
+function render(){
+  document.body.setAttribute("data-theme", dark ? "dark" : "light");
+  let mainHtml = "";
+  if(currentTab==="practice") mainHtml = renderPracticeTab();
+  else if(currentTab==="quiz") mainHtml = renderQuizTab();
+  else if(currentTab==="learned") mainHtml = renderLearnedTab();
+  else if(currentTab==="ref") mainHtml = renderRefTab();
+  else if(currentTab==="forms") mainHtml = renderFormsTab();
+
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="header">
+      <div class="title">動詞道場 <span class="title-sub">どうしどうじょう</span>
+        <span class="header-right">
+          <button class="dark-toggle" onclick="toggleDark()" title="${dark?'切換為亮色':'切換為深色'}" aria-label="切換深色模式">
+            ${dark
+              ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/></svg>'
+              : '<svg viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>'
+            }
+          </button>
+          <span class="learned-count">已學 ${learned.size}/100</span>
+        </span>
+      </div>
+      <div class="tabs">
+        ${TABS.map(t=>`<button class="tab ${currentTab===t.id?'active':''}" onclick="setTab('${t.id}')"><span>${t.icon}</span>${t.label}</button>`).join("")}
+      </div>
+    </div>
+    <div class="main">${mainHtml}</div>
+  `;
+
+  if(currentTab==="practice"){
+    const inputEl = document.getElementById("practiceInput");
+    if(inputEl && !practice.answered) inputEl.focus();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
