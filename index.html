@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日文學習工具集</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f5f3; --surface: #fff; --border: #e0e0e0;
+    --text: #1a1a1a; --text2: #666; --text3: #999;
+    --gold: #b8860b; --section: #888;
+  }
+  body.dark {
+    --bg: #111110; --surface: #1c1c1a; --border: #2e2e2b;
+    --text: #f0ede8; --text2: #a8a69e; --text3: #777;
+    --gold: #d4a94e; --section: #aaa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; padding: 40px 20px 60px;
+    transition: background .2s, color .2s;
+  }
+  .container { max-width: 760px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 36px; position: relative; }
+  header h1 { font-weight: 700; font-size: clamp(28px, 6vw, 42px); letter-spacing: 0.02em; }
+  header p { margin-top: 10px; color: var(--text2); font-size: 13px; }
+
+  .section { margin-bottom: 32px; }
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    color: var(--section);
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .card {
+    display: block; text-decoration: none; color: var(--text);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px; transition: transform .15s, border-color .15s;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--gold); }
+  .card-title { font-weight: 600; font-size: 18px; margin-bottom: 6px; }
+  .card-sub { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  footer { text-align: center; margin-top: 40px; font-size: 12px; color: var(--text3); }
+
+  .toolbar { position: absolute; top: 0; right: 0; display: flex; gap: 8px; align-items: center; }
+  .tool-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .15s, color .15s;
+  }
+  .tool-btn:hover { border-color: var(--gold); color: var(--text); }
+  .tool-btn svg { display: block; }
+
+  /* List mode */
+  .grid.list-mode { grid-template-columns: 1fr; gap: 6px; }
+  .grid.list-mode .card { display: flex; align-items: center; gap: 14px; padding: 12px 18px; }
+  .grid.list-mode .card-title { font-size: 15px; margin-bottom: 0; flex-shrink: 0; min-width: 110px; }
+  .grid.list-mode .card-sub { font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="toolbar">
+      <button class="tool-btn" onclick="toggleLayout()" title="切換顯示模式">
+        <svg id="icon-list" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        <svg id="icon-grid" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+      <button class="tool-btn" onclick="toggleTheme()" title="切換深色模式">
+        <svg id="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg id="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <circle cx="12" cy="12" r="4"/>
+          <line x1="12" y1="2" x2="12" y2="5"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+          <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+          <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+          <line x1="2" y1="12" x2="5" y2="12"/>
+          <line x1="19" y1="12" x2="22" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+          <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+    </div>
+    <h1>日文學習工具集</h1>
+    <p>點選卡片，前往對應的學習工具</p>
+  </header>
+
+  <!-- 動詞 -->
+  <div class="section">
+    <div class="section-label">動詞</div>
+    <div class="grid">
+      <a class="card" href="./verb-dojo.html">
+        <div class="card-title">動詞道場</div>
+        <div class="card-sub">五段動詞 18 式變化練習與選擇題測驗</div>
+      </a>
+      <a class="card" href="./jita-verb.html">
+        <div class="card-title">自他動詞</div>
+        <div class="card-sub">自動詞與他動詞配對與用法整理</div>
+      </a>
+      <a class="card" href="./ishi-muishi.html">
+        <div class="card-title">意志非意志動詞</div>
+        <div class="card-sub">意志動詞與非意志動詞分類練習</div>
+      </a>
+      <a class="card" href="./compond-verb.html">
+        <div class="card-title">複合動詞</div>
+        <div class="card-sub">N2 程度複合動詞記憶卡與測驗</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 文法 -->
+  <div class="section">
+    <div class="section-label">文法</div>
+    <div class="grid">
+      <a class="card" href="./adj.html">
+        <div class="card-title">形容詞變化</div>
+        <div class="card-sub">い形容詞・な形容詞活用整理與練習</div>
+      </a>
+      <a class="card" href="./keigo.html">
+        <div class="card-title">敬語謙讓語</div>
+        <div class="card-sub">尊敬語、謙讓語、丁寧語對照與用法</div>
+      </a>
+      <a class="card" href="./joshi.html">
+        <div class="card-title">助詞</div>
+        <div class="card-sub">日文助詞用法與例句整理</div>
+      </a>
+      <a class="card" href="./jujutsu.html">
+        <div class="card-title">助數詞</div>
+        <div class="card-sub">日文數量詞分類與使用場合</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 語彙・文化 -->
+  <div class="section">
+    <div class="section-label">語彙・文化</div>
+    <div class="grid">
+      <a class="card" href="./gairaigo.html">
+        <div class="card-title">外來語</div>
+        <div class="card-sub">片假名外來語單字與用法練習</div>
+      </a>
+      <a class="card" href="./countries.html">
+        <div class="card-title">國家名稱</div>
+        <div class="card-sub">片假名國名與漢字略稱閃卡測驗</div>
+      </a>
+      <a class="card" href="./kanyoshi.html">
+        <div class="card-title">慣用句</div>
+        <div class="card-sub">日文慣用句意義與例句對照</div>
+      </a>
+      <a class="card" href="./shouhou.html">
+        <div class="card-title">稱謂</div>
+        <div class="card-sub">日文人際關係稱謂與用法對照</div>
+      </a>
+      <a class="card" href="./calendar.html">
+        <div class="card-title">時間</div>
+        <div class="card-sub">時刻、日期、時間表現方式整理</div>
+      </a>
+      <a class="card" href="./map.html">
+        <div class="card-title">日本地圖</div>
+        <div class="card-sub">都道府縣地理位置與相關知識</div>
+      </a>
+      <a class="card" href="./history.html">
+        <div class="card-title">日本歷史人物</div>
+        <div class="card-sub">重要歷史人物事蹟與年代整理</div>
+      </a>
+    </div>
+  </div>
+
+  <footer>持續更新中</footer>
+</div>
+
+<script>
+function toggleTheme() {
+  const dark = document.body.classList.toggle('dark');
+  document.getElementById('icon-moon').style.display = dark ? 'none' : '';
+  document.getElementById('icon-sun').style.display = dark ? '' : 'none';
+  localStorage.setItem('jp-learning-dark', dark ? '1' : '0');
+}
+function toggleLayout() {
+  const grids = document.querySelectorAll('.grid');
+  const isList = !grids[0].classList.contains('list-mode');
+  grids.forEach(g => g.classList.toggle('list-mode', isList));
+  document.getElementById('icon-list').style.display = isList ? '' : 'none';
+  document.getElementById('icon-grid').style.display = isList ? 'none' : '';
+  localStorage.setItem('jp-learning-layout', isList ? 'list' : 'grid');
+}
+// Init
+if (localStorage.getItem('jp-learning-dark') === '1') {
+  document.body.classList.add('dark');
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('icon-moon').style.display = 'none';
+    document.getElementById('icon-sun').style.display = '';
+  });
+}
+if (localStorage.getItem('jp-learning-layout') === 'list') {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.grid').forEach(g => g.classList.add('list-mode'));
+    document.getElementById('icon-list').style.display = '';
+    document.getElementById('icon-grid').style.display = 'none';
+  });
+}
+</script>
+</body>
+</html>
