@@ -141,6 +141,161 @@
   .mini-item-meta { font-size: 10px; color: var(--text3); }
   .mini-empty { font-size: 11px; color: var(--text3); }
 
+  /* ---------- 收藏 Modal ---------- */
+  .sidebar-toggle { display: flex; gap: 8px; }
+  #favBtn { position: relative; }
+  .fav-badge {
+    position: absolute; top: -3px; right: -3px;
+    min-width: 16px; height: 16px; padding: 0 4px;
+    border-radius: 999px;
+    background: var(--gold); color: var(--surface);
+    font-size: 9px; font-weight: 700; line-height: 16px;
+    text-align: center;
+  }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,.45);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  }
+  .modal-backdrop[hidden] { display: none; }
+  .modal {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    width: 100%; max-width: 520px;
+    max-height: 86vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  }
+  .modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-title { font-size: 15px; font-weight: 700; }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { border-color: var(--gold); color: var(--text); }
+
+  .modal-tabs { display: flex; gap: 6px; padding: 12px 18px 0; }
+  .modal-tab {
+    flex: 1; padding: 8px 4px; border-radius: 9px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text2); font-size: 12px; cursor: pointer;
+    font-family: inherit;
+  }
+  .modal-tab:hover { border-color: var(--gold); color: var(--text); }
+  .modal-tab.active { background: var(--gold); border-color: var(--gold); color: var(--surface); font-weight: 600; }
+
+  .modal-body { padding: 14px 18px; overflow-y: auto; flex: 1; }
+  .modal-foot {
+    padding: 10px 18px 14px;
+    border-top: 1px solid var(--border);
+    text-align: right;
+  }
+
+  .fav-pane { display: none; }
+  .fav-pane.active { display: block; }
+
+  .fav-list { display: flex; flex-direction: column; gap: 8px; }
+  .fav-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 11px; padding: 12px 14px;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .fav-item-main { flex: 1; min-width: 0; cursor: pointer; }
+  .fav-item-jp { font-size: 14px; font-weight: 500; line-height: 1.5; }
+  .fav-item-kana { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .fav-item-zh { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+  .fav-item-src { font-size: 10px; color: var(--text3); margin-top: 5px; }
+  .fav-item-acts { display: flex; gap: 6px; flex-shrink: 0; }
+  .fav-act {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--text2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fav-act:hover { border-color: var(--gold); color: var(--text); }
+  .fav-act.playing { background: var(--gold); border-color: var(--gold); color: var(--surface); }
+  .fav-act.remove:hover { border-color: #b3474a; color: #b3474a; }
+  .fav-count { font-size: 11px; color: var(--text3); }
+  .mini-empty { font-size: 12px; color: var(--text3); }
+
+  /* 收藏測驗 */
+  .fq-empty {
+    border: 1px dashed var(--border); border-radius: 12px;
+    padding: 34px 22px; text-align: center;
+    color: var(--text2); font-size: 13px; line-height: 1.7;
+  }
+  .fq-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; gap: 10px;
+  }
+  .fq-progress { font-size: 11px; color: var(--text3); }
+  .fq-dir-btn {
+    padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--gold); background: transparent;
+    color: var(--gold); font-size: 11px; font-weight: 600;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+  }
+  .fq-dir-btn:hover { background: var(--gold); color: var(--surface); }
+
+  .fq-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 13px; padding: 26px 20px;
+    text-align: center; margin-bottom: 14px;
+  }
+  .fq-label { font-size: 11px; color: var(--text3); margin-bottom: 12px; }
+  .fq-jp { font-size: 24px; font-weight: 700; line-height: 1.35; }
+  .fq-kana { font-size: 12px; color: var(--text2); margin-top: 5px; }
+  .fq-src { font-size: 10px; color: var(--text3); margin-top: 10px; }
+
+  .fq-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fq-option {
+    padding: 13px 10px; border-radius: 11px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); font-size: 13px; cursor: pointer;
+    font-family: inherit; line-height: 1.4;
+  }
+  .fq-option:hover:not(:disabled) { border-color: var(--gold); }
+  .fq-option:disabled { cursor: default; }
+  .fq-option.correct { background: #DCEADD; border-color: #4E7D54; color: #294A2D; }
+  .fq-option.wrong { background: #F1DCDC; border-color: #97393B; color: #6B2829; }
+
+  .fq-feedback {
+    text-align: center; margin-top: 12px;
+    font-size: 12px; color: var(--text2); min-height: 16px;
+  }
+  .fq-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 14px;
+  }
+  .fq-score { font-size: 12px; color: var(--text2); }
+  .fq-score strong { color: var(--gold); }
+  .fq-next, .fq-restart {
+    padding: 8px 20px; border-radius: 999px;
+    border: 1px solid var(--gold); background: var(--gold);
+    color: var(--surface); font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+  .fq-next:disabled { opacity: .35; cursor: default; }
+  .fq-result { padding: 40px 22px; }
+  .fq-big { font-size: 38px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+  .fq-msg { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+
+  @media (max-width: 520px) {
+    .fq-options { grid-template-columns: 1fr; }
+    .modal { max-height: 92vh; }
+  }
+
   /* random button */
   .random-btn {
     width: 100%;
@@ -318,6 +473,12 @@
               <line x1="9" y1="3" x2="9" y2="21"/>
             </svg>
           </button>
+          <button class="tool-btn" id="favBtn" title="收藏">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>
+            </svg>
+            <span class="fav-badge" id="favBadge" style="display:none">0</span>
+          </button>
         </div>
         <div class="toolbar">
           <button class="tool-btn" id="layout-btn" onclick="toggleLayout()" title="切換顯示模式">
@@ -440,6 +601,72 @@
   </div>
 </div>
 
+<!-- ========== 收藏 MODAL ========== -->
+<div class="modal-backdrop" id="favModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="收藏">
+    <div class="modal-head">
+      <span class="modal-title">收藏</span>
+      <button class="modal-close" id="favClose" aria-label="關閉">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-tabs" id="favTabs">
+      <button class="modal-tab active" data-favtab="word">單字</button>
+      <button class="modal-tab" data-favtab="phrase">例句</button>
+      <button class="modal-tab" data-favtab="quiz">測驗</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- 單字 / 例句清單 -->
+      <div class="fav-pane active" id="favPaneList">
+        <div class="fav-list" id="favList"></div>
+      </div>
+
+      <!-- 測驗 -->
+      <div class="fav-pane" id="favPaneQuiz">
+        <div class="fq-empty" id="fqEmpty" style="display:none;"></div>
+
+        <div id="fqBody">
+          <div class="fq-toolbar">
+            <span class="fq-progress" id="fqProgress">第 1 題 / 共 0 題</span>
+            <button class="fq-dir-btn" id="fqDirBtn" type="button">切換為「中→日」</button>
+          </div>
+
+          <div id="fqContent">
+            <div class="fq-panel">
+              <div class="fq-label" id="fqLabel">這個單字的中文意思是？</div>
+              <div class="fq-jp" id="fqJp"></div>
+              <div class="fq-kana" id="fqKana"></div>
+              <div class="fq-src" id="fqSrc"></div>
+            </div>
+            <div class="fq-options" id="fqOptions"></div>
+            <div class="fq-feedback" id="fqFeedback"></div>
+            <div class="fq-footer">
+              <span class="fq-score">得分 <strong id="fqScore">0 / 0</strong></span>
+              <button class="fq-next" id="fqNext" disabled>下一題</button>
+            </div>
+          </div>
+
+          <div id="fqResult" style="display:none;">
+            <div class="fq-panel fq-result">
+              <div class="fq-big" id="fqFinal">0 / 0</div>
+              <div class="fq-msg" id="fqMsg"></div>
+              <button class="fq-restart" id="fqRestart">再測一次</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <span class="fav-count" id="favCount"></span>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -486,6 +713,7 @@ const titleOf = f => (PAGES.find(p => p.file === f) || {}).title || f;
 const LS_DAYS = "jp-tools-days";       // { "2026-07-09": 次數 }
 const LS_VISITS = "jp-tools-visits";   // { "keigo.html": 次數 }
 const LS_RECENT = "jp-tools-recent";   // [ "keigo.html", ... ] 最新在前
+const LS_FAVS = "jp-tools-favs";       // { "keigo.html::word::お召し上がり": {...} }
 const LS_CODE = "jp-tools-synccode";
 
 function todayStr() {
@@ -500,6 +728,7 @@ function loadJSON(key, fallback) {
 let days = loadJSON(LS_DAYS, {});
 let visits = loadJSON(LS_VISITS, {});
 let recent = loadJSON(LS_RECENT, []);
+let favs = loadJSON(LS_FAVS, {});
 let syncCode = localStorage.getItem(LS_CODE) || null;  // 未設定＝純本機，不自動產生
 let cloudOk = false;
 
@@ -507,6 +736,7 @@ function saveLocal() {
   localStorage.setItem(LS_DAYS, JSON.stringify(days));
   localStorage.setItem(LS_VISITS, JSON.stringify(visits));
   localStorage.setItem(LS_RECENT, JSON.stringify(recent));
+  localStorage.setItem(LS_FAVS, JSON.stringify(favs));
 }
 
 function mergeCount(a, b) {
@@ -523,6 +753,14 @@ function mergeRecent(local, remote) {
   return out;
 }
 
+function mergeFavs(local, remote) {
+  const out = { ...remote };
+  for (const k in local) {
+    if (!out[k] || (local[k].ts || 0) > (out[k].ts || 0)) out[k] = local[k];
+  }
+  return out;
+}
+
 async function pullCloud() {
   if (!db || !syncCode) return;
   try {
@@ -532,6 +770,7 @@ async function pullCloud() {
       days = mergeCount(days, d.days || {});
       visits = mergeCount(visits, d.visits || {});
       recent = mergeRecent(recent, d.recent || []);
+      favs = mergeFavs(favs, d.favs || {});
       saveLocal();
     }
     cloudOk = true;
@@ -546,9 +785,9 @@ async function pushCloud() {
   if (!db || !syncCode) return;
   try {
     await setDoc(doc(db, "tools", syncCode), {
-      days, visits, recent,
+      days, visits, recent, favs,
       updated: new Date().toISOString()
-    });
+    }, { merge: true });
     cloudOk = true;
   } catch (e) {
     console.warn("雲端寫入失敗", e);
@@ -672,12 +911,306 @@ function renderLeast() {
   });
 }
 
+/* ================= 收藏 Modal ================= */
+let favTab = "word";
+
+const ICON_SPEAK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const ICON_TRASH = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>';
+
+/* ---- 發音 ---- */
+let jaVoices = null;
+function getJaVoices() {
+  if (!("speechSynthesis" in window)) return [];
+  if (jaVoices && jaVoices.length) return jaVoices;
+  jaVoices = window.speechSynthesis.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("ja"));
+  return jaVoices;
+}
+if ("speechSynthesis" in window) {
+  window.speechSynthesis.onvoiceschanged = () => { jaVoices = null; };
+}
+function speakJa(text, btn) {
+  if (!("speechSynthesis" in window)) { alert("您的瀏覽器不支援語音播放功能"); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ja-JP";
+  const vs = getJaVoices();
+  if (vs.length) u.voice = vs[0];
+  u.pitch = 1.0; u.rate = 0.9;
+  document.querySelectorAll(".fav-act.playing").forEach(b => b.classList.remove("playing"));
+  if (btn) btn.classList.add("playing");
+  const clear = () => { if (btn) btn.classList.remove("playing"); };
+  u.onend = clear; u.onerror = clear;
+  window.speechSynthesis.speak(u);
+}
+
+/* ---- 開關 ---- */
+function openFavModal() {
+  document.getElementById("favModal").hidden = false;
+  document.body.style.overflow = "hidden";
+  renderFavs();
+}
+function closeFavModal() {
+  document.getElementById("favModal").hidden = true;
+  document.body.style.overflow = "";
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+}
+document.getElementById("favBtn").addEventListener("click", openFavModal);
+document.getElementById("favClose").addEventListener("click", closeFavModal);
+document.getElementById("favModal").addEventListener("click", (e) => {
+  if (e.target.id === "favModal") closeFavModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !document.getElementById("favModal").hidden) closeFavModal();
+});
+
+/* ---- 分頁 ---- */
+document.querySelectorAll(".modal-tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".modal-tab").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    favTab = btn.dataset.favtab;
+    const isQuiz = favTab === "quiz";
+    document.getElementById("favPaneList").classList.toggle("active", !isQuiz);
+    document.getElementById("favPaneQuiz").classList.toggle("active", isQuiz);
+    if (isQuiz) initFavQuiz();
+    else renderFavs();
+  });
+});
+
+/* ---- 計數與徽章 ---- */
+function favEntries(type) {
+  return Object.entries(favs)
+    .filter(([, v]) => v && v.type === type)
+    .sort((a, b) => (b[1].ts || 0) - (a[1].ts || 0));
+}
+
+function renderFavBadge() {
+  const n = Object.keys(favs).length;
+  const badge = document.getElementById("favBadge");
+  badge.textContent = n > 99 ? "99+" : n;
+  badge.style.display = n ? "block" : "none";
+}
+
+function renderFavCount() {
+  document.getElementById("favCount").textContent =
+    `單字 ${favEntries("word").length}・例句 ${favEntries("phrase").length}`;
+}
+
+/* ---- 清單 ---- */
+function removeFav(key) {
+  delete favs[key];
+  saveLocal();
+  pushCloud();
+  renderFavs();
+  renderFavBadge();
+}
+
+function renderFavs() {
+  renderFavCount();
+  renderFavBadge();
+  if (favTab === "quiz") return;
+
+  const wrap = document.getElementById("favList");
+  const entries = favEntries(favTab);
+
+  if (!entries.length) {
+    wrap.innerHTML = `<span class="mini-empty">尚無收藏的${favTab === "word" ? "單字" : "例句"}。在工具頁點擊星號即可加入。</span>`;
+    return;
+  }
+
+  wrap.innerHTML = "";
+  entries.forEach(([key, v]) => {
+    const el = document.createElement("div");
+    el.className = "fav-item";
+
+    const main = document.createElement("div");
+    main.className = "fav-item-main";
+    main.innerHTML =
+      `<div class="fav-item-jp">${v.jp || ""}</div>` +
+      (v.kana ? `<div class="fav-item-kana">${v.kana}</div>` : "") +
+      `<div class="fav-item-zh">${v.zh || ""}</div>` +
+      `<div class="fav-item-src">${titleOf(v.page)}${v.cat ? "・" + v.cat : ""}</div>`;
+    main.addEventListener("click", () => { closeFavModal(); goTo(v.page); });
+
+    const acts = document.createElement("div");
+    acts.className = "fav-item-acts";
+
+    const spk = document.createElement("button");
+    spk.className = "fav-act";
+    spk.innerHTML = ICON_SPEAK;
+    spk.title = "播放發音";
+    spk.addEventListener("click", (e) => { e.stopPropagation(); speakJa(v.jp, spk); });
+
+    const del = document.createElement("button");
+    del.className = "fav-act remove";
+    del.innerHTML = ICON_TRASH;
+    del.title = "移除收藏";
+    del.addEventListener("click", (e) => { e.stopPropagation(); removeFav(key); });
+
+    acts.appendChild(spk);
+    acts.appendChild(del);
+    el.appendChild(main);
+    el.appendChild(acts);
+    wrap.appendChild(el);
+  });
+}
+
+/* ================= 收藏測驗（跨工具） ================= */
+let fqQueue = [], fqIdx = 0, fqScore = 0, fqAnswered = false;
+let fqDir = "jp2zh";
+let fqTimer = null;
+let fqRecorded = false;   // 本輪是否已記錄學習
+
+function shuffleArr(a) {
+  const r = a.slice();
+  for (let i = r.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [r[i], r[j]] = [r[j], r[i]];
+  }
+  return r;
+}
+
+function initFavQuiz() {
+  const words = favEntries("word").map(([, v]) => v).filter(v => v.jp && v.zh);
+  const empty = document.getElementById("fqEmpty");
+  const body = document.getElementById("fqBody");
+
+  if (words.length < 4) {
+    empty.textContent = words.length
+      ? `收藏的單字只有 ${words.length} 個，至少需要 4 個才能組成選擇題。`
+      : "尚未收藏任何單字。在工具頁的速查表或單字卡點擊星號即可加入。";
+    empty.style.display = "block";
+    body.style.display = "none";
+    return;
+  }
+
+  empty.style.display = "none";
+  body.style.display = "block";
+
+  fqQueue = shuffleArr(words);
+  fqIdx = 0; fqScore = 0; fqAnswered = false; fqRecorded = false;
+  if (fqTimer) { clearTimeout(fqTimer); fqTimer = null; }
+  document.getElementById("fqContent").style.display = "block";
+  document.getElementById("fqResult").style.display = "none";
+  renderFqQuestion();
+}
+
+function renderFqQuestion() {
+  const item = fqQueue[fqIdx];
+  if (!item) return;
+  fqAnswered = false;
+  if (fqTimer) { clearTimeout(fqTimer); fqTimer = null; }
+
+  const kanaEl = document.getElementById("fqKana");
+  if (fqDir === "jp2zh") {
+    document.getElementById("fqLabel").textContent = "這個單字的中文意思是？";
+    document.getElementById("fqJp").textContent = item.jp;
+    kanaEl.textContent = item.kana || "";
+    kanaEl.style.display = item.kana ? "" : "none";
+  } else {
+    document.getElementById("fqLabel").textContent = "這個中文對應的日文是？";
+    document.getElementById("fqJp").textContent = item.zh;
+    kanaEl.style.display = "none";
+  }
+  document.getElementById("fqSrc").textContent = titleOf(item.page) + (item.cat ? "・" + item.cat : "");
+
+  document.getElementById("fqFeedback").textContent = "";
+  document.getElementById("fqNext").disabled = true;
+  document.getElementById("fqProgress").textContent = `第 ${fqIdx + 1} 題 / 共 ${fqQueue.length} 題`;
+
+  const correct = fqDir === "jp2zh" ? item.zh : item.jp;
+  const pool = fqQueue.filter((_, i) => i !== fqIdx).map(x => fqDir === "jp2zh" ? x.zh : x.jp);
+  const uniq = [...new Set(pool)].filter(x => x !== correct);
+  const wrongs = shuffleArr(uniq).slice(0, 3);
+  const options = shuffleArr([correct, ...wrongs]);
+
+  const wrap = document.getElementById("fqOptions");
+  wrap.innerHTML = "";
+  options.forEach(opt => {
+    const b = document.createElement("button");
+    b.className = "fq-option";
+    b.textContent = opt;
+    b.addEventListener("click", () => handleFqAnswer(b, opt, correct, item));
+    wrap.appendChild(b);
+  });
+
+  document.getElementById("fqScore").textContent = `${fqScore} / ${fqIdx}`;
+}
+
+function handleFqAnswer(btn, chosen, correct, item) {
+  if (fqAnswered) return;
+  fqAnswered = true;
+
+  // 第一次作答即算今日學習
+  if (!fqRecorded) { fqRecorded = true; recordFavQuiz(); }
+
+  document.querySelectorAll(".fq-option").forEach(b => b.disabled = true);
+
+  if (chosen === correct) {
+    btn.classList.add("correct");
+    fqScore++;
+    document.getElementById("fqFeedback").textContent = "答對了";
+    fqTimer = setTimeout(() => { fqTimer = null; nextFq(); }, 600);
+  } else {
+    btn.classList.add("wrong");
+    document.querySelectorAll(".fq-option").forEach(b => {
+      if (b.textContent === correct) b.classList.add("correct");
+    });
+    document.getElementById("fqFeedback").textContent = `正確答案：${correct}`;
+  }
+
+  document.getElementById("fqScore").textContent = `${fqScore} / ${fqIdx + 1}`;
+  document.getElementById("fqNext").disabled = false;
+}
+
+function nextFq() {
+  fqIdx++;
+  if (fqIdx >= fqQueue.length) showFqResult();
+  else renderFqQuestion();
+}
+
+function showFqResult() {
+  document.getElementById("fqContent").style.display = "none";
+  document.getElementById("fqResult").style.display = "block";
+  const total = fqQueue.length;
+  document.getElementById("fqFinal").textContent = `${fqScore} / ${total}`;
+  const r = fqScore / total;
+  let msg = "繼續加油，多複習幾次吧";
+  if (r === 1) msg = "完美，收藏的單字已經記熟了";
+  else if (r >= 0.8) msg = "很不錯，幾乎全對";
+  else if (r >= 0.5) msg = "還可以，再複習一輪會更熟練";
+  document.getElementById("fqMsg").textContent = msg;
+}
+
+document.getElementById("fqNext").addEventListener("click", () => {
+  if (fqTimer) { clearTimeout(fqTimer); fqTimer = null; }
+  nextFq();
+});
+document.getElementById("fqRestart").addEventListener("click", initFavQuiz);
+document.getElementById("fqDirBtn").addEventListener("click", (e) => {
+  fqDir = fqDir === "jp2zh" ? "zh2jp" : "jp2zh";
+  e.target.textContent = fqDir === "jp2zh" ? "切換為「中→日」" : "切換為「日→中」";
+  initFavQuiz();
+});
+
+/* 收藏測驗也算今日學習（不歸屬任何單一工具） */
+function recordFavQuiz() {
+  const t = todayStr();
+  days[t] = (days[t] || 0) + 1;
+  saveLocal();
+  renderHeatmap();
+  renderStats();
+  pushCloud();
+}
+
 function renderAll() {
   renderHeatmap();
   renderStats();
   renderRecent();
   renderLeast();
+  renderFavBadge();
   renderSyncStatus();
+  if (!document.getElementById("favModal").hidden) renderFavs();
 }
 
 /* ================= 同步碼 UI ================= */
